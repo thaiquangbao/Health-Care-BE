@@ -92,6 +92,11 @@ class DoctorController {
           .status(404)
           .json("Không tìm thấy bác sĩ!!!");
       }
+      if (rs === 2) {
+        return res
+          .status(400)
+          .json("Xóa hồ sơ bác sĩ không thành công!!!");
+      }
       return res.status(200).json({
         data: "Xóa thành công!!!",
         token: { accessToken, refreshToken },
@@ -148,9 +153,28 @@ class DoctorController {
   async takePasswordDoctor(req, res) {
     try {
       const data = req.body;
+      const rs = await doctorService.takePassWord(data);
+      if (rs === 0) {
+        return res
+          .status(404)
+          .json("Bác sĩ không tồn tại!!!");
+      }
+      return res.status(200).json(rs);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json("Lỗi hệ thống!!!");
+    }
+  }
+  async updateDoctorImage(req, res) {
+    try {
+      const data = req.body;
+      const image = req.file;
       const accessToken = req.headers["accesstoken"];
       const refreshToken = req.headers["refreshtoken"];
-      const rs = await doctorService.takePassWord(data);
+      const rs = await doctorService.updateImage(
+        data,
+        image
+      );
       if (rs === 0) {
         return res
           .status(404)

@@ -2,6 +2,7 @@ const userModel = require("../../models/usersModels");
 const userResponse = require("../../Dtos/Patients/UserResponse");
 const passWordUntil = require("../../../untill/PassWordUntills");
 const appointmentModel = require("../../models/appointmentModels");
+const uploadToS3 = require("../../../config/AWS/S3");
 class PatientService {
   async updatePatient(dataPatient) {
     const existPatient = await userModel.findById(
@@ -100,6 +101,28 @@ class PatientService {
     const updated = await userModel.findByIdAndUpdate(
       existPatient._id,
       { passWord: hashedPassWord },
+      { new: true }
+    );
+    return await userResponse.toUserAuth(updated);
+  }
+  async updateImage(data, image) {
+    const existUSER = await userModel.findOne({
+      $and: [{ _id: data._id }, { role: "USER" }],
+    });
+    if (!existUSER) {
+      return 0;
+    }
+    const url = await uploadToS3(
+      `image_${Date.now().toString()}_${
+        image.originalname.split(".")[0]
+      }`,
+      image.buffer,
+      image.mimetype
+    );
+    image = url.url;
+    const updated = await userModel.findByIdAndUpdate(
+      existUSER._id,
+      { $set: { image: image } },
       { new: true }
     );
     return await userResponse.toUserAuth(updated);

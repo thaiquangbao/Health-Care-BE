@@ -2,6 +2,7 @@ const appointmentModel = require("../../models/appointmentModels");
 const doctorRecordModel = require("../../models/doctorRecordModel");
 const patientService = require("../AuthService/PatientService");
 const userRequest = require("../../Dtos/Patients/PatientRequest");
+const mailService = require("../MailerService");
 class AppointmentService {
   async save(appointmentData) {
     try {
@@ -115,6 +116,58 @@ class AppointmentService {
       .lean();
 
     return rs;
+  }
+  async doctorAccept(data) {
+    const rs = await appointmentModel.findById(data._id);
+    if (!rs) {
+      return 0;
+    }
+    const accept = await appointmentModel.findByIdAndUpdate(
+      rs._id,
+      data,
+      {
+        new: true,
+      }
+    );
+    const recordDoctor = await doctorRecordModel.findById(
+      rs.doctor_record_id
+    );
+    const mail = await mailService.sendMail(
+      rs.patient.email,
+      "Xác nhận lịch hẹn",
+      `Bác sĩ ${recordDoctor.doctor.fullName} đã xác nhận lịch hẹn của ${rs.patient.fullName} vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}`,
+      ""
+    );
+    if (!mail) {
+      return 2;
+    }
+    return accept;
+  }
+  async doctorDeny(data) {
+    const rs = await appointmentModel.findById(data._id);
+    if (!rs) {
+      return 0;
+    }
+    const reject = await appointmentModel.findByIdAndUpdate(
+      rs._id,
+      data,
+      {
+        new: true,
+      }
+    );
+    const recordDoctor = await doctorRecordModel.findById(
+      rs.doctor_record_id
+    );
+    const mail = await mailService.sendMail(
+      rs.patient.email,
+      "Từ chối lịch hẹn",
+      `Bác sĩ ${recordDoctor.doctor.fullName} đã từ chối lịch hẹn của ${rs.patient.fullName} vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}`,
+      ""
+    );
+    if (!mail) {
+      return 2;
+    }
+    return reject;
   }
 }
 module.exports = new AppointmentService();

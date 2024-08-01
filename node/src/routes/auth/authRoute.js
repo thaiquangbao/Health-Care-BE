@@ -4,16 +4,19 @@ const authController = require("../../app/Controllers/AuthenticateController");
 const middleWareToken = require("../../app/middlewares/MiddleWareToken");
 const patientController = require("../../app/Controllers/PatientController");
 const doctorController = require("../../app/Controllers/DoctorController");
+const upload = require("../../uploads/upload");
 //doctor
-useRouter.post(
-  "/take-password/doctor",
-  middleWareToken.validateToken,
-  doctorController.takePasswordDoctor
-);
+
 useRouter.put(
   "/update-password/doctor/:id",
   middleWareToken.validateToken,
   doctorController.updatePassWordDoctor
+);
+useRouter.post(
+  "/update-information/doctors",
+  middleWareToken.validateToken,
+  upload.single("image"),
+  doctorController.updateDoctorImage
 );
 useRouter.post(
   "/delete/many-doctor",
@@ -46,15 +49,17 @@ useRouter.post(
   doctorController.createDoctor
 );
 // patient
-useRouter.post(
-  "/take-password/patient",
-  middleWareToken.validateToken,
-  patientController.takePasswordPatient
-);
+
 useRouter.put(
   "/update-password/patient/:id",
   middleWareToken.validateToken,
   patientController.updatePassWordPatient
+);
+useRouter.post(
+  "/update-information/patients",
+  middleWareToken.validateToken,
+  upload.single("image"),
+  patientController.updatePatientImage
 );
 useRouter.post(
   "/delete/many-patient",
@@ -94,6 +99,14 @@ useRouter.get(
   authController.getUserByToken
 );
 // không càn token
+useRouter.post(
+  "/take-password/patient",
+  patientController.takePasswordPatient
+);
+useRouter.post(
+  "/take-password/doctor",
+  doctorController.takePasswordDoctor
+);
 useRouter.post("/login/admin", authController.loginAdmin);
 useRouter.post("/login", authController.loginAuth);
 useRouter.post(

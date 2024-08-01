@@ -7,6 +7,16 @@ useRouter.post(
   appointmentController.sendMail
 );
 useRouter.post(
+  "/doctor-reject",
+  middleWareToken.validateToken,
+  appointmentController.denyAppointment
+);
+useRouter.post(
+  "/doctor-accept",
+  middleWareToken.validateToken,
+  appointmentController.acceptAppointment
+);
+useRouter.post(
   "/update",
   middleWareToken.validateToken,
   appointmentController.updateAppointment

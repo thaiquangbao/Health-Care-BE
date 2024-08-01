@@ -128,9 +128,28 @@ class PatientController {
   async takePasswordPatient(req, res) {
     try {
       const data = req.body;
+      const rs = await patientService.takePassWord(data);
+      if (rs === 0) {
+        return res
+          .status(404)
+          .json("Người dùng không tồn tại!!!");
+      }
+      return res.status(200).json(rs);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json("Lỗi hệ thống!!!");
+    }
+  }
+  async updatePatientImage(req, res) {
+    try {
+      const data = req.body;
+      const image = req.file;
       const accessToken = req.headers["accesstoken"];
       const refreshToken = req.headers["refreshtoken"];
-      const rs = await patientService.takePassWord(data);
+      const rs = await patientService.updateImage(
+        data,
+        image
+      );
       if (rs === 0) {
         return res
           .status(404)

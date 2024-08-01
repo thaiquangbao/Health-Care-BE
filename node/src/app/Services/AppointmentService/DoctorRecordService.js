@@ -69,15 +69,16 @@ class DoctorRecordService {
   }
   async deleteOne(id) {
     try {
-      const checkData = await doctorRecordModel.findById(
-        id
-      );
+      const checkData = await doctorRecordModel.findOne({
+        "doctor._id": id,
+      });
       if (!checkData) {
-        return 0;
+        console.log("Không tìm thấy hồ sơ bác sĩ");
+        return "Không tìm thấy hồ sơ bác sĩ";
       }
-      await doctorRecordModel.findByIdAndDelete(
-        checkData._id
-      );
+      await doctorRecordModel.findOneAndDelete({
+        "doctor._id": checkData.doctor._id,
+      });
       return 1;
     } catch (error) {
       throw error;

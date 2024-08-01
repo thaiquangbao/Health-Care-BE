@@ -3,6 +3,7 @@ const passWordUntil = require("../../../untill/PassWordUntills");
 const doctorResponse = require("../../Dtos/Doctors/DoctorResponse");
 const doctorRequest = require("../../Dtos/Doctors/DoctorRequest");
 const doctorRecordService = require("../AppointmentService/DoctorRecordService");
+const uploadToS3 = require("../../../config/AWS/S3");
 class DoctorService {
   async createDoctor(dataDoctor) {
     const existDoctor = await userModel.findOne({
@@ -88,8 +89,14 @@ class DoctorService {
     const doctor = await userModel.findOneAndDelete({
       $and: [{ _id: data.id }, { role: "DOCTOR" }],
     });
+
     if (!doctor) {
       return 0;
+    }
+    const doctorRecord =
+      await doctorRecordService.deleteOne(data.id);
+    if (doctorRecord != 1) {
+      return 2;
     }
     return 1;
   }
@@ -141,6 +148,28 @@ class DoctorService {
     const updated = await userModel.findByIdAndUpdate(
       existDoctor._id,
       { passWord: hashedPassWord },
+      { new: true }
+    );
+    return await doctorResponse.toDoctorAuth(updated);
+  }
+  async updateImage(data, image) {
+    const existDoctor = await userModel.findOne({
+      $and: [{ _id: data._id }, { role: "DOCTOR" }],
+    });
+    if (!existDoctor) {
+      return 0;
+    }
+    const url = await uploadToS3(
+      `image_${Date.now().toString()}_${
+        image.originalname.split(".")[0]
+      }`,
+      image.buffer,
+      image.mimetype
+    );
+    image = url.url;
+    const updated = await userModel.findByIdAndUpdate(
+      existDoctor._id,
+      { image: image },
       { new: true }
     );
     return await doctorResponse.toDoctorAuth(updated);

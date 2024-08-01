@@ -11,7 +11,7 @@ const { default: helmet } = require("helmet");
 const morgan = require("morgan");
 moment.tz.setDefault("Asia/Ho_Chi_Minh");
 const port = 8999;
-const baseURL = "http://localhost:3000";
+const baseURL = "http://127.0.0.1:3000";
 
 const corsOptions = {
   origin: [baseURL],
@@ -29,7 +29,7 @@ app.use(express.json());
 dotenv.config();
 routes(app);
 db.connectAppointment();
-notify.startDepointmentFetch();
+// notify.startDepointmentFetch();
 app.listen(port, () => {
   console.log(`Content service running on port ${port}`);
 });
