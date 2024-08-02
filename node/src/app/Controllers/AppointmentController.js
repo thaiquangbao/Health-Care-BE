@@ -132,6 +132,7 @@ class AppointmentController {
         token: { accessToken, refreshToken },
       });
     } catch (error) {
+      console.log(error);
       return res.status(500).json(error);
     }
   }
@@ -153,6 +154,37 @@ class AppointmentController {
       }
       return res.status(200).json({
         data: rs,
+        token: { accessToken, refreshToken },
+      });
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  }
+  async cancelAppointment(req, res) {
+    try {
+      const data = req.body;
+      const accessToken = req.headers["accesstoken"];
+      const refreshToken = req.headers["refreshtoken"];
+      const rs = await appointmentService.doctorCancel(
+        data
+      );
+      if (rs === 0) {
+        return res
+          .status(404)
+          .json("Không tìm thấy lịch hẹn này!!!");
+      }
+      if (rs === 2) {
+        return res
+          .status(409)
+          .json("Gửi email từ chối không thành công!!!");
+      }
+      if (rs === 3) {
+        return res
+          .status(409)
+          .json("Hủy lịch hẹn không thành công!!!");
+      }
+      return res.status(200).json({
+        data: "Hủy lịch hẹn thành công!!!",
         token: { accessToken, refreshToken },
       });
     } catch (error) {

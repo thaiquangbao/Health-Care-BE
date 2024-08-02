@@ -172,6 +172,10 @@ class DoctorService {
       { image: image },
       { new: true }
     );
+    await doctorRecordService.updateImgDoctor(
+      existDoctor._id,
+      image
+    );
     return await doctorResponse.toDoctorAuth(updated);
   }
 }

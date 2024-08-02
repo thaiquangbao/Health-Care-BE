@@ -122,22 +122,21 @@ class AppointmentService {
     if (!rs) {
       return 0;
     }
-    const accept = await appointmentModel.findByIdAndUpdate(
-      rs._id,
-      data,
-      {
+
+    const [accept, recordDoctor] = await Promise.all([
+      appointmentModel.findByIdAndUpdate(rs._id, data, {
         new: true,
-      }
-    );
-    const recordDoctor = await doctorRecordModel.findById(
-      rs.doctor_record_id
-    );
+      }),
+      doctorRecordModel.findById(rs.doctor_record_id),
+    ]);
+
     const mail = await mailService.sendMail(
       rs.patient.email,
       "Xác nhận lịch hẹn",
-      `Bác sĩ ${recordDoctor.doctor.fullName} đã xác nhận lịch hẹn của ${rs.patient.fullName} vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}`,
+      `Bác sĩ ${recordDoctor.doctor.fullName} đã xác nhận lịch hẹn của bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}`,
       ""
     );
+
     if (!mail) {
       return 2;
     }
@@ -148,26 +147,46 @@ class AppointmentService {
     if (!rs) {
       return 0;
     }
-    const reject = await appointmentModel.findByIdAndUpdate(
-      rs._id,
-      data,
-      {
+    const [reject, recordDoctor] = await Promise.all([
+      appointmentModel.findByIdAndUpdate(rs._id, data, {
         new: true,
-      }
-    );
-    const recordDoctor = await doctorRecordModel.findById(
-      rs.doctor_record_id
-    );
+      }),
+      doctorRecordModel.findById(rs.doctor_record_id),
+    ]);
     const mail = await mailService.sendMail(
       rs.patient.email,
       "Từ chối lịch hẹn",
-      `Bác sĩ ${recordDoctor.doctor.fullName} đã từ chối lịch hẹn của ${rs.patient.fullName} vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}`,
+      `Bác sĩ ${recordDoctor.doctor.fullName} đã từ chối lịch hẹn của bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}`,
       ""
     );
     if (!mail) {
       return 2;
     }
     return reject;
+  }
+  async doctorCancel(data) {
+    const rs = await appointmentModel.findById(data._id);
+    if (!rs) {
+      return 0;
+    }
+    const recordDoctor = await doctorRecordModel.findById(
+      rs.doctor_record_id
+    );
+    const mail = await mailService.sendMail(
+      rs.patient.email,
+      "Hủy lịch hẹn",
+      `Bác sĩ ${recordDoctor.doctor.fullName} đã hủy lịch hẹn của bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}. Lý do: ${data.note}`,
+      ""
+    );
+    if (!mail) {
+      return 2;
+    }
+    const deleted =
+      await appointmentModel.findByIdAndDelete(rs._id);
+    if (!deleted) {
+      return 3;
+    }
+    return 1;
   }
 }
 module.exports = new AppointmentService();

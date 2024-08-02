@@ -57,6 +57,16 @@ class DoctorRecordService {
     );
     return update;
   }
+  async updateImgDoctor(doctor_id, image) {
+    const update = await doctorRecordModel.findOneAndUpdate(
+      {
+        "doctor._id": doctor_id,
+      },
+      { $set: { "doctor.image": image } },
+      { new: true }
+    );
+    return update;
+  }
   async getAll() {
     try {
       const rs = await doctorRecordModel.find().lean();

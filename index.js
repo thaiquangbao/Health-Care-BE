@@ -29,7 +29,7 @@ app.use(express.json());
 dotenv.config();
 routes(app);
 db.connectAppointment();
-// notify.startDepointmentFetch();
+notify.startDepointmentFetch();
 app.listen(port, () => {
   console.log(`Content service running on port ${port}`);
 });

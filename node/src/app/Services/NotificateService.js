@@ -3,6 +3,7 @@ const moment = require("moment-timezone");
 const mailService = require("../Services/MailerService"); // Giả sử bạn có một dịch vụ gửi mail
 const appointmentService = require("./AppointmentService/AppointmentService");
 const appointmentModel = require("../models/appointmentModels");
+const doctorRecordModel = require("../models/doctorRecordModel");
 class ScheduleEmailNotification {
   async notification(appointment) {
     const [hours, minutes] =
@@ -27,11 +28,22 @@ class ScheduleEmailNotification {
       now.isBetween(notificationDate, appointmentDate) &&
       !appointment.notificationSent
     ) {
+      const doctorRecord = await doctorRecordModel.findById(
+        appointment.doctor_record_id
+      );
       await mailService.sendMail(
         appointment.patient.email,
         `Xin chào ${appointment.patient.fullName}`,
         "test",
-        "Bạn còn 1 tiếng nữa là đến cuộc hẹn với bác sĩ"
+        `Bạn còn 1 tiếng nữa là đến cuộc hẹn với bác sĩ ${doctorRecord.doctor.fullName} \n` +
+          `Vào lúc ${appointment.appointment_date.time}`
+      );
+      await mailService.sendMail(
+        doctorRecord.doctor?.email,
+        `Xin chào bác sĩ ${doctorRecord.doctor?.fullName}`,
+        "test",
+        `Bác sĩ còn 1 tiếng nữa là đến cuộc hẹn với bệnh nhân ${doctorRecord.doctor.fullName} \n` +
+          `Vào lúc ${appointment.appointment_date.time}`
       );
       await appointmentModel.findByIdAndUpdate(
         appointment._id,
@@ -52,7 +64,10 @@ class ScheduleEmailNotification {
       try {
         const appointments =
           await appointmentService.getAll();
-        for (const appointment of appointments) {
+        const acceptedAppointments = appointments.filter(
+          (appointment) => appointment.status === "ACCEPTED"
+        );
+        for (const appointment of acceptedAppointments) {
           this.notification(appointment);
         }
         console.log("Đã checked lịch hẹn");
