@@ -11,7 +11,11 @@ const appointments = new Schema(
       email: { type: String, default: "" },
       sex: { type: Boolean, default: false },
       phone: { type: String, default: "" },
-      image: { type: String, default: "" },
+      image: {
+        type: String,
+        default:
+          "https://th.bing.com/th/id/R.be953f29410b3d18ef0e5e0fbd8d3120?rik=Dm2iDRVLgVcpdA&pid=ImgRaw&r=0",
+      },
     },
     appointment_date: {
       day: Number,
@@ -22,7 +26,11 @@ const appointments = new Schema(
     status: String,
     note: String,
     status_message: String,
-    price: Number,
+    price_list: {
+      type: Schema.Types.ObjectId,
+      default: null,
+    },
+    sick: { type: String, default: "" },
     notificationSent: { type: Boolean, default: false },
   },
   { timestamps: true }

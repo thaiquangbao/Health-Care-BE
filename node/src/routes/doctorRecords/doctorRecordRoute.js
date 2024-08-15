@@ -18,12 +18,14 @@ useRouter.get(
 );
 useRouter.post(
   "/update",
-  middleWareToken.validateToken,
   doctorRecordController.updateDoctorRecord
 );
 useRouter.get(
+  "/get-one/:id",
+  doctorRecordController.getOne
+);
+useRouter.get(
   "/getById/:id",
-  middleWareToken.validateToken,
   doctorRecordController.getById
 );
 // useRouter.get("/", doctorRecordController.index);

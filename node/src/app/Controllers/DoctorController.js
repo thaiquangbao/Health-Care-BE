@@ -36,6 +36,9 @@ class DoctorController {
           .status(400)
           .json("Số điện thoại đã tồn tại!!!");
       }
+      if (rs === 3) {
+        return res.status(400).json("Email đã tồn tại!!!");
+      }
       return res.status(200).json({
         data: rs,
         token: { accessToken, refreshToken },

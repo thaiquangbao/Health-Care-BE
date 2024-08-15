@@ -8,6 +8,7 @@ class DoctorRequest {
       phone: doctor.phone,
       image: doctor.image,
       specialize: doctor.specialize,
+      pathological: doctor.pathological,
     };
     return data;
   }

@@ -1,9 +1,12 @@
 const roomService = require("../../Services/ChatService/RoomsService");
+const emitter = require("../../../config/Emitter/emitter");
+
 class RoomsController {
   async save(req, res) {
     try {
       const roomData = req.body;
       const room = await roomService.save(roomData);
+      emitter.emit("room.create", room);
       const accessToken = req.headers["accesstoken"];
       const refreshToken = req.headers["refreshtoken"];
       const token = { accessToken, refreshToken };

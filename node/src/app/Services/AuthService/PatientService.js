@@ -11,6 +11,15 @@ class PatientService {
     if (!existPatient) {
       return 0;
     }
+    if (dataPatient.email) {
+      const existEmail = await userModel.findOne({
+        email: dataPatient.email,
+        _id: { $ne: existPatient._id },
+      });
+      if (existEmail) {
+        return 3;
+      }
+    }
     dataPatient.role = "USER";
     const existPhone = await userModel.findOne({
       phone: dataPatient.phone,

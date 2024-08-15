@@ -12,10 +12,21 @@ class DoctorRecordController {
           .status(404)
           .json("Không tìm thấy hồ sơ bác sĩ!!!");
       }
-      const accessToken = req.headers["accesstoken"];
-      const refreshToken = req.headers["refreshtoken"];
-      const token = { accessToken, refreshToken };
-      return res.status(200).json({ data: rs, token });
+      return res.status(200).json(rs);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  }
+  async getOne(req, res) {
+    try {
+      const id = req.params.id;
+      const rs = await doctorRecordService.getById(id);
+      if (rs === 0) {
+        return res
+          .status(404)
+          .json("Không tìm thấy hồ sơ bác sĩ!!!");
+      }
+      return res.status(200).json(rs);
     } catch (error) {
       return res.status(500).json(error);
     }
@@ -25,15 +36,12 @@ class DoctorRecordController {
       const rs = await doctorRecordService.updateOne(
         req.body
       );
-      const accessToken = req.headers["accesstoken"];
-      const refreshToken = req.headers["refreshtoken"];
-      const token = { accessToken, refreshToken };
       if (rs === 0) {
         return res
           .status(404)
           .json("Không tìm thấy hồ sơ bác sĩ này!!!");
       }
-      return res.status(200).json({ data: rs, token });
+      return res.status(200).json(rs);
     } catch (error) {
       return res.status(500).json(error);
     }

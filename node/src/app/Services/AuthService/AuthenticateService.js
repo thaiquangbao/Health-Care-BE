@@ -4,25 +4,44 @@ const jwtService = require("./JWTService");
 const userResponse = require("../../Dtos/Patients/UserResponse");
 const doctorResponse = require("../../Dtos/Doctors/DoctorResponse");
 const jwt = require("jsonwebtoken");
+const customerModel = require("../../models/customerModel");
 class AuthenticateService {
   async signupAuth(dataUser) {
     const existUser = await userModel.findOne({
       phone: dataUser.phone,
     });
-    if (existUser) {
+    if (!existUser) {
+      // Nếu không tìm thấy người dùng, tạo người dùng mới
+      const passWord = await passWordUntil.hashPassword(
+        dataUser.passWord
+      );
+      dataUser.role = "USER";
+      dataUser.processSignup = 1;
+      const newUser = new userModel({
+        ...dataUser,
+        passWord,
+      });
+      await newUser.save();
+      return await userResponse.toUserAuth(newUser);
+    }
+    if (!existUser.role.match("CUSTOMER")) {
       return 0;
     }
     const passWord = await passWordUntil.hashPassword(
       dataUser.passWord
     );
-    dataUser.role = "USER";
-    dataUser.processSignup = 1;
-    const newUser = new userModel({
-      ...dataUser,
-      passWord,
-    });
-    await newUser.save();
-    return await userResponse.toUserAuth(newUser);
+    const customer = await userModel.findByIdAndUpdate(
+      existUser._id,
+      {
+        $set: {
+          passWord: passWord,
+          processSignup: 1,
+          role: "USER",
+        },
+      },
+      { new: true }
+    );
+    return await userResponse.toUserAuth(customer);
   }
   async updateProcessSignup(dataUser) {
     const existUser = await userModel.findOne({
@@ -30,6 +49,22 @@ class AuthenticateService {
     });
     if (!existUser) {
       return 0;
+    }
+    if (
+      existUser.fullName !== "" &&
+      existUser.address !== "" &&
+      existUser.dateOfBirth !== ""
+    ) {
+      const update = await userModel.findByIdAndUpdate(
+        existUser._id,
+        {
+          $set: {
+            processSignup: 3,
+          },
+        },
+        { new: true }
+      );
+      return await userResponse.toUserAuth(update);
     }
     const updated = await userModel.findByIdAndUpdate(
       existUser._id,

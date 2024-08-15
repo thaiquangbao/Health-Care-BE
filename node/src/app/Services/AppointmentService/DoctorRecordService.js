@@ -105,5 +105,12 @@ class DoctorRecordService {
       console.log(error);
     }
   }
+  async getById(id) {
+    const rs = await doctorRecordModel.findById(id);
+    if (!rs) {
+      return 0;
+    }
+    return rs;
+  }
 }
 module.exports = new DoctorRecordService();

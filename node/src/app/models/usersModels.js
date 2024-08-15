@@ -15,6 +15,8 @@ const users = new Schema(
     image: { type: String, default: "" },
     processSignup: { type: Number, default: 0 },
     specialize: { type: String, default: "" },
+    cccd: { type: String, default: "" },
+    pathological: { type: String, default: "" },
   },
   { timestamps: true }
 );

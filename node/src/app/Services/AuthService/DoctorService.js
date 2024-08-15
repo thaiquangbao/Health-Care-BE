@@ -48,6 +48,15 @@ class DoctorService {
     if (existPhone) {
       return 2;
     }
+    if (dataDoctor.email) {
+      const existEmail = await userModel.findOne({
+        email: dataDoctor.email,
+        _id: { $ne: existDoctor._id },
+      });
+      if (existEmail) {
+        return 3;
+      }
+    }
     existDoctor.role = "DOCTOR";
     const updated = await userModel.findByIdAndUpdate(
       existDoctor._id,

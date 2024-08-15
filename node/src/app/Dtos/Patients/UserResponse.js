@@ -13,6 +13,7 @@ class UserResponse {
       processSignup: user.processSignup,
       dateOfBirth: user.dateOfBirth,
       image: user.image,
+      cccd: user.cccd,
     };
     return data;
   }

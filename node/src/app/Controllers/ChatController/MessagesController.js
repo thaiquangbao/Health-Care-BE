@@ -1,5 +1,5 @@
 const messagesService = require("../../Services/ChatService/MessagesService");
-
+const emitter = require("../../../config/Emitter/emitter");
 class MessagesController {
   index(req, res, next) {
     res.send("respond with a resource");
@@ -17,6 +17,7 @@ class MessagesController {
       }
       const accessToken = req.headers["accesstoken"];
       const refreshToken = req.headers["refreshtoken"];
+      emitter.emit("message.create", message);
       return res.json({
         data: message,
         token: { accessToken, refreshToken },

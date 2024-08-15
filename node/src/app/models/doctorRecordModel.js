@@ -12,11 +12,17 @@ const doctorRecords = new Schema(
       phone: { type: String, default: "" },
       image: { type: String, default: "" },
       specialize: { type: String, default: "" },
+      pathological: { type: String, default: "" },
     },
     examination_call: { type: Number, default: 0 },
     consultation: { type: Number, default: 0 },
     assessment: { type: Number, default: 0 },
     experience_work: { type: String, default: "" },
+    trainingPlace: { type: String, default: "" },
+    certificate: { type: [String], default: [] },
+    language: { type: [String], default: [] },
+    area: { type: String, default: "" },
+    description: { type: String, default: "" },
     schedules: {
       type: [
         {

@@ -1,5 +1,6 @@
 const mailService = require("../Services/MailerService");
 const appointmentService = require("../Services/AppointmentService/AppointmentService");
+const emitter = require("../../config/Emitter/emitter");
 class AppointmentController {
   async save(req, res) {
     try {
@@ -16,6 +17,11 @@ class AppointmentController {
         return res
           .status(404)
           .json("Không tìm thấy người dùng!!!");
+      }
+      if (rs === 3) {
+        return res
+          .status(404)
+          .json("Không tìm thấy danh sách giá!!!");
       }
       const accessToken = req.headers["accesstoken"];
       const refreshToken = req.headers["refreshtoken"];
@@ -51,10 +57,7 @@ class AppointmentController {
         await appointmentService.findByRecordAndStatus(
           dataSearch
         );
-      const accessToken = req.headers["accesstoken"];
-      const refreshToken = req.headers["refreshtoken"];
-      const token = { accessToken, refreshToken };
-      return res.status(200).json({ data: rs, token });
+      return res.status(200).json(rs);
     } catch (error) {
       return res.status(500).json(error);
     }
@@ -65,24 +68,21 @@ class AppointmentController {
       const rs = await appointmentService.findByDate(
         dataSearch
       );
-      const accessToken = req.headers["accesstoken"];
-      const refreshToken = req.headers["refreshtoken"];
-      const token = { accessToken, refreshToken };
-      return res.status(200).json({ data: rs, token });
+
+      return res.status(200).json(rs);
     } catch (error) {
       return res.status(500).json(error);
     }
   }
   async findByRecords(req, res) {
     try {
-      const accessToken = req.headers["accesstoken"];
-      const refreshToken = req.headers["refreshtoken"];
-      const token = { accessToken, refreshToken };
       const rs = await appointmentService.findByRecord(
         req.body
       );
-      return res.status(200).json({ data: rs, token });
+      return res.status(200).json(rs);
     } catch (error) {
+      console.log(error);
+
       return res.status(500).json(error);
     }
   }
@@ -122,11 +122,12 @@ class AppointmentController {
           .status(404)
           .json("Không tìm thấy lịch hẹn này!!!");
       }
-      if (rs === 2) {
-        return res
-          .status(409)
-          .json("Gửi email chấp nhận không thành công!!!");
-      }
+      // if (rs === 2) {
+      //   return res
+      //     .status(409)
+      //     .json("Gửi email chấp nhận không thành công!!!");
+      // }
+      emitter.emit("send-email.accept", rs);
       return res.status(200).json({
         data: rs,
         token: { accessToken, refreshToken },
@@ -147,11 +148,7 @@ class AppointmentController {
           .status(404)
           .json("Không tìm thấy lịch hẹn này!!!");
       }
-      if (rs === 2) {
-        return res
-          .status(409)
-          .json("Gửi email từ chối không thành công!!!");
-      }
+      emitter.emit("send-email.deny", rs);
       return res.status(200).json({
         data: rs,
         token: { accessToken, refreshToken },
@@ -173,20 +170,86 @@ class AppointmentController {
           .status(404)
           .json("Không tìm thấy lịch hẹn này!!!");
       }
-      if (rs === 2) {
+      if (rs === 3) {
         return res
           .status(409)
-          .json("Gửi email từ chối không thành công!!!");
+          .json("Hủy lịch hẹn không thành công!!!");
+      }
+      emitter.emit("send-email.cancel", rs);
+      return res.status(200).json({
+        data: "Hủy lịch hẹn thành công!!!",
+        token: { accessToken, refreshToken },
+      });
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  }
+  async completeAppointment(req, res) {
+    try {
+      const data = req.body;
+      const accessToken = req.headers["accesstoken"];
+      const refreshToken = req.headers["refreshtoken"];
+      const rs = await appointmentService.doctorComplete(
+        data
+      );
+      if (rs === 0) {
+        return res
+          .status(404)
+          .json("Không tìm thấy lịch hẹn này!!!");
       }
       if (rs === 3) {
         return res
           .status(409)
           .json("Hủy lịch hẹn không thành công!!!");
       }
+      // emitter.emit("send-email.cancel", rs);
       return res.status(200).json({
         data: "Hủy lịch hẹn thành công!!!",
         token: { accessToken, refreshToken },
       });
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  }
+  async findByWeek(req, res) {
+    try {
+      const data = req.body;
+      const rs = await appointmentService.findByWeek(data);
+      return res.status(200).json(rs);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  }
+  async findByMonth(req, res) {
+    try {
+      const data = req.body;
+      const rs = await appointmentService.findByMonth(data);
+      return res.status(200).json(rs);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  }
+  async findByNextMonth(req, res) {
+    try {
+      const data = req.body;
+      const rs = await appointmentService.findByNextMonth(
+        data
+      );
+      return res.status(200).json(rs);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  }
+  async getOne(req, res) {
+    try {
+      const id = req.params.id;
+      const rs = await appointmentService.getOne(id);
+      if (rs === 0) {
+        return res
+          .status(404)
+          .json("Không tìm thấy lịch hẹn!!!");
+      }
+      return res.status(200).json(rs);
     } catch (error) {
       return res.status(500).json(error);
     }

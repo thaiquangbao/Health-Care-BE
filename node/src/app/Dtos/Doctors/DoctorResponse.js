@@ -14,6 +14,8 @@ class DoctorResponse {
       image: doctor.image,
       dateOfBirth: doctor.dateOfBirth,
       specialize: doctor.specialize,
+      cccd: doctor.cccd,
+      pathological: doctor.pathological,
     };
     return data;
   }

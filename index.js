@@ -6,15 +6,20 @@ const routes = require("./node/src/routes");
 const notify = require("./node/src/app/Services/NotificateService");
 const moment = require("moment-timezone");
 const compression = require("compression");
+const http = require("http");
 const cors = require("cors");
 const { default: helmet } = require("helmet");
 const morgan = require("morgan");
 moment.tz.setDefault("Asia/Ho_Chi_Minh");
 const port = 8999;
 const baseURL = "http://127.0.0.1:3000";
-
+const baseURLTWO = "http://127.0.0.1:3001";
+const baseURLDEPLOY =
+  "https://health-haven-seven.vercel.app";
+const myURLDEPLOY = "https://health-care-fe-two.vercel.app";
+const socket = require("./node/src/untill/Socket");
 const corsOptions = {
-  origin: [baseURL],
+  origin: [baseURL, baseURLTWO, baseURLDEPLOY, myURLDEPLOY],
   allowedHeaders: [
     "Content-Type",
     "accessToken",
@@ -30,6 +35,8 @@ dotenv.config();
 routes(app);
 db.connectAppointment();
 notify.startDepointmentFetch();
-app.listen(port, () => {
-  console.log(`Content service running on port ${port}`);
+const server = http.createServer(app);
+socket(server, baseURL);
+server.listen(port, () => {
+  console.log(`Connect service running on port ${port}`);
 });

@@ -1,10 +1,29 @@
 const express = require("express");
 const useRouter = express.Router();
 const appointmentController = require("../../app/Controllers/AppointmentController");
+const customerController = require("../../app/Controllers/CustomerController");
 const middleWareToken = require("../../app/middlewares/MiddleWareToken");
+useRouter.post("/save/customer", customerController.create);
+useRouter.get("/get-one/:id", appointmentController.getOne);
 useRouter.post(
   "/send-mail",
   appointmentController.sendMail
+);
+useRouter.post(
+  "/findByNextMonth",
+  appointmentController.findByNextMonth
+);
+useRouter.post(
+  "/findByMonth",
+  appointmentController.findByMonth
+);
+useRouter.post(
+  "/findByWeek",
+  appointmentController.findByWeek
+);
+useRouter.post(
+  "/complete",
+  appointmentController.completeAppointment
 );
 useRouter.post(
   "/doctor-cancel",
@@ -28,17 +47,14 @@ useRouter.post(
 );
 useRouter.post(
   "/findByDate",
-  middleWareToken.validateToken,
   appointmentController.findByDate
 );
 useRouter.post(
   "/findByStatus",
-  middleWareToken.validateToken,
   appointmentController.findByRecordAndStatus
 );
 useRouter.post(
   "/findByRecords",
-  middleWareToken.validateToken,
   appointmentController.findByRecords
 );
 useRouter.get("/getAll", appointmentController.getAll);

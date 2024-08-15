@@ -82,7 +82,7 @@ useRouter.get(
   patientController.getAllPatient
 );
 useRouter.post(
-  "/updateUser",
+  "/update/User",
   middleWareToken.validateToken,
   patientController.updatePatient
 );

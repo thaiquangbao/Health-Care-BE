@@ -3,6 +3,10 @@ const doctorRecordModel = require("../../models/doctorRecordModel");
 const patientService = require("../AuthService/PatientService");
 const userRequest = require("../../Dtos/Patients/PatientRequest");
 const mailService = require("../MailerService");
+const priceListService = require("../AppointmentService/PriceListService");
+const appointmentRespone = require("../../Dtos/Appoinment/appointmentRes");
+const moment = require("moment-timezone");
+moment.tz.setDefault("Asia/Ho_Chi_Minh");
 class AppointmentService {
   async save(appointmentData) {
     try {
@@ -12,11 +16,18 @@ class AppointmentService {
       if (!existRecord) {
         return 0;
       }
+
       const data = { _id: appointmentData.patient };
       const existPatient =
         await patientService.getPatientById(data);
       if (!existPatient) {
         return 2;
+      }
+      const existPriceList = await priceListService.getOne(
+        appointmentData.price_list
+      );
+      if (!existPriceList) {
+        return 3;
       }
       appointmentData.patient =
         userRequest.toPatientAppointment(existPatient);
@@ -61,8 +72,24 @@ class AppointmentService {
   async getAll() {
     try {
       const rs = await appointmentModel.find().lean();
-      return rs;
+      const result = await Promise.all(
+        rs.map(async (item) => {
+          const data = await priceListService.getOne(
+            item.price_list
+          );
+
+          const dt = appointmentRespone.toAppointment(
+            item,
+            data
+          );
+          return dt;
+        })
+      );
+
+      return result;
     } catch (error) {
+      console.log(error);
+
       throw error;
     }
   }
@@ -78,7 +105,18 @@ class AppointmentService {
           ],
         })
         .lean();
-      return rs;
+      const result = await Promise.all(
+        rs.map(async (item) => {
+          const data = await priceListService.getOne(
+            item.price_list
+          );
+          return appointmentRespone.toAppointment(
+            item,
+            data
+          );
+        })
+      );
+      return result;
     } catch (error) {
       throw error;
     }
@@ -102,7 +140,18 @@ class AppointmentService {
           ],
         })
         .lean();
-      return rs;
+      const result = await Promise.all(
+        rs.map(async (item) => {
+          const data = await priceListService.getOne(
+            item.price_list
+          );
+          return appointmentRespone.toAppointment(
+            item,
+            data
+          );
+        })
+      );
+      return result;
     } catch (error) {
       console.log(error);
       throw error;
@@ -114,32 +163,42 @@ class AppointmentService {
         doctor_record_id: dataSearch.doctor_record_id,
       })
       .lean();
-
-    return rs;
+    const result = await Promise.all(
+      rs.map(async (item) => {
+        const data = await priceListService.getOne(
+          item.price_list
+        );
+        return appointmentRespone.toAppointment(item, data);
+      })
+    );
+    return result;
   }
   async doctorAccept(data) {
     const rs = await appointmentModel.findById(data._id);
     if (!rs) {
       return 0;
     }
-
-    const [accept, recordDoctor] = await Promise.all([
-      appointmentModel.findByIdAndUpdate(rs._id, data, {
-        new: true,
-      }),
-      doctorRecordModel.findById(rs.doctor_record_id),
-    ]);
-
-    const mail = await mailService.sendMail(
-      rs.patient.email,
-      "Xác nhận lịch hẹn",
-      `Bác sĩ ${recordDoctor.doctor.fullName} đã xác nhận lịch hẹn của bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}`,
-      ""
+    const accept = await appointmentModel.findByIdAndUpdate(
+      rs._id,
+      data,
+      { new: true }
     );
+    // const [accept, recordDoctor] = await Promise.all([
+    //   appointmentModel.findByIdAndUpdate(rs._id, data, {
+    //     new: true,
+    //   }),
+    //   doctorRecordModel.findById(rs.doctor_record_id),
+    // ]);
+    // const mail = await mailService.sendMail(
+    //   rs.patient.email,
+    //   "Xác nhận lịch hẹn",
+    //   `Bác sĩ ${recordDoctor.doctor.fullName} đã xác nhận lịch hẹn của bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}`,
+    //   ""
+    // );
 
-    if (!mail) {
-      return 2;
-    }
+    // if (!mail) {
+    //   return 2;
+    // }
     return accept;
   }
   async doctorDeny(data) {
@@ -147,46 +206,149 @@ class AppointmentService {
     if (!rs) {
       return 0;
     }
-    const [reject, recordDoctor] = await Promise.all([
-      appointmentModel.findByIdAndUpdate(rs._id, data, {
-        new: true,
-      }),
-      doctorRecordModel.findById(rs.doctor_record_id),
-    ]);
-    const mail = await mailService.sendMail(
-      rs.patient.email,
-      "Từ chối lịch hẹn",
-      `Bác sĩ ${recordDoctor.doctor.fullName} đã từ chối lịch hẹn của bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}`,
-      ""
+    const reject = await appointmentModel.findByIdAndUpdate(
+      rs._id,
+      data,
+      { new: true }
     );
-    if (!mail) {
-      return 2;
-    }
+    // const [reject, recordDoctor] = await Promise.all([
+    //   appointmentModel.findByIdAndUpdate(rs._id, data, {
+    //     new: true,
+    //   }),
+    //   doctorRecordModel.findById(rs.doctor_record_id),
+    // ]);
+    // const mail = await mailService.sendMail(
+    //   rs.patient.email,
+    //   "Từ chối lịch hẹn",
+    //   `Bác sĩ ${recordDoctor.doctor.fullName} đã từ chối lịch hẹn của bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}`,
+    //   ""
+    // );
+    // if (!mail) {
+    //   return 2;
+    // }
     return reject;
+  }
+  async doctorComplete(data) {
+    const rs = await appointmentModel.findById(data._id);
+    if (!rs) {
+      return 0;
+    }
+    const complete =
+      await appointmentModel.findByIdAndUpdate(
+        rs._id,
+        data,
+        { new: true }
+      );
+    return complete;
   }
   async doctorCancel(data) {
     const rs = await appointmentModel.findById(data._id);
     if (!rs) {
       return 0;
     }
-    const recordDoctor = await doctorRecordModel.findById(
-      rs.doctor_record_id
-    );
-    const mail = await mailService.sendMail(
-      rs.patient.email,
-      "Hủy lịch hẹn",
-      `Bác sĩ ${recordDoctor.doctor.fullName} đã hủy lịch hẹn của bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}. Lý do: ${data.note}`,
-      ""
-    );
-    if (!mail) {
-      return 2;
-    }
+    // const recordDoctor = await doctorRecordModel.findById(
+    //   rs.doctor_record_id
+    // );
+    // const mail = await mailService.sendMail(
+    //   rs.patient.email,
+    //   "Hủy lịch hẹn",
+    //   `Bác sĩ ${recordDoctor.doctor.fullName} đã hủy lịch hẹn của bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}. Lý do: ${data.note}`,
+    //   ""
+    // );
+    // if (!mail) {
+    //   return 2;
+    // }
     const deleted =
-      await appointmentModel.findByIdAndDelete(rs._id);
+      await appointmentModel.findByIdAndDelete(rs._id, {
+        new: true,
+      });
     if (!deleted) {
       return 3;
     }
-    return 1;
+    return { rs: deleted, note: data.note };
+  }
+  async findByWeek(dataSearch) {
+    const startOfWeek = moment().startOf("week").toDate();
+    const endOfWeek = moment().endOf("week").toDate();
+    const start = startOfWeek.getDate() + 1;
+    const end = endOfWeek.getDate() + 1;
+    const rs = await appointmentModel
+      .find({
+        $and: [
+          {
+            doctor_record_id: dataSearch.doctor_record_id,
+          },
+          {
+            "appointment_date.day": {
+              $gte: start,
+              $lte: end,
+            },
+          },
+        ],
+      })
+      .lean();
+    const result = await Promise.all(
+      rs.map(async (item) => {
+        const data = await priceListService.getOne(
+          item.price_list
+        );
+        return appointmentRespone.toAppointment(item, data);
+      })
+    );
+    return result;
+  }
+  async findByMonth(dataSearch) {
+    const regex = moment().toDate();
+    const rs = await appointmentModel.find({
+      $and: [
+        {
+          doctor_record_id: dataSearch.doctor_record_id,
+        },
+        {
+          "appointment_date.month": regex.getMonth() + 1,
+          "appointment_date.year": regex.getFullYear(),
+        },
+      ],
+    });
+    const result = await Promise.all(
+      rs.map(async (item) => {
+        const data = await priceListService.getOne(
+          item.price_list
+        );
+        return appointmentRespone.toAppointment(item, data);
+      })
+    );
+    return result;
+  }
+  async findByNextMonth(dataSearch) {
+    const regex = moment().toDate();
+    const rs = await appointmentModel.find({
+      $and: [
+        {
+          doctor_record_id: dataSearch.doctor_record_id,
+        },
+        {
+          "appointment_date.month": regex.getMonth() + 2,
+          "appointment_date.year": regex.getFullYear(),
+        },
+      ],
+    });
+    const result = await Promise.all(
+      rs.map(async (item) => {
+        const data = await priceListService.getOne(
+          item.price_list
+        );
+        return appointmentRespone.toAppointment(item, data);
+      })
+    );
+    return result;
+  }
+  async getById(id) {
+    const rs = await appointmentModel.findById(id);
+    const data = await priceListService.getOne(
+      rs.price_list
+    );
+    return appointmentRespone.toAppointment(rs, data);
   }
 }
 module.exports = new AppointmentService();
