@@ -112,23 +112,24 @@ class MedicalRecordController {
       return res.status(500).json(error);
     }
   }
-  async addVitalSigns(req, res) {
-    try {
-      const doctor = req.body;
-      const rs = await medicalRecordService.addVitalSigns(
-        doctor
-      );
-      return res.status(200).json(rs);
-    } catch (error) {
-      return res.status(500).json(error);
-    }
-  }
   async checkMedicalRecord(req, res) {
     try {
       const data = req.body;
       const rs = await medicalRecordService.checkMedical(
         data
       );
+      return res.status(200).json(rs);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  }
+  async checkAppointment(req, res) {
+    try {
+      const data = req.body;
+      const rs =
+        await medicalRecordService.checkAppointment(
+          data.appointment
+        );
       return res.status(200).json(rs);
     } catch (error) {
       return res.status(500).json(error);

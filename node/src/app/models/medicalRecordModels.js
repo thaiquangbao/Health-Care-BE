@@ -10,59 +10,35 @@ const medicalRecords = new Schema({
     sex: { type: Boolean, default: false },
     phone: { type: String, default: "" },
     email: { type: String, default: "" },
+    image: { type: String, default: "" },
   },
   doctor: {
     _id: { type: Schema.Types.ObjectId },
     fullName: { type: String, default: "" },
     email: { type: String, default: "" },
     phone: { type: String, default: "" },
+    image: { type: String, default: "" },
   },
-  totalDiagnosisDisease: { type: [String], default: [] },
-  totalSymptoms: { type: [String], default: [] },
-  vitalSigns: {
+  diagnosisDisease: { type: String, default: "" },
+  symptoms: { type: String, default: "" },
+  note: { type: String, default: "" },
+  medical: {
     type: [
       {
         _id: false,
-        temperature: { type: Number, default: 0 },
-        bloodPressure: { type: Number, default: 0 },
-        heartRate: { type: Number, default: 0 },
-        respiratoryRate: { type: Number, default: 0 },
+        medicalName: { type: String, default: "" },
+        quantity: { type: Number, default: 0 },
+        unitOfCalculation: { type: String, default: "" },
       },
     ],
-    default: [],
   },
-  medicalExaminationHistory: {
-    type: [
-      {
-        _id: false,
-        diagnosisDisease: { type: String, default: "" },
-        symptoms: { type: String, default: "" },
-        date: {
-          day: Number,
-          month: Number,
-          year: Number,
-          time: String,
-        },
-        note: { type: String, default: "" },
-        medical: {
-          type: [
-            {
-              _id: false,
-              medicalName: { type: String, default: "" },
-              quantity: { type: Number, default: 0 },
-            },
-          ],
-          default: [],
-        },
-      },
-    ],
-    default: [],
-  },
-  reExaminationDate: {
+  date: {
     day: { type: Number, default: 0 },
     month: { type: Number, default: 0 },
     year: { type: Number, default: 0 },
+    time: { type: String, default: "" },
   },
+  appointment: { type: Schema.Types.ObjectId },
 });
 module.exports = mongoose.model(
   "medicalRecords",

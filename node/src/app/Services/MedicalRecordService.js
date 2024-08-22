@@ -85,20 +85,7 @@ class MedicalRecordService {
     });
     return rs;
   }
-  async addVitalSigns(medicalRecordData) {
-    const exist = await medicalRecordModel.findById(
-      medicalRecordData._id
-    );
-    if (!exist) {
-      return 0;
-    }
-    const rs = await medicalRecordModel.findByIdAndUpdate(
-      exist._id,
-      medicalRecordData,
-      { new: true }
-    );
-    return rs;
-  }
+
   async checkMedical(medicalRecordData) {
     const exist = await medicalRecordModel.findOne({
       $and: [
@@ -107,9 +94,18 @@ class MedicalRecordService {
       ],
     });
     if (!exist) {
-      return false;
+      return 0;
     }
-    return true;
+    return exist;
+  }
+  async checkAppointment(appointment) {
+    const exist = await medicalRecordModel.findOne({
+      appointment: appointment,
+    });
+    if (!exist) {
+      return 0;
+    }
+    return exist;
   }
 }
 module.exports = new MedicalRecordService();

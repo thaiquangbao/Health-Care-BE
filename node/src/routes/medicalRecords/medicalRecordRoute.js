@@ -22,14 +22,14 @@ useRouter.post(
   "/check-medical",
   medicalRecordController.checkMedicalRecord
 );
+useRouter.post(
+  "/check-appointment",
+  medicalRecordController.checkAppointment
+);
 useRouter.get("/getAll", medicalRecordController.getAll);
 useRouter.post(
   "/delete-many",
   medicalRecordController.delete
-);
-useRouter.post(
-  "/add-vital-signs",
-  medicalRecordController.addVitalSigns
 );
 useRouter.post("/update", medicalRecordController.update);
 useRouter.post("/save", medicalRecordController.save);

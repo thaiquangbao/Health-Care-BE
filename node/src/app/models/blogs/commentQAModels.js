@@ -10,7 +10,7 @@ const commentQAs = new Schema({
     month: Number,
     year: Number,
   },
-  image: { type: String, default: "" },
+  image: { type: [String], default: [] },
   qa: { type: Schema.Types.ObjectId, default: null },
 });
 module.exports = mongoose.model("commentQAs", commentQAs);

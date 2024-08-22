@@ -5,6 +5,7 @@ class MedicalRecordDto {
       fullName: doctor.fullName,
       email: doctor.email,
       phone: doctor.phone,
+      image: doctor.image,
     };
     return data;
   }
@@ -16,6 +17,7 @@ class MedicalRecordDto {
       email: patient.email,
       sex: patient.sex,
       phone: patient.phone,
+      image: patient.image,
     };
     return data;
   }
