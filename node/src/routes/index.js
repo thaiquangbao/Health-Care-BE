@@ -12,8 +12,10 @@ const assessmentRoute = require("./assessment/assessmentRoute");
 const forumRoute = require("./post/forumRoute");
 const imageRoute = require("./upload-image");
 const commentRoute = require("./comment/commentRoute");
+const noticeRoute = require("./notice/noticeRoute");
 function routes(app) {
   app.use("/upload-image", imageRoute);
+  app.use("/notices", noticeRoute);
   app.use("/comments", commentRoute);
   app.use("/forums", forumRoute);
   app.use("/assessments", assessmentRoute);

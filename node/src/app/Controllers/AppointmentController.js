@@ -26,6 +26,7 @@ class AppointmentController {
       const accessToken = req.headers["accesstoken"];
       const refreshToken = req.headers["refreshtoken"];
       const token = { accessToken, refreshToken };
+      emitter.emit("send-notice.submit", rs);
       return res.status(200).json({ data: rs, token });
     } catch (error) {
       console.log(error);

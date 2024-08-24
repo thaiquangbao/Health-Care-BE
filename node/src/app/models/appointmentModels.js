@@ -32,6 +32,10 @@ const appointments = new Schema(
     },
     sick: { type: String, default: "" },
     notificationSent: { type: Boolean, default: false },
+    images: { type: [String], default: [] },
+    healthRate: { type: Number, default: 0 },
+    weight: { type: Number, default: 0 },
+    bloodPressure: { type: String, default: "" },
   },
   { timestamps: true }
 );

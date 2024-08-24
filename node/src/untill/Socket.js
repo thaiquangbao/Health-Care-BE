@@ -4,6 +4,7 @@ const emitter = require("../config/Emitter/emitter");
 const mailService = require("../app/Services/MailerService");
 const doctorRecordModel = require("../app/models/doctorRecordModel");
 const appointmentService = require("../app/Services/AppointmentService/AppointmentService");
+const noticeService = require("../app/Services/NoticeService");
 const socket = (server, baseURL) => {
   const io = new Server(server, {
     cors: {
@@ -26,6 +27,37 @@ const socket = (server, baseURL) => {
     socket.on("disconnect", () => {
       console.log("User disconnected");
     });
+  });
+  emitter.on("send-notice.submit", async (data) => {
+    const recordDoctor = await doctorRecordModel.findById(
+      data.doctor_record_id
+    );
+    const messagePatient = {
+      title: "Đặt lịch hẹn",
+      content: `Bạn đã đặt lịch hẹn thành công với BS. ${recordDoctor.doctor.fullName} vào lúc ${data.appointment_date.time} ngày ${data.appointment_date.day}/${data.appointment_date.month}/${data.appointment_date.year}. Hãy chờ bác sĩ xác nhận nhé!!!`,
+      category: "APPOINTMENT",
+      date: {
+        day: new Date().getDate(),
+        month: new Date().getMonth() + 1,
+        year: new Date().getFullYear(),
+      },
+      attached: data._id,
+      user: data.patient._id,
+    };
+    const messageDoctor = {
+      title: "Đặt lịch hẹn",
+      content: `Bác sĩ có lịch đặt hẹn vào lúc ${data.appointment_date.time} ngày ${data.appointment_date.day}/${data.appointment_date.month}/${data.appointment_date.year}. Bấm vào để xem thông tin chi tiết!!!`,
+      category: "APPOINTMENT",
+      date: {
+        day: new Date().getDate(),
+        month: new Date().getMonth() + 1,
+        year: new Date().getFullYear(),
+      },
+      attached: data._id,
+      user: recordDoctor.doctor._id,
+    };
+    await noticeService.create(messagePatient);
+    await noticeService.create(messageDoctor);
   });
   // send mail accept
   emitter.on("send-email.accept", async (data) => {

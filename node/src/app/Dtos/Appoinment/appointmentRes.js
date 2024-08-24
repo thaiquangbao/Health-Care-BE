@@ -10,6 +10,10 @@ class AppointmentResponse {
       status_message: dataAp.status_message,
       notificationSent: dataAp.notificationSent,
       sick: dataAp.sick,
+      images: dataAp.images,
+      healthRate: dataAp.healthRate,
+      weight: dataAp.weight,
+      bloodPressure: dataAp.bloodPressure,
       price_list: {
         _id: dataPrice._id,
         price: dataPrice.price,

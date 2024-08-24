@@ -77,7 +77,13 @@ class MedicalRecordService {
     const rs = await medicalRecordModel.find({
       "patient._id": patient,
     });
-    return rs;
+    const result = rs.filter(
+      (item) =>
+        item.diagnosisDisease &&
+        item.diagnosisDisease.trim() !== "" &&
+        item.medical.length > 0
+    );
+    return result;
   }
   async findByDoctor(doctor) {
     const rs = await medicalRecordModel.find({

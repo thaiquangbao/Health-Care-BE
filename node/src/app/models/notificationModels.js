@@ -2,22 +2,20 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const moment = require("moment-timezone");
 moment.tz.setDefault("Asia/Ho_Chi_Minh");
-const posts = new Schema({
+const notifications = new Schema({
   title: { type: String, default: "" },
   content: { type: String, default: "" },
   category: { type: String, default: "" },
-  views: { type: Number, default: 0 },
-  author: {
-    _id: { type: Schema.Types.ObjectId },
-    fullName: { type: String, default: "" },
-    image: { type: String, default: "" },
-  },
   date: {
     day: Number,
     month: Number,
     year: Number,
   },
-  image: { type: String, default: "" },
-  like: { type: Number, default: 0 },
+  seen: { type: Boolean, default: false },
+  attached: { type: String, default: "" },
+  user: { type: Schema.Types.ObjectId, default: null },
 });
-module.exports = mongoose.model("posts", posts);
+module.exports = mongoose.model(
+  "notifications",
+  notifications
+);
