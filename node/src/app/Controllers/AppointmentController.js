@@ -171,11 +171,6 @@ class AppointmentController {
           .status(404)
           .json("Không tìm thấy lịch hẹn này!!!");
       }
-      if (rs === 3) {
-        return res
-          .status(409)
-          .json("Hủy lịch hẹn không thành công!!!");
-      }
       emitter.emit("send-email.cancel", rs);
       return res.status(200).json({
         data: "Hủy lịch hẹn thành công!!!",
@@ -188,8 +183,6 @@ class AppointmentController {
   async completeAppointment(req, res) {
     try {
       const data = req.body;
-      const accessToken = req.headers["accesstoken"];
-      const refreshToken = req.headers["refreshtoken"];
       const rs = await appointmentService.doctorComplete(
         data
       );
@@ -198,16 +191,8 @@ class AppointmentController {
           .status(404)
           .json("Không tìm thấy lịch hẹn này!!!");
       }
-      if (rs === 3) {
-        return res
-          .status(409)
-          .json("Hủy lịch hẹn không thành công!!!");
-      }
       // emitter.emit("send-email.cancel", rs);
-      return res.status(200).json({
-        data: "Hủy lịch hẹn thành công!!!",
-        token: { accessToken, refreshToken },
-      });
+      return res.status(200).json(rs);
     } catch (error) {
       return res.status(500).json(error);
     }

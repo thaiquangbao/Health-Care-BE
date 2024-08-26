@@ -4,6 +4,7 @@ const mailService = require("../Services/MailerService"); // Giả sử bạn c�
 const appointmentService = require("./AppointmentService/AppointmentService");
 const appointmentModel = require("../models/appointmentModels");
 const doctorRecordModel = require("../models/doctorRecordModel");
+const noticeService = require("../Services/NoticeService");
 class ScheduleEmailNotification {
   async notification(appointment) {
     const [hours, minutes] =
@@ -53,7 +54,7 @@ class ScheduleEmailNotification {
         appointment.patient.email,
         `Xin chào ${appointment.patient.fullName}`,
         "test",
-        `Bạn còn 1 tiếng nữa là đến cuộc hẹn với bác sĩ ${doctorRecord.doctor.fullName} Vào lúc ${appointment.appointment_date.time} <br>
+        `Bạn còn 30 phút nữa là đến cuộc hẹn với bác sĩ ${doctorRecord.doctor.fullName} Vào lúc ${appointment.appointment_date.time} <br>
         Hãy nhấn vào nút vào phòng khám để bắt đầu cuộc hẹn <br>
         <div
           style="font-family: Arial, sans-serif; width: 600px; margin: 0 auto; background-color: #f7f7f7; padding: 20px; border-radius: 8px;">
@@ -139,7 +140,7 @@ class ScheduleEmailNotification {
         doctorRecord.doctor?.email,
         `Xin chào bác sĩ ${doctorRecord.doctor?.fullName}`,
         "test",
-        `Bác sĩ còn 1 tiếng nữa là đến cuộc hẹn với bệnh nhân ${appointment.patient.fullName} <br>
+        `Bác sĩ còn 30 phút nữa là đến cuộc hẹn với bệnh nhân ${appointment.patient.fullName} <br>
           Vào lúc ${appointment.appointment_date.time} <br>
           <div
           style="font-family: Arial, sans-serif; width: 600px; margin: 0 auto; background-color: #f7f7f7; padding: 20px; border-radius: 8px;">
@@ -226,6 +227,32 @@ class ScheduleEmailNotification {
         { notificationSent: true },
         { new: true }
       );
+      const messagePatient = {
+        title: "Lịch hẹn",
+        content: `Bạn còn 30 phút nữa là đến cuộc hẹn với bác sĩ ${doctorRecord.doctor.fullName}. Vào lúc ${appointment.appointment_date.time}!!!`,
+        category: "APPOINTMENT",
+        date: {
+          day: new Date().getDate(),
+          month: new Date().getMonth() + 1,
+          year: new Date().getFullYear(),
+        },
+        attached: appointment._id,
+        user: appointment.patient._id,
+      };
+      const messageDoctor = {
+        title: "Lịch hẹn",
+        content: `Bác sĩ còn 30 phút nữa là đến cuộc hẹn với bệnh nhân ${appointment.patient.fullName}.Vào lúc ${appointment.appointment_date.time} !!!`,
+        category: "APPOINTMENT",
+        date: {
+          day: new Date().getDate(),
+          month: new Date().getMonth() + 1,
+          year: new Date().getFullYear(),
+        },
+        attached: appointment._id,
+        user: doctorRecord.doctor._id,
+      };
+      await noticeService.create(messagePatient);
+      await noticeService.create(messageDoctor);
       console.log(
         `Notification sent to ${
           appointment.patient.email

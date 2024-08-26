@@ -83,6 +83,19 @@ const socket = (server, baseURL) => {
     } else {
       category = "Tư vấn trực tiếp";
     }
+    const messagePatient = {
+      title: "Xác nhận lịch hẹn",
+      content: `Bác sĩ ${recordDoctor.doctor.fullName} đã xác nhận lịch hẹn của bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}`,
+      category: "APPOINTMENT",
+      date: {
+        day: new Date().getDate(),
+        month: new Date().getMonth() + 1,
+        year: new Date().getFullYear(),
+      },
+      attached: data._id,
+      user: data.patient._id,
+    };
+    await noticeService.create(messagePatient);
     const mail = await mailService.sendMail(
       rs.patient.email,
       "Xác nhận lịch hẹn",
@@ -174,6 +187,19 @@ const socket = (server, baseURL) => {
     const recordDoctor = await doctorRecordModel.findById(
       rs.doctor_record_id
     );
+    const messagePatient = {
+      title: "Từ chối lịch hẹn",
+      content: `Bác sĩ ${recordDoctor.doctor.fullName} đã từ chối lịch hẹn của bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}`,
+      category: "APPOINTMENT",
+      date: {
+        day: new Date().getDate(),
+        month: new Date().getMonth() + 1,
+        year: new Date().getFullYear(),
+      },
+      attached: rs._id,
+      user: rs.patient._id,
+    };
+    await noticeService.create(messagePatient);
     const mail = await mailService.sendMail(
       rs.patient.email,
       "Từ chối lịch hẹn",
@@ -191,6 +217,19 @@ const socket = (server, baseURL) => {
     const recordDoctor = await doctorRecordModel.findById(
       rs.doctor_record_id
     );
+    const messagePatient = {
+      title: "Hủy lịch hẹn",
+      content: `Bác sĩ ${recordDoctor.doctor.fullName} đã hủy lịch hẹn của bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}. Lý do: ${note}`,
+      category: "APPOINTMENT",
+      date: {
+        day: new Date().getDate(),
+        month: new Date().getMonth() + 1,
+        year: new Date().getFullYear(),
+      },
+      attached: rs._id,
+      user: rs.patient._id,
+    };
+    await noticeService.create(messagePatient);
     const mail = await mailService.sendMail(
       rs.patient.email,
       "Hủy lịch hẹn",

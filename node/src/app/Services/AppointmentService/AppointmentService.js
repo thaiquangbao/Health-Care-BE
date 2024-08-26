@@ -259,12 +259,14 @@ class AppointmentService {
     //   return 2;
     // }
     const deleted =
-      await appointmentModel.findByIdAndDelete(rs._id, {
-        new: true,
-      });
-    if (!deleted) {
-      return 3;
-    }
+      await appointmentModel.findByIdAndUpdate(
+        rs._id,
+        data,
+        {
+          new: true,
+        }
+      );
+
     return { rs: deleted, note: data.note };
   }
   async findByWeek(dataSearch) {
