@@ -2,21 +2,8 @@ const messagesModel = require("../../models/chat/messagesModel");
 const roomsService = require("../../Services/ChatService/RoomsService");
 class MessagesService {
   async save(messageData) {
-    const existRooms = await roomsService.getOne(
-      messageData.room_id
-    );
-    if (!existRooms) {
-      return 0;
-    }
-
     const message = new messagesModel(messageData);
     const saved = await message.save();
-    await roomsService.updateLastMessage(
-      existRooms._id,
-      saved._id,
-      saved.content,
-      saved.author
-    );
     return saved;
   }
   async sendFile(sendFileData) {

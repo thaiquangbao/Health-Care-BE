@@ -4,7 +4,7 @@ moment.tz.setDefault("Asia/Ho_Chi_Minh");
 class RoomService {
   async save(roomData) {
     const room = new roomsModel(roomData);
-    return await room.save();
+    return room.save();
   }
   async updateOne(roomData) {
     const existRoom = await roomsModel.findById(

@@ -4,34 +4,32 @@ const moment = require("moment-timezone");
 moment.tz.setDefault("Asia/Ho_Chi_Minh");
 const rooms = new Schema(
   {
-    lastMessages: {
-      _id: {
-        type: mongoose.Schema.Types.ObjectId,
-        default: null,
+    lastMessage: {
+      author: {
+        type: String, // id of sender
+        default: "SYSTEM",
       },
       content: {
         type: String,
-        default: "Start messaging now !!!",
-      },
-      author: {
-        type: mongoose.Schema.Types.ObjectId,
-        default: null,
+        default: "Hãy bắt đầu cuộc trò chuyện !!!",
       },
       time: {
-        type: Date,
-        default: () => moment().toDate(),
+        day: Number,
+        month: Number,
+        year: Number,
+        time: String,
       },
     },
-    image: {
-      type: String,
-      default: "",
+    doctor: {
+      _id: { type: Schema.Types.ObjectId },
+      fullName: { type: String, default: "" },
+      image: { type: String, default: "" },
     },
-    creator: Schema.Types.ObjectId,
-    recipient: Schema.Types.ObjectId,
-    name: {
-      type: String,
-      default: "",
-    },
+    patient: {
+      _id: { type: Schema.Types.ObjectId },
+      fullName: { type: String, default: "" },
+      image: { type: String, default: "" },
+    }
   },
   { timestamps: true }
 );
