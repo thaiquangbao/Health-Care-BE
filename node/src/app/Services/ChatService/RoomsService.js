@@ -49,9 +49,15 @@ class RoomService {
       { new: true }
     );
   }
-  async getRoomByUser(user_id) {
+  async getRoomByPatient(data) {
     const rooms = await roomsModel.find({
-      $or: [{ creator: user_id }, { recipient: user_id }],
+      "patient._id": data,
+    });
+    return rooms;
+  }
+  async getRoomByDoctor(data) {
+    const rooms = await roomsModel.find({
+      "doctor._id": data,
     });
     return rooms;
   }

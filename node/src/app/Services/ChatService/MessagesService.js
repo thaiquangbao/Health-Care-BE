@@ -5,6 +5,9 @@ class MessagesService {
     const message = new messagesModel(messageData);
     const saved = await message.save();
     return saved;
+  } 
+  async pushMessage(messageData) {
+    con
   }
   async sendFile(sendFileData) {
     const existRooms = await roomsService.getOne(
@@ -41,7 +44,7 @@ class MessagesService {
   }
   async getMessagesByRooms(room_id) {
     const messages = await messagesModel.find({
-      room_id: room_id,
+      room: room_id,
     });
     return messages;
   }

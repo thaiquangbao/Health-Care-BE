@@ -28,6 +28,7 @@ class RoomsController {
       const accessToken = req.headers["accesstoken"];
       const refreshToken = req.headers["refreshtoken"];
       const token = { accessToken, refreshToken };
+      emitter.emit("room.update", room);
       return res.json({ data: room, token });
     } catch (error) {
       console.log(error);
@@ -46,12 +47,23 @@ class RoomsController {
       return res.status(500).json({ error: error });
     }
   }
-  async getRoomByUser(req, res) {
+  async getRoomByPatient(req, res) {
     try {
-      const user_id = req.params.user_id;
-      const rooms = await roomService.getRoomByUser(
-        user_id
-      );
+      const id = req.params.id;
+      const rooms = await roomService.getRoomByPatient(id);
+      const accessToken = req.headers["accesstoken"];
+      const refreshToken = req.headers["refreshtoken"];
+      const token = { accessToken, refreshToken };
+      return res.json({ data: rooms, token });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ error: error });
+    }
+  }
+  async getRoomByDoctor(req, res) {
+    try {
+      const id = req.params.id;
+      const rooms = await roomService.getRoomByDoctor(id);
       const accessToken = req.headers["accesstoken"];
       const refreshToken = req.headers["refreshtoken"];
       const token = { accessToken, refreshToken };

@@ -40,6 +40,9 @@ class MessagesController {
       }
       const accessToken = req.headers["accesstoken"];
       const refreshToken = req.headers["refreshtoken"];
+      console.log("controller đã tới");
+      
+      emitter.emit("message.update", message);
       return res.json({
         data: message,
         token: { accessToken, refreshToken },

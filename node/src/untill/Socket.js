@@ -18,15 +18,24 @@ const socket = (server, baseURL) => {
     emitter.on("room.create", (room) => {
       socket.emit("room.create", room);
     });
+    emitter.on("room.update", (room) => { 
+      socket.emit(`room.update${room._id}`, room);
+    })
     // message
     emitter.on("message.create", (message) => {
-      socket.emit("message.create", message);
+      socket.emit(`message.create${message.room}`, message);
     });
-
+    emitter.on("message.update", message => {
+      console.log("tới đây rồi");
+      
+      // tới đây rồi
+      socket.emit(`message.update${message.room}`, message);
+    });
     //disconnect
     socket.on("disconnect", () => {
       console.log("User disconnected");
     });
+    
   });
   emitter.on("send-notice.submit", async (data) => {
     const recordDoctor = await doctorRecordModel.findById(

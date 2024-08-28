@@ -4,9 +4,15 @@ const middleWareToken = require("../../app/middlewares/MiddleWareToken");
 const roomController = require("../../app/Controllers/ChatController/RoomsController");
 useRouter.get("/all", roomController.getAll);
 useRouter.get(
-  "/get-room-user/:user_id",
-  roomController.getRoomByUser
+  "/get-room-patient/:id",
+  middleWareToken.validateToken,
+  roomController.getRoomByPatient
 );
-useRouter.post("/update", roomController.updateOne);
+useRouter.get(
+  "/get-room-doctor/:id",
+  middleWareToken.validateToken,
+  roomController.getRoomByDoctor
+);
+useRouter.post("/update",middleWareToken.validateToken, roomController.updateOne);
 useRouter.post("/create", roomController.save);
 module.exports = useRouter;

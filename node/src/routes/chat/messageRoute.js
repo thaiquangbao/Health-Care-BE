@@ -6,6 +6,6 @@ useRouter.get(
   "/get-messages-rooms/:room_id",
   messageController.getMessagesByRooms
 );
-useRouter.post("/update", messageController.updateOne);
-useRouter.post("/create", messageController.save);
+useRouter.post("/update",middleWareToken.validateToken, messageController.updateOne);
+useRouter.post("/create",middleWareToken.validateToken, messageController.save);
 module.exports = useRouter;
