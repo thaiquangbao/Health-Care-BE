@@ -13,6 +13,11 @@ useRouter.get(
   middleWareToken.validateToken,
   roomController.getRoomByDoctor
 );
+useRouter.post(
+  "/get-patient-doctor",
+  middleWareToken.validateToken,
+  roomController.getRoomByDoctorAndPatient
+);
 useRouter.post("/update",middleWareToken.validateToken, roomController.updateOne);
 useRouter.post("/create", roomController.save);
 module.exports = useRouter;

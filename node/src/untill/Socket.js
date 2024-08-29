@@ -18,24 +18,45 @@ const socket = (server, baseURL) => {
     emitter.on("room.create", (room) => {
       socket.emit("room.create", room);
     });
-    emitter.on("room.update", (room) => { 
+    emitter.on("room.update", (room) => {
       socket.emit(`room.update${room._id}`, room);
-    })
+    });
     // message
     emitter.on("message.create", (message) => {
       socket.emit(`message.create${message.room}`, message);
     });
-    emitter.on("message.update", message => {
-      console.log("tới đây rồi");
-      
-      // tới đây rồi
+    emitter.on("message.update", (message) => {
       socket.emit(`message.update${message.room}`, message);
+    });
+    // health log book
+    emitter.on("health-logbook-blood.update", (data) => {
+      socket.emit(`health-logbook-blood.update${data._id}`, {
+        data,
+        type: "blood",
+      });
+    });
+    emitter.on("health-logbook-temperature.update", (data) => {
+      socket.emit(`health-logbook-temperature.update${data._id}`, {
+        data,
+        type: "temperature",
+      });
+    });
+    emitter.on("health-logbook-health.update", (data) => {
+      socket.emit(`health-logbook-health.update${data._id}`, {
+        data,
+        type: "health",
+      });
+    });
+    emitter.on("health-logbook-bmi.update", (data) => {
+      socket.emit(`health-logbook-bmi.update${data._id}`, {
+        data,
+        type: "bmi",
+      });
     });
     //disconnect
     socket.on("disconnect", () => {
       console.log("User disconnected");
     });
-    
   });
   emitter.on("send-notice.submit", async (data) => {
     const recordDoctor = await doctorRecordModel.findById(
@@ -71,9 +92,7 @@ const socket = (server, baseURL) => {
   // send mail accept
   emitter.on("send-email.accept", async (data) => {
     const rs = await appointmentService.getById(data._id);
-    const recordDoctor = await doctorRecordModel.findById(
-      rs.doctor_record_id
-    );
+    const recordDoctor = await doctorRecordModel.findById(rs.doctor_record_id);
     let category_sick = "";
     let sex = "";
     let category = "";
@@ -193,9 +212,7 @@ const socket = (server, baseURL) => {
   });
   // deny mail
   emitter.on("send-email.deny", async (rs) => {
-    const recordDoctor = await doctorRecordModel.findById(
-      rs.doctor_record_id
-    );
+    const recordDoctor = await doctorRecordModel.findById(rs.doctor_record_id);
     const messagePatient = {
       title: "Từ chối lịch hẹn",
       content: `Bác sĩ ${recordDoctor.doctor.fullName} đã từ chối lịch hẹn của bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}`,
@@ -223,9 +240,7 @@ const socket = (server, baseURL) => {
   //cancel mail
   emitter.on("send-email.cancel", async (data) => {
     const { rs, note } = data;
-    const recordDoctor = await doctorRecordModel.findById(
-      rs.doctor_record_id
-    );
+    const recordDoctor = await doctorRecordModel.findById(rs.doctor_record_id);
     const messagePatient = {
       title: "Hủy lịch hẹn",
       content: `Bác sĩ ${recordDoctor.doctor.fullName} đã hủy lịch hẹn của bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}. Lý do: ${note}`,

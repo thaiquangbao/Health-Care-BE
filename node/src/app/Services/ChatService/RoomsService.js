@@ -1,8 +1,18 @@
 const roomsModel = require("../../models/chat/roomsModel");
 const moment = require("moment-timezone");
+const messagesModel = require("../../models/chat/messagesModel");
 moment.tz.setDefault("Asia/Ho_Chi_Minh");
 class RoomService {
   async save(roomData) {
+    const exist = await roomsModel.findOne({
+      $and: [
+        { "doctor._id": roomData.doctor._id },
+        { "patient._id": roomData.patient._id },
+      ]
+    })
+    if (exist) {
+      return exist;
+    }
     const room = new roomsModel(roomData);
     return room.save();
   }
@@ -60,6 +70,16 @@ class RoomService {
       "doctor._id": data,
     });
     return rooms;
+  }
+  async getRoomByDoctorAndPatient(data) {
+    const rooms = await roomsModel.findOne({
+      $and: [
+        { "doctor._id": data.doctor_id },
+        { "patient._id": data.patient_id },
+      ],
+    });
+    const messages = await messagesModel.find({room: rooms._id});
+    return messages;
   }
 }
 module.exports = new RoomService();

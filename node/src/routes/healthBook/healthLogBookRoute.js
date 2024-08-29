@@ -73,6 +73,26 @@ useRouter.get(
   healthLogBookController.getAll
 );
 useRouter.post(
+  "/update-bmi",
+  middleWareToken.validateToken,
+  healthLogBookController.updateBMI
+);
+useRouter.post(
+  "/update-temperature",
+  middleWareToken.validateToken,
+  healthLogBookController.updateTemperature
+);
+useRouter.post(
+  "/update-health-rate",
+  middleWareToken.validateToken,
+  healthLogBookController.updateHeartRate
+);
+useRouter.post(
+  "/update-blood-pressure",
+  middleWareToken.validateToken,
+  healthLogBookController.updateBloodPressure
+);
+useRouter.post(
   "/update",
   middleWareToken.validateToken,
   healthLogBookController.update

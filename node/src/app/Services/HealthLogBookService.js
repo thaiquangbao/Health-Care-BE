@@ -31,17 +31,16 @@ class HealthLogBookService {
     if (!exist) {
       return 0;
     }
-    const updated =
-      await healthLogBookModel.findByIdAndUpdate(
-        exist._id,
-        {
-          $set: {
-            "status.status_type": "ACCEPTED",
-            "status.message": "Bác sĩ đã đồng ý",
-          },
+    const updated = await healthLogBookModel.findByIdAndUpdate(
+      exist._id,
+      {
+        $set: {
+          "status.status_type": "ACCEPTED",
+          "status.message": "Bác sĩ đã đồng ý",
         },
-        { new: true }
-      );
+      },
+      { new: true }
+    );
     const room = {
       patient: {
         _id: updated.patient._id,
@@ -99,9 +98,7 @@ class HealthLogBookService {
     return rs;
   }
   async updateDoctor(data) {
-    const exist = await healthLogBookModel.findById(
-      data._id
-    );
+    const exist = await healthLogBookModel.findById(data._id);
     if (!exist) {
       return 0;
     }
@@ -140,10 +137,9 @@ class HealthLogBookService {
     if (!exist) {
       return 0;
     }
-    const rs = await healthLogBookModel.findByIdAndUpdate(
-      data._id.data,
-      { new: true }
-    );
+    const rs = await healthLogBookModel.findByIdAndUpdate(data._id.data, {
+      new: true,
+    });
     return rs;
   }
   async getAll() {
@@ -203,14 +199,8 @@ class HealthLogBookService {
     return rs;
   }
   async findByNextWeek(data) {
-    const startOfNextWeek = moment()
-      .add(1, "weeks")
-      .startOf("week")
-      .toDate();
-    const endOfNextWeek = moment()
-      .add(1, "weeks")
-      .endOf("week")
-      .toDate();
+    const startOfNextWeek = moment().add(1, "weeks").startOf("week").toDate();
+    const endOfNextWeek = moment().add(1, "weeks").endOf("week").toDate();
     const start = startOfNextWeek.getDate();
     const end = endOfNextWeek.getDate();
     const rs = await healthLogBookModel.find({
@@ -248,6 +238,50 @@ class HealthLogBookService {
           "date.year": regex.getFullYear(),
         },
       ],
+    });
+    return rs;
+  }
+  async updateBloodPressure(data) {
+    const exist = await healthLogBookModel.findById(data._id);
+    if (!exist) {
+      return 0;
+    }
+    exist.disMon.push(data.disMonItem);
+    const rs = await healthLogBookModel.findByIdAndUpdate(exist._id, exist, {
+      new: true,
+    });
+    return rs;
+  }
+  async updateTemperature(data) {
+    const exist = await healthLogBookModel.findById(data._id);
+    if (!exist) {
+      return 0;
+    }
+    exist.disMon.push(data.disMonItem);
+    const rs = await healthLogBookModel.findByIdAndUpdate(exist._id, exist, {
+      new: true,
+    });
+    return rs;
+  }
+  async updateHeartRate(data) {
+    const exist = await healthLogBookModel.findById(data._id);
+    if (!exist) {
+      return 0;
+    }
+    exist.disMon.push(data.disMonItem);
+    const rs = await healthLogBookModel.findByIdAndUpdate(exist._id, exist, {
+      new: true,
+    });
+    return rs;
+  }
+  async updateBMI(data) {
+    const exist = await healthLogBookModel.findById(data._id);
+    if (!exist) {
+      return 0;
+    }
+    exist.disMon.push(data.disMonItem);
+    const rs = await healthLogBookModel.findByIdAndUpdate(exist._id, exist, {
+      new: true,
     });
     return rs;
   }

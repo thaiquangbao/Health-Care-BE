@@ -1,4 +1,5 @@
 const healthBookService = require("../Services/HealthLogBookService");
+const emitter = require("../../config/Emitter/emitter");
 class HealthLogBookController {
   async save(req, res) {
     try {
@@ -35,9 +36,7 @@ class HealthLogBookController {
   async findByPatient(req, res) {
     try {
       const data = req.params.id;
-      const rs = await healthBookService.findByPatient(
-        data
-      );
+      const rs = await healthBookService.findByPatient(data);
       const accessToken = req.headers["accesstoken"];
       const refreshToken = req.headers["refreshtoken"];
       const token = {
@@ -55,9 +54,7 @@ class HealthLogBookController {
       const data = req.body;
       const rs = await healthBookService.accepted(data._id);
       if (rs === 0) {
-        return res
-          .status(404)
-          .json("Không tìm thấy lịch khám!!!");
+        return res.status(404).json("Không tìm thấy lịch khám!!!");
       }
       const accessToken = req.headers["accesstoken"];
       const refreshToken = req.headers["refreshtoken"];
@@ -76,9 +73,7 @@ class HealthLogBookController {
       const data = req.params.id;
       const rs = await healthBookService.getOne(data);
       if (rs === 0) {
-        return res
-          .status(404)
-          .json("Không tìm thấy lịch khám!!!");
+        return res.status(404).json("Không tìm thấy lịch khám!!!");
       }
       const accessToken = req.headers["accesstoken"];
       const refreshToken = req.headers["refreshtoken"];
@@ -97,9 +92,7 @@ class HealthLogBookController {
       const data = req.body;
       const rs = await healthBookService.rejected(data._id);
       if (rs === 0) {
-        return res
-          .status(404)
-          .json("Không tìm thấy lịch khám!!!");
+        return res.status(404).json("Không tìm thấy lịch khám!!!");
       }
       const accessToken = req.headers["accesstoken"];
       const refreshToken = req.headers["refreshtoken"];
@@ -118,9 +111,7 @@ class HealthLogBookController {
       const data = req.body;
       const rs = await healthBookService.updateDoctor(data);
       if (rs === 0) {
-        return res
-          .status(404)
-          .json("Không tìm thấy lịch khám!!!");
+        return res.status(404).json("Không tìm thấy lịch khám!!!");
       }
       const accessToken = req.headers["accesstoken"];
       const refreshToken = req.headers["refreshtoken"];
@@ -139,9 +130,7 @@ class HealthLogBookController {
       const data = req.body;
       const rs = await healthBookService.stopped(data._id);
       if (rs === 0) {
-        return res
-          .status(404)
-          .json("Không tìm thấy lịch khám!!!");
+        return res.status(404).json("Không tìm thấy lịch khám!!!");
       }
       const accessToken = req.headers["accesstoken"];
       const refreshToken = req.headers["refreshtoken"];
@@ -160,9 +149,7 @@ class HealthLogBookController {
       const data = req.body;
       const rs = await healthBookService.update(data);
       if (rs === 0) {
-        return res
-          .status(404)
-          .json("Không tìm thấy lịch khám!!!");
+        return res.status(404).json("Không tìm thấy lịch khám!!!");
       }
       const accessToken = req.headers["accesstoken"];
       const refreshToken = req.headers["refreshtoken"];
@@ -210,9 +197,7 @@ class HealthLogBookController {
   async findByNextDay(req, res) {
     try {
       const data = req.body;
-      const rs = await healthBookService.findByNextDay(
-        data
-      );
+      const rs = await healthBookService.findByNextDay(data);
       const accessToken = req.headers["accesstoken"];
       const refreshToken = req.headers["refreshtoken"];
       const token = {
@@ -244,9 +229,7 @@ class HealthLogBookController {
   async findByNextWeek(req, res) {
     try {
       const data = req.body;
-      const rs = await healthBookService.findByNextWeek(
-        data
-      );
+      const rs = await healthBookService.findByNextWeek(data);
       const accessToken = req.headers["accesstoken"];
       const refreshToken = req.headers["refreshtoken"];
       const token = {
@@ -278,9 +261,7 @@ class HealthLogBookController {
   async findByNextMonth(req, res) {
     try {
       const data = req.body;
-      const rs = await healthBookService.findByNextMonth(
-        data
-      );
+      const rs = await healthBookService.findByNextMonth(data);
       const accessToken = req.headers["accesstoken"];
       const refreshToken = req.headers["refreshtoken"];
       const token = {
@@ -291,6 +272,86 @@ class HealthLogBookController {
     } catch (error) {
       console.log(error);
       return res.status(500).json(error);
+    }
+  }
+  async updateBloodPressure(req, res) {
+    try {
+      const data = req.body;
+      const rs = await healthBookService.updateBloodPressure(data);
+      if (rs === 0) {
+        return res.status(404).json("Không tìm thấy lịch khám!!!");
+      }
+      const accessToken = req.headers["accesstoken"];
+      const refreshToken = req.headers["refreshtoken"];
+      const token = {
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+      };
+      emitter.emit("health-logbook-blood.update", rs);
+      return res.status(200).json({ data: rs, token });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error);
+    }
+  }
+  async updateTemperature(req, res) {
+    try {
+      const data = req.body;
+      const rs = await healthBookService.updateTemperature(data);
+      if (rs === 0) {
+        return res.status(404).json("Không tìm thấy lịch khám!!!");
+      }
+      const accessToken = req.headers["accesstoken"];
+      const refreshToken = req.headers["refreshtoken"];
+      const token = {
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+      };
+      emitter.emit("health-logbook-temperature.update", rs);
+      return res.status(200).json({ data: rs, token });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error.message);
+    }
+  }
+  async updateHeartRate(req, res) {
+    try {
+      const data = req.body;
+      const rs = await healthBookService.updateHeartRate(data);
+      if (rs === 0) {
+        return res.status(404).json("Không tìm thấy lịch khám!!!");
+      }
+      const accessToken = req.headers["accesstoken"];
+      const refreshToken = req.headers["refreshtoken"];
+      const token = {
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+      };
+      emitter.emit("health-logbook-health.update", rs);
+      return res.status(200).json({ data: rs, token });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error.message);
+    }
+  }
+  async updateBMI(req, res) {
+    try {
+      const data = req.body;
+      const rs = await healthBookService.updateBMI(data);
+      if (rs === 0) {
+        return res.status(404).json("Không tìm thấy lịch khám!!!");
+      }
+      const accessToken = req.headers["accesstoken"];
+      const refreshToken = req.headers["refreshtoken"];
+      const token = {
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+      };
+      emitter.emit("health-logbook-bmi.update", rs);
+      return res.status(200).json({ data: rs, token });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error.message);
     }
   }
 }

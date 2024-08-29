@@ -2,6 +2,10 @@ const messagesModel = require("../../models/chat/messagesModel");
 const roomsService = require("../../Services/ChatService/RoomsService");
 class MessagesService {
   async save(messageData) {
+    const exist = await messagesModel.findOne({ room: messageData.room });
+    if(exist) {
+      return exist;
+    }
     const message = new messagesModel(messageData);
     const saved = await message.save();
     return saved;

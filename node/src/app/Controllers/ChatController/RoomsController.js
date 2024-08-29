@@ -73,5 +73,18 @@ class RoomsController {
       return res.status(500).json({ error: error });
     }
   }
+  async getRoomByDoctorAndPatient(req, res) {
+    try {
+      const data = req.body;
+      const rooms = await roomService.getRoomByDoctorAndPatient(data);
+      const accessToken = req.headers["accesstoken"];
+      const refreshToken = req.headers["refreshtoken"];
+      const token = { accessToken, refreshToken };
+      return res.status(200).json({ data: rooms, token });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ error: error });
+    }
+  }
 }
 module.exports = new RoomsController();
