@@ -2,7 +2,11 @@ const express = require("express");
 const useRouter = express.Router();
 const middleWareToken = require("../../app/middlewares/MiddleWareToken");
 const roomController = require("../../app/Controllers/ChatController/RoomsController");
-useRouter.get("/all", roomController.getAll);
+useRouter.get(
+  "/get-one/:id",
+  middleWareToken.validateToken,
+  roomController.getOne
+);
 useRouter.get(
   "/get-room-patient/:id",
   middleWareToken.validateToken,
@@ -13,6 +17,7 @@ useRouter.get(
   middleWareToken.validateToken,
   roomController.getRoomByDoctor
 );
+useRouter.get("/all", roomController.getAll);
 useRouter.post(
   "/get-patient-doctor",
   middleWareToken.validateToken,
