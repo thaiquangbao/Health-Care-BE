@@ -11,7 +11,8 @@ class HealthLogBookController {
         accessToken: accessToken,
         refreshToken: refreshToken,
       };
-      return res.status(200).json({ data: result, token });
+      emitter.emit("health-logbook-blood.create", result);
+      return res.status(200).json({ data: result.data, token });
     } catch (error) {
       console.log(error);
       return res.status(500).json(error);

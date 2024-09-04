@@ -2,7 +2,7 @@ const noticeService = require("../Services/NoticeService");
 class NoticeController {
   async create(req, res) {
     try {
-      const notice = await noticeService.create(req.body);
+      const notice = noticeService.create(req.body);
       res.status(200).json(notice);
     } catch (error) {
       res.status(500).json(error.message);

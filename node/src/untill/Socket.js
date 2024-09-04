@@ -14,6 +14,10 @@ const socket = (server, baseURL) => {
   });
 
   io.on("connection", (socket) => {
+    // Heart log book
+    // emitter.on("health-logbook-blood.create", async (data) => {
+    //   socket.emit(`health-logbook-blood.create${data.data.doctor._id}`, data.messageDoctor);
+    // });
     // Phòng chat
     emitter.on("room.create", (room) => {
       socket.emit("room.create", room);
@@ -21,6 +25,12 @@ const socket = (server, baseURL) => {
     emitter.on("room.update", (room) => {
       socket.emit(`room.update${room._id}`, room);
     });
+    // Notice 
+    emitter.on("notice.create", async (notice) => {
+      const result = await notice;
+      socket.emit(`notice.create${result.user}`,await result);
+    });
+
     // message
     emitter.on("message.create", (message) => {
       socket.emit(`message.create${message.room}`, message);
@@ -58,37 +68,6 @@ const socket = (server, baseURL) => {
       console.log("User disconnected");
     });
   });
-  emitter.on("send-notice.submit", async (data) => {
-    const recordDoctor = await doctorRecordModel.findById(
-      data.doctor_record_id
-    );
-    const messagePatient = {
-      title: "Đặt lịch hẹn",
-      content: `Bạn đã đặt lịch hẹn thành công với BS. ${recordDoctor.doctor.fullName} vào lúc ${data.appointment_date.time} ngày ${data.appointment_date.day}/${data.appointment_date.month}/${data.appointment_date.year}. Hãy chờ bác sĩ xác nhận nhé!!!`,
-      category: "APPOINTMENT",
-      date: {
-        day: new Date().getDate(),
-        month: new Date().getMonth() + 1,
-        year: new Date().getFullYear(),
-      },
-      attached: data._id,
-      user: data.patient._id,
-    };
-    const messageDoctor = {
-      title: "Đặt lịch hẹn",
-      content: `Bác sĩ có lịch đặt hẹn vào lúc ${data.appointment_date.time} ngày ${data.appointment_date.day}/${data.appointment_date.month}/${data.appointment_date.year}. Bấm vào để xem thông tin chi tiết!!!`,
-      category: "APPOINTMENT",
-      date: {
-        day: new Date().getDate(),
-        month: new Date().getMonth() + 1,
-        year: new Date().getFullYear(),
-      },
-      attached: data._id,
-      user: recordDoctor.doctor._id,
-    };
-    await noticeService.create(messagePatient);
-    await noticeService.create(messageDoctor);
-  });
   // send mail accept
   emitter.on("send-email.accept", async (data) => {
     const rs = await appointmentService.getById(data._id);
@@ -111,19 +90,6 @@ const socket = (server, baseURL) => {
     } else {
       category = "Tư vấn trực tiếp";
     }
-    const messagePatient = {
-      title: "Xác nhận lịch hẹn",
-      content: `Bác sĩ ${recordDoctor.doctor.fullName} đã xác nhận lịch hẹn của bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}`,
-      category: "APPOINTMENT",
-      date: {
-        day: new Date().getDate(),
-        month: new Date().getMonth() + 1,
-        year: new Date().getFullYear(),
-      },
-      attached: data._id,
-      user: data.patient._id,
-    };
-    await noticeService.create(messagePatient);
     const mail = await mailService.sendMail(
       rs.patient.email,
       "Xác nhận lịch hẹn",
@@ -213,19 +179,6 @@ const socket = (server, baseURL) => {
   // deny mail
   emitter.on("send-email.deny", async (rs) => {
     const recordDoctor = await doctorRecordModel.findById(rs.doctor_record_id);
-    const messagePatient = {
-      title: "Từ chối lịch hẹn",
-      content: `Bác sĩ ${recordDoctor.doctor.fullName} đã từ chối lịch hẹn của bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}`,
-      category: "APPOINTMENT",
-      date: {
-        day: new Date().getDate(),
-        month: new Date().getMonth() + 1,
-        year: new Date().getFullYear(),
-      },
-      attached: rs._id,
-      user: rs.patient._id,
-    };
-    await noticeService.create(messagePatient);
     const mail = await mailService.sendMail(
       rs.patient.email,
       "Từ chối lịch hẹn",
@@ -241,19 +194,6 @@ const socket = (server, baseURL) => {
   emitter.on("send-email.cancel", async (data) => {
     const { rs, note } = data;
     const recordDoctor = await doctorRecordModel.findById(rs.doctor_record_id);
-    const messagePatient = {
-      title: "Hủy lịch hẹn",
-      content: `Bác sĩ ${recordDoctor.doctor.fullName} đã hủy lịch hẹn của bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}. Lý do: ${note}`,
-      category: "APPOINTMENT",
-      date: {
-        day: new Date().getDate(),
-        month: new Date().getMonth() + 1,
-        year: new Date().getFullYear(),
-      },
-      attached: rs._id,
-      user: rs.patient._id,
-    };
-    await noticeService.create(messagePatient);
     const mail = await mailService.sendMail(
       rs.patient.email,
       "Hủy lịch hẹn",

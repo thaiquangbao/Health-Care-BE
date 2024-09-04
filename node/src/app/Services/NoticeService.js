@@ -1,8 +1,11 @@
 const notificationModel = require("../models//notificationModels");
+const emitter = require("../../config/Emitter/emitter");
 class NoticeService {
-  async create(data) {
+  create(data) {
     const notice = new notificationModel(data);
-    return await notice.save();
+    const result = notice.save();
+    emitter.emit("notice.create", result);
+    return result;
   }
   async getAll() {
     return await notificationModel.find();

@@ -1,12 +1,40 @@
 const healthLogBookModel = require("../models/healthLogBookModels");
 const roomsService = require("./ChatService/RoomsService");
 const messageService = require("./ChatService/MessagesService");
+const noticeService = require("./NoticeService");
 const moment = require("moment-timezone");
 moment.tz.setDefault("Asia/Ho_Chi_Minh");
 class HealthLogBookService {
   async save(data) {
     const healthLogBook = new healthLogBookModel(data);
-    return healthLogBook.save();
+    const saved = await healthLogBook.save();
+    const messagePatient = {
+        title: "Đặt khám lâu dài",
+        content: `Bạn đã đặt lịch theo dõi sức khỏe thành công với BS. ${data.doctor.fullName}. Hãy chờ bác sĩ xác nhận nhé!!!`,
+        category: "HEARTLOGBOOK",
+        date: {
+          day: new Date().getDate(),
+          month: new Date().getMonth() + 1,
+          year: new Date().getFullYear(),
+        },
+        attached: data._id,
+        user: data.patient._id,
+      };
+      const messageDoctor = {
+        title: "Đặt khám lâu dài",
+        content: `Bác sĩ có lịch đặt hẹn theo dõi sức khỏe mới. Bấm vào để xem thông tin chi tiết!!!`,
+        category: "HEARTLOGBOOK",
+        date: {
+          day: data.date.day,
+          month: data.date.month,
+          year: data.date.year,
+        },
+        attached: data._id,
+        user: data.doctor._id,
+      };
+    noticeService.create(messagePatient)
+    noticeService.create(messageDoctor)
+    return {data: saved, messagePatient, messageDoctor};
   }
   async findByDoctor(id) {
     const exist = await healthLogBookModel.find({
@@ -70,6 +98,19 @@ class HealthLogBookService {
         },
       ],
     };
+     const messagePatient = {
+        title: "Xác nhận khám lâu dài",
+        content: `Bác sĩ ${exist.doctor.fullName} đã đồng ý theo dõi sức khỏe của bạn. Hãy bắt đầu cuộc trò chuyện để bác sĩ có thể theo dõi sức khỏe của bạn nhé!!!`,
+        category: "HEARTLOGBOOK",
+        date: {
+          day: new Date().getDate(),
+          month: new Date().getMonth() + 1,
+          year: new Date().getFullYear(),
+        },
+        attached: exist._id,
+        user: exist.patient._id,
+      };
+    noticeService.create(messagePatient)
     await messageService.save(message);
     return updated;
   }
@@ -95,6 +136,19 @@ class HealthLogBookService {
       },
       { new: true }
     );
+    const messagePatient = {
+        title: "Xác nhận khám lâu dài",
+        content: `Bác sĩ ${exist.doctor.fullName} đã từ chối theo dõi sức khỏe của bạn!!!`,
+        category: "HEARTLOGBOOK",
+        date: {
+          day: new Date().getDate(),
+          month: new Date().getMonth() + 1,
+          year: new Date().getFullYear(),
+        },
+        attached: exist._id,
+        user: exist.patient._id,
+      };
+    noticeService.create(messagePatient)
     return rs;
   }
   async updateDoctor(data) {
