@@ -4,6 +4,7 @@ const messageService = require("./ChatService/MessagesService");
 const noticeService = require("./NoticeService");
 const moment = require("moment-timezone");
 moment.tz.setDefault("Asia/Ho_Chi_Minh");
+const emitter = require("../../config/Emitter/emitter");
 class HealthLogBookService {
   async save(data) {
     const healthLogBook = new healthLogBookModel(data);
@@ -137,7 +138,7 @@ class HealthLogBookService {
       { new: true }
     );
     const messagePatient = {
-        title: "Xác nhận khám lâu dài",
+        title: "Từ chối khám lâu dài",
         content: `Bác sĩ ${exist.doctor.fullName} đã từ chối theo dõi sức khỏe của bạn!!!`,
         category: "HEARTLOGBOOK",
         date: {
@@ -151,6 +152,58 @@ class HealthLogBookService {
     noticeService.create(messagePatient)
     return rs;
   }
+  async completed(id) {
+    const exist = await healthLogBookModel.findById(id);
+    if (!exist) {
+      return 0;
+    }
+    const rs = await healthLogBookModel.findByIdAndUpdate(
+      exist._id,
+      {
+        $set: {
+          "status.status_type": "COMPLETED",
+          "status.message": "Đã hoàn thành",
+        },
+      },
+      { new: true }
+    );
+    const room = {
+      patient: rs.patient,
+      doctor: rs.doctor,
+    }
+    const rsRoom= await roomsService.updateStatusRoom(room)
+    if (rsRoom === 0) {
+      return 2;
+    }
+    const messagePatient = {
+        title: "Hoàn thành khám lâu dài",
+        content: `Lịch theo giỏi sức khỏe của bạn vào ngày ${rs.date.day}-${rs.date.month}-${rs.date.year} với BS. ${rs.doctor.fullName} (${rs.priceList.price}đ/${rs.priceList.type}) đã hoàn tất!!!. Cảm ơn bạn đã sử dụng dịch vụ`,
+        category: "HEARTLOGBOOK",
+        date: {
+          day: new Date().getDate(),
+          month: new Date().getMonth() + 1,
+          year: new Date().getFullYear(),
+        },
+        attached: exist._id,
+        user: exist.patient._id,
+      };
+      const messageDoctor = {
+        title: "Hoàn thành khám lâu dài",
+        content: `Lịch theo giỏi sức khỏe của bác sĩ vào ngày ${rs.date.day}-${rs.date.month}-${rs.date.year} với bệnh nhân ${rs.patient.fullName} (${rs.priceList.price}đ/${rs.priceList.type}) đã hoàn tất!!!`,
+        category: "HEARTLOGBOOK",
+        date: {
+          day: new Date().getDate(),
+          month: new Date().getMonth() + 1,
+          year: new Date().getFullYear(),
+        },
+        attached: exist._id,
+        user: exist.doctor._id,
+      };
+    emitter.emit("health-logbook-completed.update", messagePatient)  
+    noticeService.create(messagePatient)
+    noticeService.create(messageDoctor)
+    return rs;
+  }
   async updateDoctor(data) {
     const exist = await healthLogBookModel.findById(data._id);
     if (!exist) {
@@ -160,17 +213,59 @@ class HealthLogBookService {
       exist._id,
       {
         $set: {
-          doctor: data.doctor,
-          "status.status_type": "QUEUE",
-          "status.message": "Đang chờ xác nhận",
+          dateStop: data.dateStop,
+          status: data.status,
         },
       },
       { new: true }
     );
-    return rs;
+    const dataNew = {
+      patient: rs.patient,
+      doctor: data.doctor,
+      priceList: rs.priceList,
+      date: rs.dateStop,
+      status: data.statusNew,
+    }
+    const healthLogBook = new healthLogBookModel(dataNew);
+    const saved = await healthLogBook.save();
+    const room = {
+      patient: rs.patient,
+      doctor: rs.doctor,
+    }
+    const rsRoom= await roomsService.updateStatusRoom(room)
+    if (rsRoom === 0) {
+      return 2;
+    }
+    const messagePatient = {
+        title: "Chuyển bác sĩ",
+        content: `BS. ${exist.doctor.fullName} đã chuyển bạn sang BS. ${data.doctor.fullName}. Hãy chờ bác sĩ mới xác nhận nhé!!!`,
+        category: "HEARTLOGBOOK",
+        date: {
+          day: new Date().getDate(),
+          month: new Date().getMonth() + 1,
+          year: new Date().getFullYear(),
+        },
+        attached: exist._id,
+        user: exist.patient._id,
+      };
+      const messageDoctor = {
+        title: "Chuyển bác sĩ",
+        content: `Bác sĩ đã được chuyển một bệnh nhân mới từ bác sĩ ${exist.doctor.fullName}. Bấm vào để xem thông tin chi tiết!!!.`,
+        category: "HEARTLOGBOOK",
+        date: {
+          day: new Date().getDate(),
+          month: new Date().getMonth() + 1,
+          year: new Date().getFullYear(),
+        },
+        attached: saved._id,
+        user: data.doctor._id,
+      };
+    noticeService.create(messagePatient)
+    noticeService.create(messageDoctor)
+    return { dataTransfer: rs, dataNew: saved};
   }
-  async stopped(id) {
-    const exist = await healthLogBookModel.findById(id);
+  async stopped(data) {
+    const exist = await healthLogBookModel.findById(data._id);
     if (!exist) {
       return 0;
     }
@@ -180,24 +275,38 @@ class HealthLogBookService {
         $set: {
           "status.status_type": "STOPPED",
           "status.message": "Đã dừng điều trị",
+          dateStop: data.dateStop,
         },
       },
       { new: true }
     );
+    const messagePatient = {
+        title: "Dừng theo dõi sức khỏe",
+        content: `BS. ${exist.doctor.fullName} đã dừng theo dõi sức khỏe với bạn.`,
+        category: "HEARTLOGBOOK",
+        date: {
+          day: new Date().getDate(),
+          month: new Date().getMonth() + 1,
+          year: new Date().getFullYear(),
+        },
+        attached: exist._id,
+        user: exist.patient._id,
+      };
+    noticeService.create(messagePatient)
     return rs;
   }
   async update(data) {
-    const exist = await healthLogBookModel.findById(id);
+    const exist = await healthLogBookModel.findById(data._id);
     if (!exist) {
       return 0;
     }
-    const rs = await healthLogBookModel.findByIdAndUpdate(data._id.data, {
+    const rs = await healthLogBookModel.findByIdAndUpdate(exist._id,data, {
       new: true,
     });
     return rs;
   }
   async getAll() {
-    return healthLogBookModel.find();
+    return await healthLogBookModel.find();
   }
   async findByDay(dataSearch) {
     // Chuyển đổi dữ liệu từ client thành định dạng ISO
@@ -329,6 +438,17 @@ class HealthLogBookService {
     return rs;
   }
   async updateBMI(data) {
+    const exist = await healthLogBookModel.findById(data._id);
+    if (!exist) {
+      return 0;
+    }
+    exist.disMon.push(data.disMonItem);
+    const rs = await healthLogBookModel.findByIdAndUpdate(exist._id, exist, {
+      new: true,
+    });
+    return rs;
+  }
+   async updateSymptom(data) {
     const exist = await healthLogBookModel.findById(data._id);
     if (!exist) {
       return 0;

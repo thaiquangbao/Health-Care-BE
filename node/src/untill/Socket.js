@@ -63,6 +63,32 @@ const socket = (server, baseURL) => {
         type: "bmi",
       });
     });
+    emitter.on("health-logbook-symptom.update", (data) => {
+      socket.emit(`health-logbook-symptom.update${data._id}`, {
+        data,
+        type: "symptom",
+      });
+    });
+    emitter.on("health-logbook-doctor.transfer", (data) => {
+      socket.emit(`health-logbook-doctor.transfer${data.dataTransfer._id}`, data.dataTransfer);
+      socket.emit(`health-logbook-doctor.transfer${data.dataNew.doctor._id}`, data.dataNew);
+    });
+    emitter.on("health-logbook-doctor.stopped", (data) => {
+      socket.emit(`health-logbook-doctor.stopped${data._id}`, data);
+    });
+    // heart warning AI
+    emitter.on("bloodPressure-warning.ai", (data) => {
+      socket.emit(`bloodPressure-warning.ai${data.user}`, data);
+    })
+    emitter.on("bmi-warning.ai", (data) => {
+      socket.emit(`bmi-warning.ai${data.user}`, data);
+    })
+     emitter.on("heartRate-warning.ai", (data) => {
+      socket.emit(`heartRate-warning.ai${data.user}`, data);
+    })
+     emitter.on("temperature-warning.ai", (data) => {
+      socket.emit(`temperature-warning.ai${data.user}`, data);
+    })
     //disconnect
     socket.on("disconnect", () => {
       console.log("User disconnected");

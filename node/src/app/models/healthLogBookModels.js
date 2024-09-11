@@ -69,6 +69,16 @@ const healthLogBooks = new Schema({
     ],
     default: [],
   },
+  status_heart: {
+    type: [
+      {
+        _id: false,
+        status_type: String,
+        message: String,
+      } 
+    ],
+    default: [],
+  },
   status: {
     type: {
       _id: false,
@@ -76,6 +86,12 @@ const healthLogBooks = new Schema({
       message: String,
     },
     default: { status_type: "", message: "" },
+  },
+  dateStop: {
+    day: {type: Number, default: 0},
+    month: {type: Number, default: 0},
+    year: {type: Number, default: 0},
+    time: {type: String, default: ""},
   },
 });
 module.exports = mongoose.model("healthLogBooks", healthLogBooks);

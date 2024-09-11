@@ -29,7 +29,8 @@ const rooms = new Schema(
       _id: { type: Schema.Types.ObjectId },
       fullName: { type: String, default: "" },
       image: { type: String, default: "" },
-    }
+    },
+    status: {type: String, default: "ACTIVE"},
   },
   { timestamps: true }
 );

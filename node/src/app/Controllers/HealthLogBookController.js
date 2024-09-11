@@ -114,13 +114,17 @@ class HealthLogBookController {
       if (rs === 0) {
         return res.status(404).json("Không tìm thấy lịch khám!!!");
       }
+      if (rs === 2) {
+        return res.status(404).json("Không tìm thấy phòng chat!!!");
+      }
       const accessToken = req.headers["accesstoken"];
       const refreshToken = req.headers["refreshtoken"];
       const token = {
         accessToken: accessToken,
         refreshToken: refreshToken,
       };
-      return res.status(200).json({ data: rs, token });
+      emitter.emit("health-logbook-doctor.transfer", rs);
+      return res.status(200).json({ data: rs.dataTransfer, token });
     } catch (error) {
       console.log(error);
       return res.status(500).json(error);
@@ -129,7 +133,7 @@ class HealthLogBookController {
   async stopped(req, res) {
     try {
       const data = req.body;
-      const rs = await healthBookService.stopped(data._id);
+      const rs = await healthBookService.stopped(data);
       if (rs === 0) {
         return res.status(404).json("Không tìm thấy lịch khám!!!");
       }
@@ -139,6 +143,7 @@ class HealthLogBookController {
         accessToken: accessToken,
         refreshToken: refreshToken,
       };
+      emitter.emit("health-logbook-doctor.stopped", rs);
       return res.status(200).json({ data: rs, token });
     } catch (error) {
       console.log(error);
@@ -349,6 +354,26 @@ class HealthLogBookController {
         refreshToken: refreshToken,
       };
       emitter.emit("health-logbook-bmi.update", rs);
+      return res.status(200).json({ data: rs, token });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error.message);
+    }
+  }
+  async updateSymptom(req, res) {
+    try {
+      const data = req.body;
+      const rs = await healthBookService.updateSymptom(data);
+      if (rs === 0) {
+        return res.status(404).json("Không tìm thấy lịch khám!!!");
+      }
+      const accessToken = req.headers["accesstoken"];
+      const refreshToken = req.headers["refreshtoken"];
+      const token = {
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+      };
+      emitter.emit("health-logbook-symptom.update", rs);
       return res.status(200).json({ data: rs, token });
     } catch (error) {
       console.log(error);

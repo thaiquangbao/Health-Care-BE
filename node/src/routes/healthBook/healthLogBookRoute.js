@@ -48,7 +48,7 @@ useRouter.get(
   healthLogBookController.getOne
 );
 useRouter.post(
-  "/update-doctor",
+  "/transfer-doctor",
   middleWareToken.validateToken,
   healthLogBookController.updateDoctor
 );
@@ -71,6 +71,11 @@ useRouter.get(
   "/get-all",
   middleWareToken.validateToken,
   healthLogBookController.getAll
+);
+useRouter.post(
+  "/update-symptom-note",
+  middleWareToken.validateToken,
+  healthLogBookController.updateSymptom
 );
 useRouter.post(
   "/update-bmi",

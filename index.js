@@ -4,6 +4,7 @@ const db = require("./node/src/config/database/appointment");
 const dotenv = require("dotenv");
 const routes = require("./node/src/routes");
 const notify = require("./node/src/app/Services/NotificateService");
+const expiredLogBook = require("./node/src/app/Services/ExpiredLogBookService");
 const moment = require("moment-timezone");
 const compression = require("compression");
 const http = require("http");
@@ -19,7 +20,7 @@ const baseURLDEPLOY =
 const myURLDEPLOY = "https://health-care-fe-two.vercel.app";
 const socket = require("./node/src/untill/Socket");
 const corsOptions = {
-  origin: [baseURL, baseURLTWO, baseURLDEPLOY, myURLDEPLOY],
+  origin: "*",
   allowedHeaders: [
     "Content-Type",
     "accessToken",
@@ -35,8 +36,9 @@ dotenv.config();
 routes(app);
 db.connectAppointment();
 notify.startDepointmentFetch();
+expiredLogBook.startLogBookFetch();
 const server = http.createServer(app);
-socket(server, baseURL);
+socket(server, [baseURL, baseURLTWO, baseURLDEPLOY, myURLDEPLOY]);
 server.listen(port, () => {
   console.log(`Connect service running on port ${port}`);
 });

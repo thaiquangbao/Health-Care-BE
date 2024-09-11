@@ -1,0 +1,20 @@
+meet định kỳ
+AI (Tạm xong)
+fix lại khi patient vào meet thì khi out phòng là out
+Cảnh báo sức khỏe
+customer and user gui ho so qua gmail
+thiếu status sau khi khám hoàn tất
+mobile
+smart contract
+Bắt buộc bác sĩ, user nhập mail
+tich hop momo
+#Đã xong
+status room (ok)
+dki 1 bác sĩ (ok)
+xem hồ sơ bệnh án bệnh nhân của tôi (ok)
+chiệu trứng ghi chú riêng (ok)
+Chuyển bác sĩ xong thì tắt form(ok)
+#Lỡ dỡ
+Trong quá trình chờ bác sĩ accept thì không dc dki bác sĩ theo dõi khác(check lại chổ dieu kien hiển thị nút kahm1 lâu dài)
+xem detail theo doi suc khoe (còn 1 phần chart chưa load)
+set time hết khám lâu dài (ok, thiếu socket, chổ lịch khám chỉnh lại màu)

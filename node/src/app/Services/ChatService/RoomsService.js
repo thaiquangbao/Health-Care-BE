@@ -11,7 +11,12 @@ class RoomService {
       ]
     })
     if (exist) {
-      return exist;
+      const rs = await roomsModel.findByIdAndUpdate(
+        exist._id,
+        { $set: { status: "ACTIVE" } },
+        { new: true }
+      ); 
+      return rs;
     }
     const room = new roomsModel(roomData);
     return room.save();
@@ -80,6 +85,23 @@ class RoomService {
     });
     const messages = await messagesModel.find({room: rooms._id});
     return messages;
+  }
+  async updateStatusRoom(room) {
+    const existRoom = await roomsModel.findOne({
+      $and: [
+        { "doctor._id": room.doctor._id },
+        { "patient._id": room.patient._id },
+      ],
+    });
+    if (!existRoom) {
+      return 0;
+    }
+    return await roomsModel.findByIdAndUpdate(
+      existRoom._id,
+      { $set: { status: "BLOCKED" } },
+      { new: true }
+    );  
+
   }
 }
 module.exports = new RoomService();
