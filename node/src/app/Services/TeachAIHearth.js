@@ -4,7 +4,8 @@ class TeachAIHearth {
         let result = {
             maxPressure: null,
             minPressure: null,
-            message: ''
+            message: '',
+            status: '',
         };
         // Xác định phạm vi huyết áp dựa trên độ tuổi
         if (age <= 19) {
@@ -33,10 +34,13 @@ class TeachAIHearth {
         // Kiểm tra huyết áp tâm thu và tâm trương
         if (tamThu <= result.maxPressure && tamTruong >= result.minPressure) {
             result.message = "Huyết áp bình thường.";
+            result.status = "NORMAL";
         } else if (tamThu > result.maxPressure) {
             result.message = "Huyết áp cao.";
+            result.status = "HIGH";
         } else if (tamTruong < result.minPressure) {
             result.message = "Huyết áp thấp.";
+            result.status = "LOW";
         }
 
         return result;
@@ -47,7 +51,8 @@ class TeachAIHearth {
         let result = {
             maxPressure: null,
             minPressure: null,
-            message: ''
+            message: '',
+            status: '',
         };
 
         // Xác định phạm vi huyết áp dựa trên độ tuổi
@@ -77,39 +82,53 @@ class TeachAIHearth {
         // Kiểm tra huyết áp tâm thu và tâm trương
         if (tamThu <= result.maxPressure && tamTruong >= result.minPressure) {
             result.message = "Huyết áp bình thường.";
+            result.status = "NORMAL";
         } else if (tamThu > result.maxPressure) {
             result.message = "Huyết áp cao.";
+            result.status = "HIGH";
         } else if (tamTruong < result.minPressure) {
             result.message = "Huyết áp thấp.";
+            result.status = "LOW";
         }
 
         return result;
     
     }
     async BMI(bmi) {
-        let category = "";
-
+        let result = {
+            message: '',
+            status: '',
+        };
         if (bmi < 18.5) {
-            category = "Nhẹ cân (Underweight)";
+            result.message = "Nhẹ cân (Underweight)";
+            result.status = "UNDERWEIGHT";
         } else if (bmi >= 18.5 && bmi <= 24.9) {
-            category = "Bình thường (Normal)";
+            result.message = "Bình thường (Normal)";
+            result.status = "NORMAL";
         } else if (bmi >= 25 && bmi <= 29.9) {
-            category = "Tiền béo phì (Pre-obesity)";
+            result.message = "Tiền béo phì (Pre-obesity)";
+            result.status = "WARNING";
         } else if (bmi >= 30 && bmi <= 34.9) {
-            category = "Béo phì độ I (Obesity class I)";
+            result.message = "Béo phì độ I (Obesity class I)";
+            result.status = "WARNING";
         } else if (bmi >= 35 && bmi <= 39.9) {
-            category = "Béo phì độ II (Obesity class II)";
+            result.message = "Béo phì độ II (Obesity class II)";
+            result.status = "WARNING";
         } else if (bmi >= 40) {
-            category = "Béo phì độ III (Obesity class III)";
+            result.message = "Béo phì độ III (Obesity class III)";
+            result.status = "WARNING";
         } else {
-            category = "Chỉ số BMI không hợp lệ";
+            result.message = "Chỉ số BMI không hợp lệ";
         }
 
-        return category;
+        return result;
     }
     async heartRateMale(age, heartRate) {
         let min, max;
-        
+        let result = {
+            message: '',
+            status: '',
+        };
         if (age < 1) {
             min = 102;
             max = 155;
@@ -150,16 +169,23 @@ class TeachAIHearth {
             return "Tuổi không hợp lệ.";
         } 
          if (heartRate >= min && heartRate <= max) {
-            return "Nhịp tim bình thường.";
+            result.message = "Nhịp tim bình thường.";
+            result.status = "NORMAL";
         } else if (heartRate > max) {
-            return "Nhịp tim đập nhanh.";
+            result.message = "Nhịp tim đập nhanh";
+            result.status = "FAST";
         } else {
-            return "Nhịp tim đập chậm.";
+            result.message = "Nhịp tim đập chậm.";
+            result.status = "SLOW";
         }
+        return result;
     }  
     async heartRateFeMale(age, heartRate) {
         let min, max;
-
+        let result = {
+            message: '',
+            status: '',
+        };
         if (age < 1) {
             min = 104;
             max = 156;
@@ -201,15 +227,23 @@ class TeachAIHearth {
         }
         
         if (heartRate >= min && heartRate <= max) {
-            return "Nhịp tim bình thường.";
+             result.message = "Nhịp tim bình thường.";
+            result.status = "NORMAL";
         } else if (heartRate > max) {
-            return "Nhịp tim đập nhanh.";
+            result.message = "Nhịp tim đập nhanh";
+            result.status = "FAST";
         } else {
-            return "Nhịp tim đập chậm.";
+            result.message = "Nhịp tim đập chậm.";
+            result.status = "SLOW";
         }
+        return result;
     } 
     async temperature(age,temperature) {
         let min,max;
+        let result = {
+            message: '',
+            status: '',
+        };
         if(age <= 10) {
             min = 36.4;
             max = 37.7;
@@ -223,13 +257,16 @@ class TeachAIHearth {
             return "Nhiệt độ không hợp lệ.";
         }
          if (temperature >= min && temperature <= max) {
-            return "Nhiệt độ cơ thể bình thường.";
+            result.message = "Nhiệt độ cơ thể bình thường.";
+            result.status = "NORMAL";
         } else if (temperature > max) {
-            return "Nhiệt độ cơ thể cao.";
+            result.message = "Nhiệt độ cơ thể cao.";
+            result.status = "HIGH";
         } else {
-            return "Nhiệt độ cơ thể thấp.";
+            result.message = "Nhiệt độ cơ thể thấp.";
+            result.status = "LOW";
         }
-
+        return result;
     }
 }
 module.exports = new TeachAIHearth();

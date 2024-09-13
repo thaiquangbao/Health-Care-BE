@@ -1,7 +1,9 @@
 const express = require("express");
 const useRouter = express.Router();
 const middleWareToken = require("../../app/middlewares/MiddleWareToken");
-const medicalRecordController = require("../../app/Controllers/MedicalRecordController");
+const medicalRecordController = require("../../app/Controllers/MedicalRecordController");2222
+const mailerController = require("../../app/Controllers/MailerController");
+useRouter.post("/send-mail/:id", mailerController.mailMedicalRecord);
 useRouter.get(
   "/findByDoctor/:id",
   medicalRecordController.findByDoctor

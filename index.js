@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const routes = require("./node/src/routes");
 const notify = require("./node/src/app/Services/NotificateService");
 const expiredLogBook = require("./node/src/app/Services/ExpiredLogBookService");
+const expiredAppointment= require("./node/src/app/Services/ExpiredAppointmentService");
 const moment = require("moment-timezone");
 const compression = require("compression");
 const http = require("http");
@@ -37,6 +38,7 @@ routes(app);
 db.connectAppointment();
 notify.startDepointmentFetch();
 expiredLogBook.startLogBookFetch();
+expiredAppointment.startDepointmentFetch();
 const server = http.createServer(app);
 socket(server, [baseURL, baseURLTWO, baseURLDEPLOY, myURLDEPLOY]);
 server.listen(port, () => {

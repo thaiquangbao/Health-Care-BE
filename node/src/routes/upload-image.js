@@ -7,4 +7,8 @@ useRouter.post(
   upload.array("files"),
   imageController.postImage
 );
+useRouter.post(
+  "/mobile/upload",
+  imageController.postImageMobile
+);
 module.exports = useRouter;

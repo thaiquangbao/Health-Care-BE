@@ -22,5 +22,28 @@ class ImageController {
       return res.status(500).json("Lỗi hệ thống!!!");
     }
   }
+  async postImageMobile(req, res) {
+    try {
+       const { information} = req.body
+       let file_title = ['']
+       let processedInformation = await Promise.all(information.map(async item => {
+       const buffer = await Buffer.from(item.base64, 'base64');
+       file_title.push(item.originalname.split('.')[0])
+       return {
+          originalname: item.originalname,
+          mimetype: item.mimetype,
+          buffer,
+          size: item.size,         
+        };
+      }));
+      const promises = processedInformation.map(async (item, index) => {
+        return uploadToS3(`${item.mimetype.split('/')[0] !== 'application' ? item.mimetype.split('/')[0] : item.originalname.split('.')[item.originalname.split('.').length - 1]}___${Date.now().toString()}_${item.originalname.split('.')[0]}`, item.buffer, item.mimetype, file_title[index], item.size / 1024)
+      });
+      const urls = await Promise.all(promises)
+      return res.status(200).json(urls)
+    } catch (error) {
+      return res.status(500).json(error.message);
+    }
+  }
 }
 module.exports = new ImageController();

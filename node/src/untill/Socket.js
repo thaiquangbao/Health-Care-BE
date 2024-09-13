@@ -69,12 +69,19 @@ const socket = (server, baseURL) => {
         type: "symptom",
       });
     });
-    emitter.on("health-logbook-doctor.transfer", (data) => {
-      socket.emit(`health-logbook-doctor.transfer${data.dataTransfer._id}`, data.dataTransfer);
-      socket.emit(`health-logbook-doctor.transfer${data.dataNew.doctor._id}`, data.dataNew);
+    emitter.on("health-logbook-doctor.accepted", (data) => {
+      socket.emit(`health-logbook-doctor.accepted${data.logBook.patient._id}`, data.room)
     });
-    emitter.on("health-logbook-doctor.stopped", (data) => {
-      socket.emit(`health-logbook-doctor.stopped${data._id}`, data);
+    emitter.on("health-logbook-doctor.transfer", (data) => {
+      // socket.emit(`health-logbook-doctor.transfer${data.dataTransfer._id}`, data.dataTransfer);
+      // socket.emit(`health-logbook-doctor.transfer${data.dataNew.doctor._id}`, data.dataNew);
+      socket.emit(`health-logbook-doctor.transfer${data.room._id}`, data.room)
+    });
+    // emitter.on("health-logbook-doctor.stopped", (data) => {
+    //   socket.emit(`health-logbook-doctor.stopped${data._id}`, data);
+    // });
+    emitter.on("health-logbook-completed.update", (data) => {
+      socket.emit(`health-logbook-completed.update${data._id}`, data);
     });
     // heart warning AI
     emitter.on("bloodPressure-warning.ai", (data) => {

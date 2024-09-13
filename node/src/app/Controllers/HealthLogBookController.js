@@ -63,7 +63,8 @@ class HealthLogBookController {
         accessToken: accessToken,
         refreshToken: refreshToken,
       };
-      return res.status(200).json({ data: rs, token });
+      emitter.emit("health-logbook-doctor.accepted", rs);
+      return res.status(200).json({ data: rs.logBook, token });
     } catch (error) {
       console.log(error);
       return res.status(500).json(error);

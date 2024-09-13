@@ -69,13 +69,43 @@ const healthLogBooks = new Schema({
     ],
     default: [],
   },
-  status_heart: {
+  status_heartRate: {
     type: [
       {
         _id: false,
         status_type: String,
+        message: String,   
+      }  
+    ],
+    default: [],
+  },
+  status_bmi: {
+    type: [
+      { 
+        _id: false,
+        status_type: String,
         message: String,
-      } 
+      }   
+    ],
+    default: [],
+  },
+  status_bloodPressure: {
+    type: [
+      {
+        _id: false,
+        status_type: String,
+        message: String,   
+      }
+    ],
+    default: [],
+  },
+  status_temperature: {
+    type: [
+      {
+        _id: false,
+        status_type: String,
+        message: String,   
+      }
     ],
     default: [],
   },

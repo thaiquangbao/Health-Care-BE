@@ -1,9 +1,8 @@
-meet định kỳ
-AI (Tạm xong)
-fix lại khi patient vào meet thì khi out phòng là out
-Cảnh báo sức khỏe
+Thông báo đầu tuần cho bác sĩ kahm1 lâu dài
+Cảnh báo sức khỏe(Chỉ có 2 trạng tháng cảnh báo và bình thường, gửi thông báo, mail)
 customer and user gui ho so qua gmail
-thiếu status sau khi khám hoàn tất
+load chart donut
+---
 mobile
 smart contract
 Bắt buộc bác sĩ, user nhập mail
@@ -14,7 +13,11 @@ dki 1 bác sĩ (ok)
 xem hồ sơ bệnh án bệnh nhân của tôi (ok)
 chiệu trứng ghi chú riêng (ok)
 Chuyển bác sĩ xong thì tắt form(ok)
+Trong quá trình chờ bác sĩ accept thì không dc dki bác sĩ theo dõi khác(ok)
+fix lại khi patient vào meet thì khi out phòng là out (ok)
+meet định kỳ (ok)
+xem detail theo doi suc khoe (ok)
+set time hết khám lâu dài (ok)
+thiếu status sau khi khám hoàn tất (ok)
 #Lỡ dỡ
-Trong quá trình chờ bác sĩ accept thì không dc dki bác sĩ theo dõi khác(check lại chổ dieu kien hiển thị nút kahm1 lâu dài)
-xem detail theo doi suc khoe (còn 1 phần chart chưa load)
-set time hết khám lâu dài (ok, thiếu socket, chổ lịch khám chỉnh lại màu)
+AI (còn ghi chú và triệu chứng)
