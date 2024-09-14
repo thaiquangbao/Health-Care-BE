@@ -2,6 +2,7 @@ const healthLogBookModel = require("../models/healthLogBookModels");
 const roomsService = require("./ChatService/RoomsService");
 const messageService = require("./ChatService/MessagesService");
 const noticeService = require("./NoticeService");
+const mailService = require("./MailerService")
 const moment = require("moment-timezone");
 moment.tz.setDefault("Asia/Ho_Chi_Minh");
 const emitter = require("../../config/Emitter/emitter");
@@ -10,32 +11,32 @@ class HealthLogBookService {
     const healthLogBook = new healthLogBookModel(data);
     const saved = await healthLogBook.save();
     const messagePatient = {
-        title: "Đặt khám lâu dài",
-        content: `Bạn đã đặt lịch theo dõi sức khỏe thành công với BS. ${data.doctor.fullName}. Hãy chờ bác sĩ xác nhận nhé!!!`,
-        category: "HEARTLOGBOOK",
-        date: {
-          day: new Date().getDate(),
-          month: new Date().getMonth() + 1,
-          year: new Date().getFullYear(),
-        },
-        attached: data._id,
-        user: data.patient._id,
-      };
-      const messageDoctor = {
-        title: "Đặt khám lâu dài",
-        content: `Bác sĩ có lịch đặt hẹn theo dõi sức khỏe mới. Bấm vào để xem thông tin chi tiết!!!`,
-        category: "HEARTLOGBOOK",
-        date: {
-          day: data.date.day,
-          month: data.date.month,
-          year: data.date.year,
-        },
-        attached: data._id,
-        user: data.doctor._id,
-      };
-    noticeService.create(messagePatient)
-    noticeService.create(messageDoctor)
-    return {data: saved, messagePatient, messageDoctor};
+      title: "Đặt khám lâu dài",
+      content: `Bạn đã đặt lịch theo dõi sức khỏe thành công với BS. ${data.doctor.fullName}. Hãy chờ bác sĩ xác nhận nhé!!!`,
+      category: "HEARTLOGBOOK",
+      date: {
+        day: new Date().getDate(),
+        month: new Date().getMonth() + 1,
+        year: new Date().getFullYear(),
+      },
+      attached: data._id,
+      user: data.patient._id,
+    };
+    const messageDoctor = {
+      title: "Đặt khám lâu dài",
+      content: `Bác sĩ có lịch đặt hẹn theo dõi sức khỏe mới. Bấm vào để xem thông tin chi tiết!!!`,
+      category: "HEARTLOGBOOK",
+      date: {
+        day: data.date.day,
+        month: data.date.month,
+        year: data.date.year,
+      },
+      attached: data._id,
+      user: data.doctor._id,
+    };
+    noticeService.create(messagePatient);
+    noticeService.create(messageDoctor);
+    return { data: saved, messagePatient, messageDoctor };
   }
   async findByDoctor(id) {
     const exist = await healthLogBookModel.find({
@@ -60,16 +61,17 @@ class HealthLogBookService {
     if (!exist) {
       return 0;
     }
-    const updated = await healthLogBookModel.findByIdAndUpdate(
-      exist._id,
-      {
-        $set: {
-          "status.status_type": "ACCEPTED",
-          "status.message": "Bác sĩ đã đồng ý",
+    const updated =
+      await healthLogBookModel.findByIdAndUpdate(
+        exist._id,
+        {
+          $set: {
+            "status.status_type": "ACCEPTED",
+            "status.message": "Bác sĩ đã đồng ý",
+          },
         },
-      },
-      { new: true }
-    );
+        { new: true }
+      );
     const room = {
       patient: {
         _id: updated.patient._id,
@@ -99,21 +101,21 @@ class HealthLogBookService {
         },
       ],
     };
-     const messagePatient = {
-        title: "Xác nhận khám lâu dài",
-        content: `Bác sĩ ${exist.doctor.fullName} đã đồng ý theo dõi sức khỏe của bạn. Hãy bắt đầu cuộc trò chuyện để bác sĩ có thể theo dõi sức khỏe của bạn nhé!!!`,
-        category: "HEARTLOGBOOK",
-        date: {
-          day: new Date().getDate(),
-          month: new Date().getMonth() + 1,
-          year: new Date().getFullYear(),
-        },
-        attached: exist._id,
-        user: exist.patient._id,
-      };
-    noticeService.create(messagePatient)
+    const messagePatient = {
+      title: "Xác nhận khám lâu dài",
+      content: `Bác sĩ ${exist.doctor.fullName} đã đồng ý theo dõi sức khỏe của bạn. Hãy bắt đầu cuộc trò chuyện để bác sĩ có thể theo dõi sức khỏe của bạn nhé!!!`,
+      category: "HEARTLOGBOOK",
+      date: {
+        day: new Date().getDate(),
+        month: new Date().getMonth() + 1,
+        year: new Date().getFullYear(),
+      },
+      attached: exist._id,
+      user: exist.patient._id,
+    };
+    noticeService.create(messagePatient);
     await messageService.save(message);
-    return {logBook: updated, room: createRoom};
+    return { logBook: updated, room: createRoom };
   }
   async getOne(id) {
     const rs = await healthLogBookModel.findById(id);
@@ -138,18 +140,18 @@ class HealthLogBookService {
       { new: true }
     );
     const messagePatient = {
-        title: "Từ chối khám lâu dài",
-        content: `Bác sĩ ${exist.doctor.fullName} đã từ chối theo dõi sức khỏe của bạn!!!`,
-        category: "HEARTLOGBOOK",
-        date: {
-          day: new Date().getDate(),
-          month: new Date().getMonth() + 1,
-          year: new Date().getFullYear(),
-        },
-        attached: exist._id,
-        user: exist.patient._id,
-      };
-    noticeService.create(messagePatient)
+      title: "Từ chối khám lâu dài",
+      content: `Bác sĩ ${exist.doctor.fullName} đã từ chối theo dõi sức khỏe của bạn!!!`,
+      category: "HEARTLOGBOOK",
+      date: {
+        day: new Date().getDate(),
+        month: new Date().getMonth() + 1,
+        year: new Date().getFullYear(),
+      },
+      attached: exist._id,
+      user: exist.patient._id,
+    };
+    noticeService.create(messagePatient);
     return rs;
   }
   async completed(id) {
@@ -170,42 +172,46 @@ class HealthLogBookService {
     const room = {
       patient: rs.patient,
       doctor: rs.doctor,
-    }
-    const rsRoom= await roomsService.updateStatusRoom(room)
+    };
+    const rsRoom = await roomsService.updateStatusRoom(
+      room
+    );
     if (rsRoom === 0) {
       return 2;
     }
     const messagePatient = {
-        title: "Hoàn thành khám lâu dài",
-        content: `Lịch theo giỏi sức khỏe của bạn vào ngày ${rs.date.day}-${rs.date.month}-${rs.date.year} với BS. ${rs.doctor.fullName} (${rs.priceList.price}đ/${rs.priceList.type}) đã hoàn tất!!!. Cảm ơn bạn đã sử dụng dịch vụ`,
-        category: "HEARTLOGBOOK",
-        date: {
-          day: new Date().getDate(),
-          month: new Date().getMonth() + 1,
-          year: new Date().getFullYear(),
-        },
-        attached: exist._id,
-        user: exist.patient._id,
-      };
-      const messageDoctor = {
-        title: "Hoàn thành khám lâu dài",
-        content: `Lịch theo giỏi sức khỏe của bác sĩ vào ngày ${rs.date.day}-${rs.date.month}-${rs.date.year} với bệnh nhân ${rs.patient.fullName} (${rs.priceList.price}đ/${rs.priceList.type}) đã hoàn tất!!!`,
-        category: "HEARTLOGBOOK",
-        date: {
-          day: new Date().getDate(),
-          month: new Date().getMonth() + 1,
-          year: new Date().getFullYear(),
-        },
-        attached: exist._id,
-        user: exist.doctor._id,
-      };
-    emitter.emit("health-logbook-completed.update", rsRoom)  
-    noticeService.create(messagePatient)
-    noticeService.create(messageDoctor)
+      title: "Hoàn thành khám lâu dài",
+      content: `Lịch theo giỏi sức khỏe của bạn vào ngày ${rs.date.day}-${rs.date.month}-${rs.date.year} với BS. ${rs.doctor.fullName} (${rs.priceList.price}đ/${rs.priceList.type}) đã hoàn tất!!!. Cảm ơn bạn đã sử dụng dịch vụ`,
+      category: "HEARTLOGBOOK",
+      date: {
+        day: new Date().getDate(),
+        month: new Date().getMonth() + 1,
+        year: new Date().getFullYear(),
+      },
+      attached: exist._id,
+      user: exist.patient._id,
+    };
+    const messageDoctor = {
+      title: "Hoàn thành khám lâu dài",
+      content: `Lịch theo giỏi sức khỏe của bác sĩ vào ngày ${rs.date.day}-${rs.date.month}-${rs.date.year} với bệnh nhân ${rs.patient.fullName} (${rs.priceList.price}đ/${rs.priceList.type}) đã hoàn tất!!!`,
+      category: "HEARTLOGBOOK",
+      date: {
+        day: new Date().getDate(),
+        month: new Date().getMonth() + 1,
+        year: new Date().getFullYear(),
+      },
+      attached: exist._id,
+      user: exist.doctor._id,
+    };
+    emitter.emit("health-logbook-completed.update", rsRoom);
+    noticeService.create(messagePatient);
+    noticeService.create(messageDoctor);
     return rs;
   }
   async updateDoctor(data) {
-    const exist = await healthLogBookModel.findById(data._id);
+    const exist = await healthLogBookModel.findById(
+      data._id
+    );
     if (!exist) {
       return 0;
     }
@@ -225,47 +231,55 @@ class HealthLogBookService {
       priceList: rs.priceList,
       date: rs.dateStop,
       status: data.statusNew,
-    }
+    };
     const healthLogBook = new healthLogBookModel(dataNew);
     const saved = await healthLogBook.save();
     const room = {
       patient: rs.patient,
       doctor: rs.doctor,
-    }
-    const rsRoom= await roomsService.updateStatusRoom(room)
+    };
+    const rsRoom = await roomsService.updateStatusRoom(
+      room
+    );
     if (rsRoom === 0) {
       return 2;
     }
     const messagePatient = {
-        title: "Chuyển bác sĩ",
-        content: `BS. ${exist.doctor.fullName} đã chuyển bạn sang BS. ${data.doctor.fullName}. Hãy chờ bác sĩ mới xác nhận nhé!!!`,
-        category: "HEARTLOGBOOK",
-        date: {
-          day: new Date().getDate(),
-          month: new Date().getMonth() + 1,
-          year: new Date().getFullYear(),
-        },
-        attached: exist._id,
-        user: exist.patient._id,
-      };
-      const messageDoctor = {
-        title: "Chuyển bác sĩ",
-        content: `Bác sĩ đã được chuyển một bệnh nhân mới từ bác sĩ ${exist.doctor.fullName}. Bấm vào để xem thông tin chi tiết!!!.`,
-        category: "HEARTLOGBOOK",
-        date: {
-          day: new Date().getDate(),
-          month: new Date().getMonth() + 1,
-          year: new Date().getFullYear(),
-        },
-        attached: saved._id,
-        user: data.doctor._id,
-      };
-    noticeService.create(messagePatient)
-    noticeService.create(messageDoctor)
-    return { dataTransfer: rs, dataNew: saved, room: rsRoom };
+      title: "Chuyển bác sĩ",
+      content: `BS. ${exist.doctor.fullName} đã chuyển bạn sang BS. ${data.doctor.fullName}. Hãy chờ bác sĩ mới xác nhận nhé!!!`,
+      category: "HEARTLOGBOOK",
+      date: {
+        day: new Date().getDate(),
+        month: new Date().getMonth() + 1,
+        year: new Date().getFullYear(),
+      },
+      attached: exist._id,
+      user: exist.patient._id,
+    };
+    const messageDoctor = {
+      title: "Chuyển bác sĩ",
+      content: `Bác sĩ đã được chuyển một bệnh nhân mới từ bác sĩ ${exist.doctor.fullName}. Bấm vào để xem thông tin chi tiết!!!.`,
+      category: "HEARTLOGBOOK",
+      date: {
+        day: new Date().getDate(),
+        month: new Date().getMonth() + 1,
+        year: new Date().getFullYear(),
+      },
+      attached: saved._id,
+      user: data.doctor._id,
+    };
+    noticeService.create(messagePatient);
+    noticeService.create(messageDoctor);
+    return {
+      dataTransfer: rs,
+      dataNew: saved,
+      room: rsRoom,
+    };
   }
   async stopped(data) {
-    const exist = await healthLogBookModel.findById(data._id);
+    const exist = await healthLogBookModel.findById(
+      data._id
+    );
     if (!exist) {
       return 0;
     }
@@ -281,28 +295,34 @@ class HealthLogBookService {
       { new: true }
     );
     const messagePatient = {
-        title: "Dừng theo dõi sức khỏe",
-        content: `BS. ${exist.doctor.fullName} đã dừng theo dõi sức khỏe với bạn.`,
-        category: "HEARTLOGBOOK",
-        date: {
-          day: new Date().getDate(),
-          month: new Date().getMonth() + 1,
-          year: new Date().getFullYear(),
-        },
-        attached: exist._id,
-        user: exist.patient._id,
-      };
-    noticeService.create(messagePatient)
+      title: "Dừng theo dõi sức khỏe",
+      content: `BS. ${exist.doctor.fullName} đã dừng theo dõi sức khỏe với bạn.`,
+      category: "HEARTLOGBOOK",
+      date: {
+        day: new Date().getDate(),
+        month: new Date().getMonth() + 1,
+        year: new Date().getFullYear(),
+      },
+      attached: exist._id,
+      user: exist.patient._id,
+    };
+    noticeService.create(messagePatient);
     return rs;
   }
   async update(data) {
-    const exist = await healthLogBookModel.findById(data._id);
+    const exist = await healthLogBookModel.findById(
+      data._id
+    );
     if (!exist) {
       return 0;
     }
-    const rs = await healthLogBookModel.findByIdAndUpdate(exist._id,data, {
-      new: true,
-    });
+    const rs = await healthLogBookModel.findByIdAndUpdate(
+      exist._id,
+      data,
+      {
+        new: true,
+      }
+    );
     return rs;
   }
   async getAll() {
@@ -362,8 +382,14 @@ class HealthLogBookService {
     return rs;
   }
   async findByNextWeek(data) {
-    const startOfNextWeek = moment().add(1, "weeks").startOf("week").toDate();
-    const endOfNextWeek = moment().add(1, "weeks").endOf("week").toDate();
+    const startOfNextWeek = moment()
+      .add(1, "weeks")
+      .startOf("week")
+      .toDate();
+    const endOfNextWeek = moment()
+      .add(1, "weeks")
+      .endOf("week")
+      .toDate();
     const start = startOfNextWeek.getDate();
     const end = endOfNextWeek.getDate();
     const rs = await healthLogBookModel.find({
@@ -405,122 +431,169 @@ class HealthLogBookService {
     return rs;
   }
   async updateBloodPressure(data) {
-    const exist = await healthLogBookModel.findById(data._id);
+    const exist = await healthLogBookModel.findById(
+      data._id
+    );
     if (!exist) {
       return 0;
     }
-    if(data.status_bloodPressure.status_type !== "NORMAL") {
+    exist.disMon.push(data.disMonItem);
+    if (
+      data.status_bloodPressure.status_type !== "NORMAL"
+    ) {
       const messageDoctor = {
         title: "Cảnh báo sức khỏe",
         content: `Huyết áp của bệnh nhân ${exist.patient.fullName} đang trong tình trạng ${data.status_bloodPressure.message}. Bác sĩ hãy chú ý đến bệnh nhân này!!!`,
         category: "HEARTLOGBOOK",
         date: {
-           day: new Date().getDate(),
+          day: new Date().getDate(),
           month: new Date().getMonth() + 1,
           year: new Date().getFullYear(),
         },
         attached: data._id,
         user: exist.doctor._id,
       };
-      noticeService.create(messageDoctor)
+      mailService.warning(exist.doctor.email, "Cảnh báo sức khỏe", `Huyết áp của bệnh nhân ${exist.patient.fullName} đang trong tình trạng ${data.status_bloodPressure.message}. Bác sĩ hãy chú ý đến bệnh nhân này!!!`, "");
+      noticeService.create(messageDoctor);
+      exist.status_bloodPressure =
+        data.status_bloodPressure;
+    } else {
+      exist.status_bloodPressure = null;
     }
-    exist.disMon.push(data.disMonItem);
-    exist.status_bloodPressure.push(data.status_bloodPressure);
-    const rs = await healthLogBookModel.findByIdAndUpdate(exist._id, exist, {
-      new: true,
-    });
+    const rs = await healthLogBookModel.findByIdAndUpdate(
+      exist._id,
+      exist,
+      {
+        new: true,
+      }
+    );
     return rs;
   }
   async updateTemperature(data) {
-    const exist = await healthLogBookModel.findById(data._id);
+    const exist = await healthLogBookModel.findById(
+      data._id
+    );
     if (!exist) {
       return 0;
     }
-    if(data.status_temperature.status_type !== "NORMAL") {
+    exist.disMon.push(data.disMonItem);
+    if (data.status_temperature.status_type !== "NORMAL") {
       const messageDoctor = {
         title: "Cảnh báo sức khỏe",
         content: `Nhiệt độ cơ thể của bệnh nhân ${exist.patient.fullName} đang trong tình trạng ${data.status_temperature.message}. Bác sĩ hãy chú ý đến bệnh nhân này!!!`,
         category: "HEARTLOGBOOK",
         date: {
-           day: new Date().getDate(),
+          day: new Date().getDate(),
           month: new Date().getMonth() + 1,
           year: new Date().getFullYear(),
         },
         attached: data._id,
         user: exist.doctor._id,
       };
-      noticeService.create(messageDoctor)
+      mailService.warning(exist.doctor.email, "Cảnh báo sức khỏe", `Nhiệt độ cơ thể của bệnh nhân ${exist.patient.fullName} đang trong tình trạng ${data.status_temperature.message}. Bác sĩ hãy chú ý đến bệnh nhân này!!!`, "");
+      noticeService.create(messageDoctor);
+      exist.status_temperature = data.status_temperature;
+    } else {
+      exist.status_temperature = null;
     }
-    exist.disMon.push(data.disMonItem);
-    exist.status_temperature.push(data.status_temperature);
-    const rs = await healthLogBookModel.findByIdAndUpdate(exist._id, exist, {
-      new: true,
-    });
+    const rs = await healthLogBookModel.findByIdAndUpdate(
+      exist._id,
+      exist,
+      {
+        new: true,
+      }
+    );
     return rs;
   }
   async updateHeartRate(data) {
-    const exist = await healthLogBookModel.findById(data._id);
+    const exist = await healthLogBookModel.findById(
+      data._id
+    );
     if (!exist) {
       return 0;
     }
-     if(data.status_heartRate.status_type !== "NORMAL") {
+
+    exist.disMon.push(data.disMonItem);
+    if (data.status_heartRate.status_type !== "NORMAL") {
       const messageDoctor = {
         title: "Cảnh báo sức khỏe",
         content: `Nhịp tim của bệnh nhân ${exist.patient.fullName} đang trong tình trạng ${data.status_heartRate.message}. Bác sĩ hãy chú ý đến bệnh nhân này!!!`,
         category: "HEARTLOGBOOK",
         date: {
-           day: new Date().getDate(),
+          day: new Date().getDate(),
           month: new Date().getMonth() + 1,
           year: new Date().getFullYear(),
         },
         attached: data._id,
         user: exist.doctor._id,
       };
-      noticeService.create(messageDoctor)
+      mailService.warning(exist.doctor.email, "Cảnh báo sức khỏe", `Nhịp tim của bệnh nhân ${exist.patient.fullName} đang trong tình trạng ${data.status_heartRate.message}. Bác sĩ hãy chú ý đến bệnh nhân này!!!`, "");
+      noticeService.create(messageDoctor);
+      exist.status_heartRate = data.status_heartRate;
+    } else {
+      exist.status_heartRate = null;
     }
-    exist.disMon.push(data.disMonItem);
-    exist.status_heartRate.push(data.status_heartRate);
-    const rs = await healthLogBookModel.findByIdAndUpdate(exist._id, exist, {
-      new: true,
-    });
+
+    const rs = await healthLogBookModel.findByIdAndUpdate(
+      exist._id,
+      exist,
+      {
+        new: true,
+      }
+    );
     return rs;
   }
   async updateBMI(data) {
-    const exist = await healthLogBookModel.findById(data._id);
+    const exist = await healthLogBookModel.findById(
+      data._id
+    );
     if (!exist) {
       return 0;
     }
-     if(data.status_bmi.status_type !== "NORMAL") {
+    exist.disMon.push(data.disMonItem);
+    if (data.status_bmi.status_type !== "NORMAL") {
       const messageDoctor = {
         title: "Cảnh báo sức khỏe",
         content: `Chỉ số BMI của bệnh nhân ${exist.patient.fullName} đang trong tình trạng ${data.status_bmi.message}. Bác sĩ hãy chú ý đến bệnh nhân này!!!`,
         category: "HEARTLOGBOOK",
         date: {
-           day: new Date().getDate(),
+          day: new Date().getDate(),
           month: new Date().getMonth() + 1,
           year: new Date().getFullYear(),
         },
         attached: data._id,
         user: exist.doctor._id,
       };
-      noticeService.create(messageDoctor)
+      mailService.warning(exist.doctor.email, "Cảnh báo sức khỏe", `Chỉ số BMI của bệnh nhân ${exist.patient.fullName} đang trong tình trạng ${data.status_bmi.message}. Bác sĩ hãy chú ý đến bệnh nhân này!!!`, "");
+      noticeService.create(messageDoctor);
+      exist.status_bmi = data.status_bmi;
+    } else {
+      exist.status_bmi = null;
     }
-    exist.disMon.push(data.disMonItem);
-    exist.status_bmi.push(data.status_bmi);
-    const rs = await healthLogBookModel.findByIdAndUpdate(exist._id, exist, {
-      new: true,
-    });
+    const rs = await healthLogBookModel.findByIdAndUpdate(
+      exist._id,
+      exist,
+      {
+        new: true,
+      }
+    );
     return rs;
   }
-   async updateSymptom(data) {
-    const exist = await healthLogBookModel.findById(data._id);
+  async updateSymptom(data) {
+    const exist = await healthLogBookModel.findById(
+      data._id
+    );
     if (!exist) {
       return 0;
     }
     exist.disMon.push(data.disMonItem);
-    const rs = await healthLogBookModel.findByIdAndUpdate(exist._id, exist, {
-      new: true,
-    });
+    const rs = await healthLogBookModel.findByIdAndUpdate(
+      exist._id,
+      exist,
+      {
+        new: true,
+      }
+    );
     return rs;
   }
 }

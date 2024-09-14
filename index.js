@@ -37,6 +37,7 @@ dotenv.config();
 routes(app);
 db.connectAppointment();
 notify.startDepointmentFetch();
+notify.startWeeklyLogBookFetch();
 expiredLogBook.startLogBookFetch();
 expiredAppointment.startDepointmentFetch();
 const server = http.createServer(app);

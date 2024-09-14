@@ -19,6 +19,8 @@ class AppointmentResponse {
         price: dataPrice.price,
         type: dataPrice.type,
       },
+      height: dataAp.height,
+      temperature: dataAp.temperature
     };
     return data;
   }

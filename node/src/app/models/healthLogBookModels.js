@@ -70,44 +70,36 @@ const healthLogBooks = new Schema({
     default: [],
   },
   status_heartRate: {
-    type: [
-      {
-        _id: false,
-        status_type: String,
-        message: String,   
-      }  
-    ],
-    default: [],
+    type: {
+      _id: false,
+      status_type: String,
+      message: String,
+    },
+    default: null,
   },
   status_bmi: {
-    type: [
-      { 
-        _id: false,
-        status_type: String,
-        message: String,
-      }   
-    ],
-    default: [],
+    type: {
+      _id: false,
+      status_type: String,
+      message: String,
+    },
+    default: null,
   },
   status_bloodPressure: {
-    type: [
-      {
-        _id: false,
-        status_type: String,
-        message: String,   
-      }
-    ],
-    default: [],
+    type: {
+      _id: false,
+      status_type: String,
+      message: String,
+    },
+    default: null,
   },
   status_temperature: {
-    type: [
-      {
-        _id: false,
-        status_type: String,
-        message: String,   
-      }
-    ],
-    default: [],
+    type: {
+      _id: false,
+      status_type: String,
+      message: String,
+    },
+    default: null,
   },
   status: {
     type: {
@@ -118,10 +110,13 @@ const healthLogBooks = new Schema({
     default: { status_type: "", message: "" },
   },
   dateStop: {
-    day: {type: Number, default: 0},
-    month: {type: Number, default: 0},
-    year: {type: Number, default: 0},
-    time: {type: String, default: ""},
+    day: { type: Number, default: 0 },
+    month: { type: Number, default: 0 },
+    year: { type: Number, default: 0 },
+    time: { type: String, default: "" },
   },
 });
-module.exports = mongoose.model("healthLogBooks", healthLogBooks);
+module.exports = mongoose.model(
+  "healthLogBooks",
+  healthLogBooks
+);

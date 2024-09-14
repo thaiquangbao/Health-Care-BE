@@ -40,8 +40,10 @@ const medicalRecords = new Schema({
   },
   appointment: { type: Schema.Types.ObjectId },
   images: { type: [String], default: [] },
-  healthRate: { type: Number, default: 0 },
+  healthRate: { type: String, default: "" },
   weight: { type: Number, default: 0 },
+  height: { type: Number, default: 0 },
+  temperature: { type: Number, default: 0 },
   bloodPressure: { type: String, default: "" },
 });
 module.exports = mongoose.model(
