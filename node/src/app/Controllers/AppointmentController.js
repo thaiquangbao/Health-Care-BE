@@ -240,5 +240,35 @@ class AppointmentController {
       return res.status(500).json(error);
     }
   }
+  async createAppointmentLogBook(req, res) {
+    try {
+      const data = req.body;
+      const rs = await appointmentService.createAppointmentLogBook(
+        data
+      );
+      if (rs === 0) {
+        return res
+          .status(404)
+          .json("Không tìm thấy hồ sơ bác sĩ!!!");
+      }
+      if (rs === 2) {
+        return res
+          .status(404)
+          .json("Không tìm thấy người dùng!!!");
+      }
+      if (rs === 3) {
+        return res
+          .status(404)
+          .json("Không tìm thấy danh sách giá!!!");
+      }
+      const accessToken = req.headers["accesstoken"];
+      const refreshToken = req.headers["refreshtoken"];
+      const token = { accessToken, refreshToken };
+      emitter.emit("doctor-appointment-logbook.submit", rs);
+      return res.status(200).json({data: rs, token});
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  }
 }
 module.exports = new AppointmentController();

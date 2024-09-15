@@ -45,6 +45,11 @@ const medicalRecords = new Schema({
   height: { type: Number, default: 0 },
   temperature: { type: Number, default: 0 },
   bloodPressure: { type: String, default: "" },
+  reExaminationDate: {
+    day: { type: Number, default: 0 },
+    month: { type: Number, default: 0 },
+    year: { type: Number, default: 0 },
+  }
 });
 module.exports = mongoose.model(
   "medicalRecords",

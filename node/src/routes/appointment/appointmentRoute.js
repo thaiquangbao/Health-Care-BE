@@ -3,6 +3,7 @@ const useRouter = express.Router();
 const appointmentController = require("../../app/Controllers/AppointmentController");
 const customerController = require("../../app/Controllers/CustomerController");
 const middleWareToken = require("../../app/middlewares/MiddleWareToken");
+useRouter.post("/create-appointment-logbook", middleWareToken.validateToken ,appointmentController.createAppointmentLogBook);
 useRouter.post("/save/customer", customerController.create);
 useRouter.get("/get-one/:id", appointmentController.getOne);
 useRouter.post(

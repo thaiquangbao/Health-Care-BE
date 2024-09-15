@@ -381,5 +381,61 @@ class AppointmentService {
     );
     return appointmentRespone.toAppointment(rs, data);
   }
+  async createAppointmentLogBook(appointmentData) {
+    const existRecord = await doctorRecordModel.findById(
+      appointmentData.doctor_record_id
+    );
+      if (!existRecord) {
+        return 0;
+      }
+
+      const data = { _id: appointmentData.patient };
+      const existPatient =
+        await patientService.getPatientById(data);
+      if (!existPatient) {
+        return 2;
+      }
+      const existPriceList = await priceListService.getOne(
+        appointmentData.price_list
+      );
+      if (!existPriceList) {
+        return 3;
+      }
+      appointmentData.patient =
+        userRequest.toPatientAppointment(existPatient);
+      const appointment = new appointmentModel(
+        appointmentData
+      );
+      appointment.doctor_record_id = existRecord._id;
+      await appointment.save();
+      const messagePatient = {
+      title: "Đặt lịch hẹn",
+      content: `BS. ${existRecord.doctor.fullName} đã tạo lịch hẹn khám định kỳ với bạn vào lúc ${appointmentData.appointment_date.time} ngày ${appointmentData.appointment_date.day}/${appointmentData.appointment_date.month}/${appointmentData.appointment_date.year}. Bấm vào để xem thông tin chi tiết!!!`,
+      category: "APPOINTMENT",
+      date: {
+        day: appointmentData.appointment_date.day,
+        month: appointmentData.appointment_date.month,
+        year: appointmentData.appointment_date.year,
+      },
+      attached: appointment._id,
+      user: appointmentData.patient,
+    };
+    const messageDoctor = {
+      title: "Đặt lịch hẹn",
+      content: `Bác sĩ đã tạo lịch hẹn khám định kỳ thành công với bệnh nhân ${existPatient.fullName}vào lúc ${appointmentData.appointment_date.time} ngày ${appointmentData.appointment_date.day}/${appointmentData.appointment_date.month}/${appointmentData.appointment_date.year}.`,
+      category: "APPOINTMENT",
+      date: {
+        day: appointmentData.appointment_date.day,
+        month: appointmentData.appointment_date.month,
+        year: appointmentData.appointment_date.year,
+      },
+      attached: appointment._id,
+      user: existRecord.doctor._id,
+    };
+    noticeService.create(messagePatient);
+    noticeService.create(messageDoctor);
+    
+    return appointment;
+  }
 }
 module.exports = new AppointmentService();

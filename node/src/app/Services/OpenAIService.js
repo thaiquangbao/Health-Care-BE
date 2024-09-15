@@ -39,7 +39,7 @@ class OpenAIService {
           {
             role: "system",
             content: 
-            `Hãy trả lời bằng tiếng việt \nDựa vào thông tin này ${rs.message} hãy đưa ra lời khuyên\n- Lời khuyên: \n(Hãy đưa ra lời khuyên nếu bình thường thì làm sao để duy trì (ngắn gọn thôi), nếu thấp hoặc cao thì làm sao để cải thiện), No Yapping`,
+            `Hãy trả lời bằng tiếng việt \nDựa vào thông tin này ${rs.message} hãy đưa ra lời khuyên\n- Lời khuyên: \n(Hãy đưa ra lời khuyên nếu bình thường thì làm sao để duy trì (ngắn gọn thôi), nếu thấp hoặc cao thì làm sao để cải thiện), Nếu như lời khuyên bắt đầu bằng các số hoc85 dấu gạch đầu dòng thì tự xuống hàng, No Yapping`,
           },
         ],
         model: "gpt-3.5-turbo",

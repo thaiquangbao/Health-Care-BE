@@ -1,6 +1,4 @@
 
-
-Chỉnh lại thông báo đặt lịch set up khám định kỳ
 ---
 mobile
 smart contract
@@ -14,12 +12,14 @@ Cảnh báo sức khỏe(ok)
 xem hồ sơ bệnh án bệnh nhân của tôi (ok)
 chiệu trứng ghi chú riêng (ok)
 customer and user gui ho so qua gmail(ok)
+Chỉnh lại thông báo đặt lịch set up khám định kỳ(ok)
 Chuyển bác sĩ xong thì tắt form(ok)
 Trong quá trình chờ bác sĩ accept thì không dc dki bác sĩ theo dõi khác(ok)
 fix lại khi patient vào meet thì khi out phòng là out (ok)
 meet định kỳ (ok)
 load chart donut(ok)
 xem detail theo doi suc khoe (ok)
+thêm chổ nhập ngày tái khám(ok)
 set time hết khám lâu dài (ok)
 thiếu status sau khi khám hoàn tất (ok)
 AI (ok)
