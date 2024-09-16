@@ -39,7 +39,7 @@ class OpenAIService {
           {
             role: "system",
             content: 
-            `Hãy trả lời bằng tiếng việt \nDựa vào thông tin này ${rs.message} hãy đưa ra lời khuyên\n- Lời khuyên: \n(Hãy đưa ra lời khuyên nếu bình thường thì làm sao để duy trì (ngắn gọn thôi), nếu thấp hoặc cao thì làm sao để cải thiện), Nếu như lời khuyên bắt đầu bằng các số hoc85 dấu gạch đầu dòng thì tự xuống hàng, No Yapping`,
+            `Hãy trả lời bằng tiếng việt \nDựa vào thông tin này ${rs.message} hãy đưa ra lời khuyên\n- Lời khuyên: \n(Hãy đưa ra lời khuyên nếu bình thường thì làm sao để duy trì (ngắn gọn thôi), nếu thấp hoặc cao thì làm sao để cải thiện), Nếu như lời khuyên bắt đầu bằng các số hoặc dấu gạch đầu dòng thì tự xuống hàng, No Yapping`,
           },
         ],
         model: "gpt-3.5-turbo",
@@ -63,7 +63,7 @@ class OpenAIService {
                   "Hãy trả lời bằng tiếng việt " + "\n" + 
                   `Dựa vào thông tin này ${rs.message} hãy đưa ra lời khuyên` + "\n" +
                   "- Lời khuyên: " + "\n" +
-                  "(Hãy đưa ra lời khuyên nếu nhẹ cân thì cần cung cấp những gì và chế độ sống ra sao, nếu bình thường thì làm sao để duy trì (ngắn gọn thôi) hoặc bị béo phì thì làm sao để cải thiện), No Yapping",
+                  "(Hãy đưa ra lời khuyên nếu nhẹ cân thì cần cung cấp những gì và chế độ sống ra sao, nếu bình thường thì làm sao để duy trì (ngắn gọn thôi) hoặc bị béo phì thì làm sao để cải thiện), Nếu như lời khuyên bắt đầu bằng các số hoặc dấu gạch đầu dòng thì tự xuống hàng, No Yapping",
               },
             ],
             model: "gpt-3.5-turbo",
@@ -84,8 +84,11 @@ class OpenAIService {
       messages: [
         {
           role: "system",
-          content: `Hãy trả lời bằng tiếng việt \nDựa vào thông tin này nhịp tim ${rs.message}hãy đưa ra lời khuyên\n- Lời khuyên: \n(Hãy đưa ra lời khuyên nếu nhịp tim bình thường thì làm sao để duy trì (hãy tự mình đưa ra ý kiến của mình, ngắn gọn thôi), nếu nhịp tim không bình thường thì làm sao để cải thiện (hãy tự mình đưa ra ý kiến)), No Yapping`,
+          content: `Hãy trả lời bằng tiếng việt \n
+          Dựa vào thông tin này nhịp tim ${rs.message}hãy đưa ra lời khuyên\n- Lời khuyên: \n(Hãy đưa ra lời khuyên nếu nhịp tim bình thường thì làm sao để duy trì (hãy tự mình đưa ra ý kiến của mình, ngắn gọn thôi), nếu nhịp tim không bình thường thì làm sao để cải thiện (hãy tự mình đưa ra ý kiến)),
+          Nếu như lời khuyên bắt đầu bằng các số hoặc dấu gạch đầu dòng thì tự xuống hàng, No Yapping`,
         },
+
       ],
       model: "gpt-3.5-turbo",
     });
@@ -110,7 +113,7 @@ class OpenAIService {
                   "Hãy trả lời bằng tiếng việt " + "\n" + 
                   `Dựa vào thông tin này nhiệt độ cơ thể ${rs.message} °C  hãy đưa ra lời khuyên` + "\n" +
                   "- Lời khuyên: " + "\n" +
-                  "(Hãy đưa ra lời khuyên nếu nhiệt độ cơ thể bình thường làm sao để duy trì(ngắn gọn thôi), nếu nhiệt độ cơ thể cao hoặc nhiệt độ cơ thể thấp thì làm sao để cải thiện), No Yapping",
+                  "(Hãy đưa ra lời khuyên nếu nhiệt độ cơ thể bình thường làm sao để duy trì(ngắn gọn thôi), nếu nhiệt độ cơ thể cao hoặc nhiệt độ cơ thể thấp thì làm sao để cải thiện),Nếu như lời khuyên bắt đầu bằng các số hoặc dấu gạch đầu dòng thì tự xuống hàng, No Yapping",
               },
             ],
             model: "gpt-3.5-turbo",
