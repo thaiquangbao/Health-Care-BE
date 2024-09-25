@@ -11,15 +11,7 @@ class PatientService {
     if (!existPatient) {
       return 0;
     }
-    if (dataPatient.email) {
-      const existEmail = await userModel.findOne({
-        email: dataPatient.email,
-        _id: { $ne: existPatient._id },
-      });
-      if (existEmail) {
-        return 3;
-      }
-    }
+    
     dataPatient.role = "USER";
     const existPhone = await userModel.findOne({
       phone: dataPatient.phone,
@@ -135,6 +127,31 @@ class PatientService {
       { new: true }
     );
     return await userResponse.toUserAuth(updated);
+  }
+  async updateEmail(dataPatient){
+    const existPatient = await userModel.findById(
+      dataPatient._id
+    );
+
+    if (!existPatient) {
+      return 0;
+    }
+    const existEmail = await userModel.findOne({ email: dataPatient.email, _id: { $ne: existPatient._id }, });
+    if (existEmail) {
+      return 2;
+    }
+    dataPatient.role = "USER";
+    const updated = await userModel.findByIdAndUpdate(
+      existPatient._id,
+      { $set: 
+        {
+          email: dataPatient.email
+        }  
+      },
+      { new: true }
+    );
+    const patient = await userResponse.toUserAuth(updated);
+    return patient;
   }
 }
 module.exports = new PatientService();

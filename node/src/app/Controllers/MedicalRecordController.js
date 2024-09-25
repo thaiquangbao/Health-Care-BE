@@ -84,9 +84,14 @@ class MedicalRecordController {
   }
   async getAll(req, res) {
     try {
-      const rs = await medicalRecordService.getAll();
+      let rs = await medicalRecordService.getAll();
+      rs = JSON.parse(JSON.stringify(rs, (key, value) =>
+        typeof value === 'bigint' ? value.toString() : value
+    ));
       return res.status(200).json(rs);
     } catch (error) {
+      console.log(error);
+      
       return res.status(500).json(error);
     }
   }

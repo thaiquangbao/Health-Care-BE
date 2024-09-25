@@ -16,9 +16,7 @@ class PatientController {
           .status(400)
           .json("Số điện thoại đã tồn tại!!!");
       }
-      if (rs === 3) {
-        return res.status(400).json("Email đã tồn tại!!!");
-      }
+     
       return res.status(200).json({
         data: rs,
         token: { accessToken, refreshToken },
@@ -158,6 +156,32 @@ class PatientController {
           .status(404)
           .json("Người dùng không tồn tại!!!");
       }
+      return res.status(200).json({
+        data: rs,
+        token: { accessToken, refreshToken },
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json("Lỗi hệ thống!!!");
+    }
+  }
+  async updateEmailPatient(req, res) {
+    try {
+      const data = req.body;
+      const accessToken = req.headers["accesstoken"];
+      const refreshToken = req.headers["refreshtoken"];
+      const rs = await patientService.updateEmail(data);
+      if (rs === 0) {
+        return res
+          .status(404)
+          .json("Người dùng không tồn tại!!!");
+      }
+      if (rs === 2) {
+        return res
+          .status(400)
+          .json("Địa chỉ email đã tồn tại!!!");
+      }
+     
       return res.status(200).json({
         data: rs,
         token: { accessToken, refreshToken },

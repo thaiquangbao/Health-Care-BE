@@ -8,6 +8,7 @@ const expiredLogBook = require("./node/src/app/Services/ExpiredLogBookService");
 const expiredAppointment= require("./node/src/app/Services/ExpiredAppointmentService");
 const moment = require("moment-timezone");
 const compression = require("compression");
+const bodyParser = require('body-parser');
 const http = require("http");
 const cors = require("cors");
 const { default: helmet } = require("helmet");
@@ -32,6 +33,9 @@ app.use(morgan("dev"));
 app.use(helmet());
 app.use(compression());
 app.use(cors(corsOptions));
+// Tăng giới hạn kích thước yêu cầu lên 50MB
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.json());
 dotenv.config();
 routes(app);

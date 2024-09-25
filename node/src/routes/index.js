@@ -14,7 +14,9 @@ const imageRoute = require("./upload-image");
 const commentRoute = require("./comment/commentRoute");
 const noticeRoute = require("./notice/noticeRoute");
 const healthLogBookRoute = require("./healthBook/healthLogBookRoute");
+const paymentRoute = require("./payment");
 function routes(app) {
+  app.use("/payments", paymentRoute);
   app.use("/healthLogBooks", healthLogBookRoute);
   app.use("/upload-image", imageRoute);
   app.use("/notices", noticeRoute);

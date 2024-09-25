@@ -48,15 +48,6 @@ class DoctorService {
     if (existPhone) {
       return 2;
     }
-    if (dataDoctor.email) {
-      const existEmail = await userModel.findOne({
-        email: dataDoctor.email,
-        _id: { $ne: existDoctor._id },
-      });
-      if (existEmail) {
-        return 3;
-      }
-    }
     existDoctor.role = "DOCTOR";
     const updated = await userModel.findByIdAndUpdate(
       existDoctor._id,
@@ -185,6 +176,37 @@ class DoctorService {
       existDoctor._id,
       image
     );
+    return await doctorResponse.toDoctorAuth(updated);
+  }
+  async updateEmail(dataDoctor){
+    const existDoctor = await userModel.findOne({
+      $and: [{ _id: dataDoctor._id }, { role: "DOCTOR" }],
+    });
+
+    if (!existDoctor) {
+      return 0;
+    }
+    const existEmail = await userModel.findOne({ email: dataDoctor.email, _id: { $ne: existDoctor._id }, });
+    if (existEmail) {
+      return 2;
+    }
+    existDoctor.role = "DOCTOR";
+    const updated = await userModel.findByIdAndUpdate(
+      existDoctor._id,
+      { $set: 
+        {
+          email: dataDoctor.email
+        }  
+      },
+      { new: true }
+    );
+    const updateRecord =
+      await doctorRecordService.updateDoctor(
+        doctorRequest.toDoctorRecord(updated)
+      );
+    if (!updateRecord) {
+      return "Cập nhật hồ sơ bác sĩ không thành công";
+    }
     return await doctorResponse.toDoctorAuth(updated);
   }
 }

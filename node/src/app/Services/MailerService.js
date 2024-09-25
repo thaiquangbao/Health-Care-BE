@@ -1,5 +1,6 @@
 const nodemailer = require("nodemailer");
 const medicalRecordService = require("../Services/MedicalRecordService");
+const smartContract = require("../Services/SmartContractService");
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 587,
@@ -39,14 +40,18 @@ class MailerService {
     }
   }
    async mailMedicalRecord(id) {
+   
     const data = await medicalRecordService.getById(id);
+   
+    const hastTX = await smartContract.saveMedical(data);
+    await medicalRecordService.updateBlockChain(data._id, hastTX);
     const send = await transporter.sendMail({
       to: data.patient.email,
       from: "vutienduc26122002@gmail.com",
       subject: "Phiếu khám sức khỏe",
       html: `Phiếu khám sức khỏe vào lúc ${data?.date.time} ngày ${data?.date.day}/${data?.date.month}/${data?.date.year} <br>
         <!DOCTYPE html>
-<html>
+<html>  
   <head>
     <meta charset="UTF-8" />
     <title>Hồ Sơ Bệnh Án</title>
@@ -141,11 +146,12 @@ class MailerService {
           <span class="label">Ngày Khám:</span> (${data.date.time}) ngày ${data.date.day}/${data.date.month}/${data.date.year}
         </div>
         <div class="info">
-          <span class="label">Nhịp tim:</span> ${data.healthRate !== 0 ? data.healthRate + "bpm" : "Không"} 
+          <span class="label">Nhịp tim:</span> ${data.healthRate !== 0 ? data.healthRate + " bpm" : "Không"} 
         </div>
         <div class="info">
-          <span class="label">Huyết áp</span> ${data.bloodPressure !== "" ? data.bloodPressure + "mmHg" : "Không"} 
+          <span class="label">Huyết áp:</span> ${data.bloodPressure !== "" ? data.bloodPressure + " mmHg" : "Không"} 
         </div>
+        
       </div>  
       
       <div class="doctor-info">
@@ -154,7 +160,7 @@ class MailerService {
           <strong>Bác sĩ:</strong> BS.Dương Nguyễn Viết Hương
         </div>
         <div class="info">
-          <span class="label">Ngày tái khám:</span> Không
+          <span class="label">Ngày tái khám:</span> ${data.reExaminationDate.month !== 0 ? `ngày ${data?.reExaminationDate.day}/${data?.reExaminationDate.month}/${data?.reExaminationDate.year}`: "Không"} 
         </div>
         <div class="info">
           <span class="label">Nhiệt độ:</span> ${data.temperature !== 0 ? data.temperature + "°C" : "Không"}

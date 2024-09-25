@@ -27,7 +27,8 @@
     "multer": "^1.4.5-lts.1",
     "node-cron": "^3.0.3",
     "nodemailer": "^6.9.14",
-    "openai": "^4.54.0"
+    "openai": "^4.54.0",
+    "web3": "^4.13.0"
   },
   "devDependencies": {
     "@types/compression": "^1.7.5",

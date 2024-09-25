@@ -6,7 +6,16 @@ const patientController = require("../../app/Controllers/PatientController");
 const doctorController = require("../../app/Controllers/DoctorController");
 const upload = require("../../uploads/upload");
 //doctor
-
+useRouter.post(
+  "/update-email/doctor",
+  middleWareToken.validateToken,
+  doctorController.updateEmailDoctor
+);
+useRouter.post(
+  "/update-email/User",
+  middleWareToken.validateToken,
+  patientController.updateEmailPatient
+);
 useRouter.put(
   "/update-password/doctor/:id",
   middleWareToken.validateToken,

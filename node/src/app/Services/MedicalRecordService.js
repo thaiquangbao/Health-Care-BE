@@ -2,6 +2,7 @@ const medicalRecordModel = require("../models/medicalRecordModels");
 const patientService = require("./AuthService/PatientService");
 const doctorService = require("./AuthService/DoctorService");
 const medicalRecordDto = require("../Dtos/MedicalRecord/MedicalRecordDto");
+const smartContract = require("./SmartContractService");
 class MedicalRecordService {
   async save(medicalRecordData) {
     const data = { _id: medicalRecordData.patient };
@@ -27,8 +28,10 @@ class MedicalRecordService {
       medicalRecordData
     );
     await medicalRecord.save();
+    
     return medicalRecord;
   }
+ 
   async update(medicalRecordData) {
     const exist = await medicalRecordModel.findById(
       medicalRecordData._id
@@ -41,6 +44,8 @@ class MedicalRecordService {
       medicalRecordData,
       { new: true }
     );
+   
+   
     return rs;
   }
   async delete(id) {
@@ -73,6 +78,23 @@ class MedicalRecordService {
     const rs = await medicalRecordModel.find();
     return rs;
   }
+  // async findByPatient(patient) {
+  //   const rs = await medicalRecordModel.find({
+  //     "patient._id": patient,
+  //   });
+  //   const result = rs.filter(
+  //     (item) =>
+  //       item.diagnosisDisease &&
+  //       item.diagnosisDisease.trim() !== "" &&
+  //       item.medical.length > 0
+  //   );
+  //   const validData = await Promise.all(result.map(async (item) => {
+  //     const check = await smartContract.checkMedicalRecord(item.blockChain.hashTX);
+  //     return check && check._id === item.id ? item : null; // Chỉ trả về item nếu nó hợp lệ
+  //   }));
+    
+  // return validData.filter(item => item !== null); // Lọc ra các item hợp lệ
+  // }
   async findByPatient(patient) {
     const rs = await medicalRecordModel.find({
       "patient._id": patient,
@@ -83,7 +105,9 @@ class MedicalRecordService {
         item.diagnosisDisease.trim() !== "" &&
         item.medical.length > 0
     );
-    return result;
+
+    
+  return result
   }
   async findByDoctor(doctor) {
     const rs = await medicalRecordModel.find({
@@ -112,6 +136,18 @@ class MedicalRecordService {
       return 0;
     }
     return exist;
+  }
+  async updateBlockChain(id, hashTX) {
+    const exist = await medicalRecordModel.findById(id);
+    if (!exist) {
+      return 0;
+    }
+    const rs = await medicalRecordModel.findByIdAndUpdate(
+      exist._id,
+      { $set: { 'blockChain.hashTX': hashTX} },
+      { new: true }
+    );
+    return rs;
   }
 }
 module.exports = new MedicalRecordService();

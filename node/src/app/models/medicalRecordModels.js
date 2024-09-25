@@ -49,6 +49,9 @@ const medicalRecords = new Schema({
     day: { type: Number, default: 0 },
     month: { type: Number, default: 0 },
     year: { type: Number, default: 0 },
+  },
+  blockChain: {
+    hashTX: { type: String, default: "" },
   }
 });
 module.exports = mongoose.model(
