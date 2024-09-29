@@ -121,7 +121,7 @@ class OpenAIService {
         );
         return { status: rs.status ,comment: rs.message , advice: completion.choices[0].message.content};
   } 
-
+  
 }
 module.exports = new OpenAIService();
 // 

@@ -44,6 +44,8 @@ class MailerService {
     const data = await medicalRecordService.getById(id);
    
     const hastTX = await smartContract.saveMedical(data);
+    console.log("hastTX", hastTX);
+    
     await medicalRecordService.updateBlockChain(data._id, hastTX);
     const send = await transporter.sendMail({
       to: data.patient.email,
