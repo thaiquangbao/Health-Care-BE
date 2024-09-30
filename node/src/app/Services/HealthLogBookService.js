@@ -2,7 +2,7 @@ const healthLogBookModel = require("../models/healthLogBookModels");
 const roomsService = require("./ChatService/RoomsService");
 const messageService = require("./ChatService/MessagesService");
 const noticeService = require("./NoticeService");
-const mailService = require("./MailerService")
+const mailService = require("./MailerService");
 const moment = require("moment-timezone");
 moment.tz.setDefault("Asia/Ho_Chi_Minh");
 const emitter = require("../../config/Emitter/emitter");
@@ -369,14 +369,62 @@ class HealthLogBookService {
     return rs;
   }
   async findByWeak(data) {
-    const startOfWeek = moment().startOf("week").toDate();
-    const endOfWeek = moment().endOf("week").toDate();
-    const start = startOfWeek.getDate() + 1;
-    const end = endOfWeek.getDate() + 1;
+    const startOfWeek = moment
+      .tz("Asia/Ho_Chi_Minh")
+      .startOf("week")
+      .toDate();
+    const endOfWeek = moment
+      .tz("Asia/Ho_Chi_Minh")
+      .endOf("week")
+      .toDate();
+    const startDay = startOfWeek.getDate() + 2;
+    const startMonth = startOfWeek.getMonth() + 1; // Tháng trong JS bắt đầu từ 0
+    const startYear = startOfWeek.getFullYear();
+
+    const endDay = endOfWeek.getDate() + 1;
+    const endMonth = endOfWeek.getMonth() + 1;
+    const endYear = endOfWeek.getFullYear();
+    console.log(startDay, endDay);
+
     const rs = await healthLogBookModel.find({
-      $and: [
-        { "doctor._id": data.doctor },
-        { "date.day": { $gte: start, $lte: end } },
+      "doctor._id": data.doctor,
+      $or: [
+        // Trường hợp trong cùng 1 năm và tháng
+        {
+          "date.year": startYear,
+          "date.month": startMonth,
+          "date.day": {
+            $gte: startDay,
+            $lte: endDay,
+          },
+        },
+        // Trường hợp khác năm hoặc khác tháng (trường hợp tuần kéo dài qua tháng/năm)
+        {
+          $and: [
+            {
+              "date.year": {
+                $gte: startYear,
+                $lte: endYear,
+              },
+            },
+            {
+              $or: [
+                {
+                  "date.month": startMonth,
+                  "date.day": {
+                    $gte: startDay,
+                  },
+                },
+                {
+                  "date.month": endMonth,
+                  "date.day": {
+                    $lte: endDay,
+                  },
+                },
+              ],
+            },
+          ],
+        },
       ],
     });
     return rs;
@@ -453,7 +501,12 @@ class HealthLogBookService {
         attached: data._id,
         user: exist.doctor._id,
       };
-      mailService.warning(exist.doctor.email, "Cảnh báo sức khỏe", `Huyết áp của bệnh nhân ${exist.patient.fullName} đang trong tình trạng ${data.status_bloodPressure.message}. Bác sĩ hãy chú ý đến bệnh nhân này!!!`, "");
+      mailService.warning(
+        exist.doctor.email,
+        "Cảnh báo sức khỏe",
+        `Huyết áp của bệnh nhân ${exist.patient.fullName} đang trong tình trạng ${data.status_bloodPressure.message}. Bác sĩ hãy chú ý đến bệnh nhân này!!!`,
+        ""
+      );
       noticeService.create(messageDoctor);
       exist.status_bloodPressure =
         data.status_bloodPressure;
@@ -490,7 +543,12 @@ class HealthLogBookService {
         attached: data._id,
         user: exist.doctor._id,
       };
-      mailService.warning(exist.doctor.email, "Cảnh báo sức khỏe", `Nhiệt độ cơ thể của bệnh nhân ${exist.patient.fullName} đang trong tình trạng ${data.status_temperature.message}. Bác sĩ hãy chú ý đến bệnh nhân này!!!`, "");
+      mailService.warning(
+        exist.doctor.email,
+        "Cảnh báo sức khỏe",
+        `Nhiệt độ cơ thể của bệnh nhân ${exist.patient.fullName} đang trong tình trạng ${data.status_temperature.message}. Bác sĩ hãy chú ý đến bệnh nhân này!!!`,
+        ""
+      );
       noticeService.create(messageDoctor);
       exist.status_temperature = data.status_temperature;
     } else {
@@ -527,7 +585,12 @@ class HealthLogBookService {
         attached: data._id,
         user: exist.doctor._id,
       };
-      mailService.warning(exist.doctor.email, "Cảnh báo sức khỏe", `Nhịp tim của bệnh nhân ${exist.patient.fullName} đang trong tình trạng ${data.status_heartRate.message}. Bác sĩ hãy chú ý đến bệnh nhân này!!!`, "");
+      mailService.warning(
+        exist.doctor.email,
+        "Cảnh báo sức khỏe",
+        `Nhịp tim của bệnh nhân ${exist.patient.fullName} đang trong tình trạng ${data.status_heartRate.message}. Bác sĩ hãy chú ý đến bệnh nhân này!!!`,
+        ""
+      );
       noticeService.create(messageDoctor);
       exist.status_heartRate = data.status_heartRate;
     } else {
@@ -564,7 +627,12 @@ class HealthLogBookService {
         attached: data._id,
         user: exist.doctor._id,
       };
-      mailService.warning(exist.doctor.email, "Cảnh báo sức khỏe", `Chỉ số BMI của bệnh nhân ${exist.patient.fullName} đang trong tình trạng ${data.status_bmi.message}. Bác sĩ hãy chú ý đến bệnh nhân này!!!`, "");
+      mailService.warning(
+        exist.doctor.email,
+        "Cảnh báo sức khỏe",
+        `Chỉ số BMI của bệnh nhân ${exist.patient.fullName} đang trong tình trạng ${data.status_bmi.message}. Bác sĩ hãy chú ý đến bệnh nhân này!!!`,
+        ""
+      );
       noticeService.create(messageDoctor);
       exist.status_bmi = data.status_bmi;
     } else {

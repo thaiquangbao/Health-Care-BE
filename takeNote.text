@@ -1,6 +1,21 @@
 Nhớ đổi link meet qua bên https://heath-haven-meet.vercel.app
+Thêm chức năng đặt khám tại nhà
+Thêm thống kê doanh thu cho bác sĩ
 ---
-
+# fix
+Tìm bác sĩ
+customer khi xem chi tiết bác sĩ
+reponsive web
+thêm redis cho mượt
+Phân quyền lại các trang
+Bắt buộc bác sĩ, user nhập mail(còn phần customer khi đặt check mail, liên kết email check mai
+nút đặt câu hỏi chỉ có user mới hiện nút đó ra
+thêm loading cho các trang
+set chức năng cho nút đặt khám ngay tại /cac-dich-vu
+ràng buộc các input
+Bệnh nhân đã đặt lịch trong thời gian đó rồi thì không được đặt nữa
+Khi đặt lịch thành công bấm vào đặt tiếp nó lại chuyển phần thanh toán tới bước cuối
+Xem lại thông báo đặt lịch hẹn kahm1 định kỳ
 #Đã xong
 status room (ok)
 Thông báo đầu tuần cho bác sĩ kahm1 lâu dài(ok)
@@ -21,7 +36,7 @@ set time hết khám lâu dài (ok)
 thiếu status sau khi khám hoàn tất (ok)
 AI (ok)
 #Lỡ dỡ
-Bắt buộc bác sĩ, user nhập mail(còn phần customer khi đặt check mail, liên kết email check mail)
+l)
 mobile
 smart contract(Tạm)
 tich hop momo(tạm)

@@ -38,32 +38,32 @@ class AppointmentService {
       appointment.doctor_record_id = existRecord._id;
       await appointment.save();
       const messagePatient = {
-      title: "Đặt lịch hẹn",
-      content: `Bạn đã đặt lịch hẹn thành công với BS. ${existRecord.doctor.fullName} vào lúc ${appointmentData.appointment_date.time} ngày ${appointmentData.appointment_date.day}/${appointmentData.appointment_date.month}/${appointmentData.appointment_date.year}. Hãy chờ bác sĩ xác nhận nhé!!!`,
-      category: "APPOINTMENT",
-      date: {
-        day: appointmentData.appointment_date.day,
-        month: appointmentData.appointment_date.month,
-        year: appointmentData.appointment_date.year,
-      },
-      attached: appointment._id,
-      user: appointmentData.patient,
-    };
-    const messageDoctor = {
-      title: "Đặt lịch hẹn",
-      content: `Bác sĩ có lịch đặt hẹn vào lúc ${appointmentData.appointment_date.time} ngày ${appointmentData.appointment_date.day}/${appointmentData.appointment_date.month}/${appointmentData.appointment_date.year}. Bấm vào để xem thông tin chi tiết!!!`,
-      category: "APPOINTMENT",
-      date: {
-        day: appointmentData.appointment_date.day,
-        month: appointmentData.appointment_date.month,
-        year: appointmentData.appointment_date.year,
-      },
-      attached: appointment._id,
-      user: existRecord.doctor._id,
-    };
-    noticeService.create(messagePatient);
-    noticeService.create(messageDoctor);
-      
+        title: "Đặt lịch hẹn",
+        content: `Bạn đã đặt lịch hẹn thành công với BS. ${existRecord.doctor.fullName} vào lúc ${appointmentData.appointment_date.time} ngày ${appointmentData.appointment_date.day}/${appointmentData.appointment_date.month}/${appointmentData.appointment_date.year}. Hãy chờ bác sĩ xác nhận nhé!!!`,
+        category: "APPOINTMENT",
+        date: {
+          day: appointmentData.appointment_date.day,
+          month: appointmentData.appointment_date.month,
+          year: appointmentData.appointment_date.year,
+        },
+        attached: appointment._id,
+        user: appointmentData.patient,
+      };
+      const messageDoctor = {
+        title: "Đặt lịch hẹn",
+        content: `Bác sĩ có lịch đặt hẹn vào lúc ${appointmentData.appointment_date.time} ngày ${appointmentData.appointment_date.day}/${appointmentData.appointment_date.month}/${appointmentData.appointment_date.year}. Bấm vào để xem thông tin chi tiết!!!`,
+        category: "APPOINTMENT",
+        date: {
+          day: appointmentData.appointment_date.day,
+          month: appointmentData.appointment_date.month,
+          year: appointmentData.appointment_date.year,
+        },
+        attached: appointment._id,
+        user: existRecord.doctor._id,
+      };
+      noticeService.create(messagePatient);
+      noticeService.create(messageDoctor);
+
       return appointment;
     } catch (error) {
       console.log(error);
@@ -206,7 +206,9 @@ class AppointmentService {
     if (!rs) {
       return 0;
     }
-    const recordDoctor = await doctorRecordModel.findById(rs.doctor_record_id);
+    const recordDoctor = await doctorRecordModel.findById(
+      rs.doctor_record_id
+    );
     const accept = await appointmentModel.findByIdAndUpdate(
       rs._id,
       data,
@@ -237,7 +239,9 @@ class AppointmentService {
       data,
       { new: true }
     );
-    const recordDoctor = await doctorRecordModel.findById(rs.doctor_record_id);
+    const recordDoctor = await doctorRecordModel.findById(
+      rs.doctor_record_id
+    );
     const messagePatient = {
       title: "Từ chối lịch hẹn",
       content: `Bác sĩ ${recordDoctor.doctor.fullName} đã từ chối lịch hẹn của bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}`,
@@ -274,7 +278,7 @@ class AppointmentService {
     const recordDoctor = await doctorRecordModel.findById(
       rs.doctor_record_id
     );
-    
+
     const deleted =
       await appointmentModel.findByIdAndUpdate(
         rs._id,
@@ -283,7 +287,7 @@ class AppointmentService {
           new: true,
         }
       );
-     const messagePatient = {
+    const messagePatient = {
       title: "Hủy lịch hẹn",
       content: `Bác sĩ ${recordDoctor.doctor.fullName} đã hủy lịch hẹn của bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}. Lý do: ${data.note}`,
       category: "APPOINTMENT",
@@ -299,25 +303,64 @@ class AppointmentService {
     return { rs: deleted, note: data.note };
   }
   async findByWeek(dataSearch) {
-    const startOfWeek = moment().startOf("week").toDate();
-    const endOfWeek = moment().endOf("week").toDate();
-    const start = startOfWeek.getDate() + 1;
-    const end = endOfWeek.getDate() + 1;
-    const rs = await appointmentModel
-      .find({
-        $and: [
-          {
-            doctor_record_id: dataSearch.doctor_record_id,
+    const startOfWeek = moment
+      .tz("Asia/Ho_Chi_Minh")
+      .startOf("week")
+      .toDate();
+    const endOfWeek = moment
+      .tz("Asia/Ho_Chi_Minh")
+      .endOf("week")
+      .toDate();
+    const startDay = startOfWeek.getDate() + 2;
+    const startMonth = startOfWeek.getMonth() + 1; // Tháng trong JS bắt đầu từ 0
+    const startYear = startOfWeek.getFullYear();
+
+    const endDay = endOfWeek.getDate() + 1;
+    const endMonth = endOfWeek.getMonth() + 1;
+    const endYear = endOfWeek.getFullYear();
+    console.log(startDay, endDay);
+    const rs = await appointmentModel.find({
+      doctor_record_id: dataSearch.doctor_record_id,
+      $or: [
+        // Trường hợp trong cùng 1 năm và tháng
+        {
+          "appointment_date.year": startYear,
+          "appointment_date.month": startMonth,
+          "appointment_date.day": {
+            $gte: startDay,
+            $lte: endDay,
           },
-          {
-            "appointment_date.day": {
-              $gte: start,
-              $lte: end,
+        },
+        // Trường hợp khác năm hoặc khác tháng (trường hợp tuần kéo dài qua tháng/năm)
+        {
+          $and: [
+            {
+              "appointment_date.year": {
+                $gte: startYear,
+                $lte: endYear,
+              },
             },
-          },
-        ],
-      })
-      .lean();
+            {
+              $or: [
+                {
+                  "appointment_date.month": startMonth,
+                  "appointment_date.day": {
+                    $gte: startDay,
+                  },
+                },
+                {
+                  "appointment_date.month": endMonth,
+                  "appointment_date.day": {
+                    $lte: endDay,
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+
     const result = await Promise.all(
       rs.map(async (item) => {
         const data = await priceListService.getOne(
@@ -385,30 +428,30 @@ class AppointmentService {
     const existRecord = await doctorRecordModel.findById(
       appointmentData.doctor_record_id
     );
-      if (!existRecord) {
-        return 0;
-      }
+    if (!existRecord) {
+      return 0;
+    }
 
-      const data = { _id: appointmentData.patient };
-      const existPatient =
-        await patientService.getPatientById(data);
-      if (!existPatient) {
-        return 2;
-      }
-      const existPriceList = await priceListService.getOne(
-        appointmentData.price_list
-      );
-      if (!existPriceList) {
-        return 3;
-      }
-      appointmentData.patient =
-        userRequest.toPatientAppointment(existPatient);
-      const appointment = new appointmentModel(
-        appointmentData
-      );
-      appointment.doctor_record_id = existRecord._id;
-      await appointment.save();
-      const messagePatient = {
+    const data = { _id: appointmentData.patient };
+    const existPatient =
+      await patientService.getPatientById(data);
+    if (!existPatient) {
+      return 2;
+    }
+    const existPriceList = await priceListService.getOne(
+      appointmentData.price_list
+    );
+    if (!existPriceList) {
+      return 3;
+    }
+    appointmentData.patient =
+      userRequest.toPatientAppointment(existPatient);
+    const appointment = new appointmentModel(
+      appointmentData
+    );
+    appointment.doctor_record_id = existRecord._id;
+    await appointment.save();
+    const messagePatient = {
       title: "Đặt lịch hẹn",
       content: `BS. ${existRecord.doctor.fullName} đã tạo lịch hẹn khám định kỳ với bạn vào lúc ${appointmentData.appointment_date.time} ngày ${appointmentData.appointment_date.day}/${appointmentData.appointment_date.month}/${appointmentData.appointment_date.year}. Bấm vào để xem thông tin chi tiết!!!`,
       category: "APPOINTMENT",
@@ -434,8 +477,23 @@ class AppointmentService {
     };
     noticeService.create(messagePatient);
     noticeService.create(messageDoctor);
-    
+
     return appointment;
+  }
+  async findCountByDate(dataSearch) {
+    const rs = await appointmentModel.find({
+      $and: [
+        {
+          doctor_record_id: dataSearch.doctor_record_id,
+        },
+        {
+          "appointment_date.day": dataSearch.date.day,
+          "appointment_date.month": dataSearch.date.month,
+          "appointment_date.year": dataSearch.date.year,
+        },
+      ],
+    });
+    return rs;
   }
 }
 module.exports = new AppointmentService();

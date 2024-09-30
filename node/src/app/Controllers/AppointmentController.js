@@ -243,9 +243,10 @@ class AppointmentController {
   async createAppointmentLogBook(req, res) {
     try {
       const data = req.body;
-      const rs = await appointmentService.createAppointmentLogBook(
-        data
-      );
+      const rs =
+        await appointmentService.createAppointmentLogBook(
+          data
+        );
       if (rs === 0) {
         return res
           .status(404)
@@ -265,7 +266,20 @@ class AppointmentController {
       const refreshToken = req.headers["refreshtoken"];
       const token = { accessToken, refreshToken };
       emitter.emit("doctor-appointment-logbook.submit", rs);
-      return res.status(200).json({data: rs, token});
+      return res.status(200).json({ data: rs, token });
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  }
+  async findCountByDate(req, res) {
+    try {
+      const rs = await appointmentService.findCountByDate(
+        req.body
+      );
+      const accessToken = req.headers["accesstoken"];
+      const refreshToken = req.headers["refreshtoken"];
+      const token = { accessToken, refreshToken };
+      return res.status(200).json({ data: rs, token });
     } catch (error) {
       return res.status(500).json(error);
     }
