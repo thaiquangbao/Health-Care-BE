@@ -1,15 +1,13 @@
 Nhớ đổi link meet qua bên https://heath-haven-meet.vercel.app
 Thêm chức năng đặt khám tại nhà
-Thêm thống kê doanh thu cho bác sĩ
+
 ---
 # fix
-Tìm bác sĩ
 customer khi xem chi tiết bác sĩ
 reponsive web
 thêm redis cho mượt
 Phân quyền lại các trang
-Bắt buộc bác sĩ, user nhập mail(còn phần customer khi đặt check mail, liên kết email check mai
-nút đặt câu hỏi chỉ có user mới hiện nút đó ra
+Bắt buộc bác sĩ, user nhập mail(còn phần customer khi đặt check mail, liên kết email check mail)
 thêm loading cho các trang
 set chức năng cho nút đặt khám ngay tại /cac-dich-vu
 ràng buộc các input
@@ -34,9 +32,12 @@ xem detail theo doi suc khoe (ok)
 thêm chổ nhập ngày tái khám(ok)
 set time hết khám lâu dài (ok)
 thiếu status sau khi khám hoàn tất (ok)
+mobile(ok)
 AI (ok)
+
 #Lỡ dỡ
-l)
-mobile
 smart contract(Tạm)
 tich hop momo(tạm)
+Thêm thống kê doanh thu cho bác sĩ(chưa gửi,thiếu mobile)
+thông báo rỗng(chưa gửi)
+Tìm bác sĩ(chưa gửi)
