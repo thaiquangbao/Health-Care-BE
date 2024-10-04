@@ -23,6 +23,7 @@ const doctorRecords = new Schema(
     language: { type: [String], default: [] },
     area: { type: String, default: "" },
     description: { type: String, default: "" },
+    motivate: { type: String, default: "" },
     schedules: {
       type: [
         {

@@ -15,7 +15,11 @@ const commentRoute = require("./comment/commentRoute");
 const noticeRoute = require("./notice/noticeRoute");
 const healthLogBookRoute = require("./healthBook/healthLogBookRoute");
 const paymentRoute = require("./payment");
+const appointmentHomeRoute = require("./appointmentHome/appointmentHomeRoute");
+const testRoute = require("./test/testRoute");
 function routes(app) {
+  app.use("/test", testRoute);
+  app.use("/appointmentHomes", appointmentHomeRoute);
   app.use("/payments", paymentRoute);
   app.use("/healthLogBooks", healthLogBookRoute);
   app.use("/upload-image", imageRoute);

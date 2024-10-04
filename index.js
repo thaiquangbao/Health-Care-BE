@@ -7,6 +7,7 @@ const notify = require("./node/src/app/Services/NotificateService");
 const notifyWeekly = require("./node/src/app/Services/NoticeWeeklyMonday");
 const expiredLogBook = require("./node/src/app/Services/ExpiredLogBookService");
 const expiredAppointment = require("./node/src/app/Services/ExpiredAppointmentService");
+const expiredAppointmentHome = require("./node/src/app/Services/ExpiredAppoimentHome");
 const moment = require("moment-timezone");
 const compression = require("compression");
 const bodyParser = require("body-parser");
@@ -46,6 +47,7 @@ notify.startDepointmentFetch();
 notifyWeekly.startWeeklyLogBookFetch();
 expiredLogBook.startLogBookFetch();
 expiredAppointment.startDepointmentFetch();
+expiredAppointmentHome.startAppointmentHomeFetch();
 const server = http.createServer(app);
 socket(server, [
   baseURL,

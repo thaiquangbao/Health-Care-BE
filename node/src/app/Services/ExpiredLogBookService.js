@@ -65,7 +65,7 @@ class ExpiredLogBookService {
                 console.log("Không có lịch hẹn 6 tháng nào hết hạn");
             }
         } else {
-            const notificationDate12 = logBookDate.clone().add(12, "months"); // cộng thêm 6 tháng
+            const notificationDate12 = logBookDate.clone().add(12, "months"); // cộng thêm 12 tháng
             if (now.isSameOrAfter(notificationDate12)) {
                 const completedData = await healthLogBookService.completed(logBooks._id);
                 await mailService.sendMail(

@@ -2,7 +2,6 @@ const appointmentModel = require("../../models/appointmentModels");
 const doctorRecordModel = require("../../models/doctorRecordModel");
 const patientService = require("../AuthService/PatientService");
 const userRequest = require("../../Dtos/Patients/PatientRequest");
-const mailService = require("../MailerService");
 const priceListService = require("../AppointmentService/PriceListService");
 const appointmentRespone = require("../../Dtos/Appoinment/appointmentRes");
 const noticeService = require("../NoticeService");
