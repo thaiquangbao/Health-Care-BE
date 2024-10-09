@@ -38,7 +38,10 @@ const medicalRecords = new Schema({
     year: { type: Number, default: 0 },
     time: { type: String, default: "" },
   },
-  appointment: { type: Schema.Types.ObjectId },
+  appointment: {
+    type: Schema.Types.ObjectId,
+    default: null,
+  },
   images: { type: [String], default: [] },
   healthRate: { type: String, default: "" },
   weight: { type: Number, default: 0 },
@@ -52,7 +55,7 @@ const medicalRecords = new Schema({
   },
   blockChain: {
     hashTX: { type: String, default: "" },
-  }
+  },
 });
 module.exports = mongoose.model(
   "medicalRecords",

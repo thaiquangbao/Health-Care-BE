@@ -98,7 +98,9 @@ class AppointmentHomeController {
   async findByWeek(req, res) {
     try {
       const data = req.body;
-      const rs = await appointmentHomeService.findByWeek(data);
+      const rs = await appointmentHomeService.findByWeek(
+        data
+      );
       return res.status(200).json(rs);
     } catch (error) {
       return res.status(500).json(error);
@@ -107,7 +109,9 @@ class AppointmentHomeController {
   async findByMonth(req, res) {
     try {
       const data = req.body;
-      const rs = await appointmentHomeService.findByMonth(data);
+      const rs = await appointmentHomeService.findByMonth(
+        data
+      );
       return res.status(200).json(rs);
     } catch (error) {
       return res.status(500).json(error);
@@ -116,9 +120,8 @@ class AppointmentHomeController {
   async findByNextMonth(req, res) {
     try {
       const data = req.body;
-      const rs = await appointmentHomeService.findByNextMonth(
-        data
-      );
+      const rs =
+        await appointmentHomeService.findByNextMonth(data);
       return res.status(200).json(rs);
     } catch (error) {
       return res.status(500).json(error);
@@ -155,7 +158,7 @@ class AppointmentHomeController {
           .status(404)
           .json("Không tìm thấy lịch hẹn này!!!");
       }
-      //emitter.emit("send-email.accept", rs);
+      emitter.emit("send-email-appointment-home.accept", rs);
       return res.status(200).json({
         data: rs,
         token: { accessToken, refreshToken },
@@ -170,13 +173,15 @@ class AppointmentHomeController {
       const data = req.body;
       const accessToken = req.headers["accesstoken"];
       const refreshToken = req.headers["refreshtoken"];
-      const rs = await appointmentHomeService.doctorDeny(data);
+      const rs = await appointmentHomeService.doctorDeny(
+        data
+      );
       if (rs === 0) {
         return res
           .status(404)
           .json("Không tìm thấy lịch hẹn này!!!");
       }
-      //emitter.emit("send-email.deny", rs);
+      emitter.emit("send-email-appointment-home.deny", rs);
       return res.status(200).json({
         data: rs,
         token: { accessToken, refreshToken },
@@ -198,11 +203,34 @@ class AppointmentHomeController {
           .status(404)
           .json("Không tìm thấy lịch hẹn này!!!");
       }
-    //  emitter.emit("send-email.cancel", rs);
+       emitter.emit(
+         "send-email-appointment-home.cancel",
+         rs
+       );
       return res.status(200).json({
         data: "Hủy lịch hẹn thành công!!!",
         token: { accessToken, refreshToken },
       });
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  }
+  async completeAppointmentHome(req, res) {
+    try {
+      const data = req.body;
+      const rs = await appointmentHomeService.doctorComplete(
+        data
+      );
+      if (rs === 0) {
+        return res
+          .status(404)
+          .json("Không tìm thấy lịch hẹn này!!!");
+      }
+      emitter.emit(
+        "send-email-appointment-home.complete",
+        rs
+      );
+      return res.status(200).json(rs);
     } catch (error) {
       return res.status(500).json(error);
     }
@@ -212,22 +240,24 @@ class AppointmentHomeController {
       const data = req.body;
       const accessToken = req.headers["accesstoken"];
       const refreshToken = req.headers["refreshtoken"];
-      const rs = await appointmentHomeService.paymentPatient(
-        data
-      );
+      const rs =
+        await appointmentHomeService.paymentPatient(data);
       if (rs === 0) {
         return res
           .status(404)
           .json("Không tìm thấy lịch hẹn này!!!");
       }
-      //emitter.emit("send-email.payment", rs);
+      emitter.emit(
+        "send-email-appointment-home.payment",
+        rs
+      );
       return res.status(200).json({
         data: rs,
         token: { accessToken, refreshToken },
       });
     } catch (error) {
       console.log(error);
-      
+
       return res.status(500).json(error);
     }
   }

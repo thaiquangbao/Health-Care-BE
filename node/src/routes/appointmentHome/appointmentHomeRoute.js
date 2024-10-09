@@ -16,10 +16,10 @@ const middleWareToken = require("../../app/middlewares/MiddleWareToken");
 // );
 
 
-// useRouter.post(
-//   "/complete",
-//   appointmentController.completeAppointment
-// );
+useRouter.post(
+  "/complete",
+  appointmentHomeController.completeAppointmentHome
+);
 
 useRouter.post(
   "/payment",

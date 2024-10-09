@@ -1,11 +1,10 @@
 Nhớ đổi link meet qua bên https://heath-haven-meet.vercel.app
 Thêm chức năng đặt khám tại nhà
-còn phần khi hoàn tất khám tại nhà
+
 google map api
-
-move time vào lịch của bác sũ khi bác sĩ khi lịch hết hạn
-
 những bác sĩ gần bạn
+
+cho socket chổ phê xong và đã hoàn tất cho phần khám tại nhà
 ---
 # fix
 customer khi xem chi tiết bác sĩ
@@ -21,8 +20,10 @@ khi hoàn thành thì gửi mail appointment thường
 #Đã xong
 status room (ok)
 màn hình thanh toán cho khám tại nhà(ok)
+check lại luồn sự kiện hiển thị nút hồ sơ bác sĩ(thằng đức ok)
 add vào lịch của bác sũ khi bác sĩ xác nhận khám tại nhà (ok)
 ẩn khám tại nhà đối với các bác sĩ khác khi đã thành toàn (ok)
+move time vào lịch của bác sũ khi bác sĩ khi lịch hết hạn(ok)
 Thông báo đầu tuần cho bác sĩ kahm1 lâu dài(ok)
 dki 1 bác sĩ (ok)
 Cảnh báo sức khỏe(ok)
@@ -45,6 +46,12 @@ Xem lại thông báo đặt lịch hẹn kahm1 định kỳ(ok)
 thông báo rỗng(ok)
 Tìm bác sĩ(ok)
 ràng buộc các input(ok)
+thông báo thành công khi hoàn thành hồ sơ sức khỏe tại nhà và refresh lại dữ liệu(ok)
+Khi đã duyệt rồi thì hiện form medical record(ok)
+hoàn thành 1 cái record thì load lại trang(ok)
+sắp xếp lại các nút hoàn thành và đánh giá(ok)
+còn phần khi hoàn tất khám tại nhà(ok)
+Gửi mail cho appointmentHome (ok)
 #Lỡ dỡ
 smart contract(Tạm)
 tich hop momo(tạm)

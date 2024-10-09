@@ -293,19 +293,48 @@ class AppointmentHomeService {
     noticeService.create(messagePatient);
     return reject;
   }
-  // async doctorComplete(data) {
-  //   const rs = await appointmentModel.findById(data._id);
-  //   if (!rs) {
-  //     return 0;
-  //   }
-  //   const complete =
-  //     await appointmentModel.findByIdAndUpdate(
-  //       rs._id,
-  //       data,
-  //       { new: true }
-  //     );
-  //   return complete;
-  // }
+  async doctorComplete(data) {
+    const rs = await appointmentHomeModel.findById(data._id);
+    if (!rs) {
+      return 0;
+    }
+    const recordDoctor = await doctorRecordModel.findById(
+      rs.doctor_record_id
+    );
+    const complete =
+      await appointmentHomeModel.findByIdAndUpdate(
+        rs._id,
+        data,
+        { new: true }
+      );
+      const messagePatient = {
+        title: "Hoàn tất lịch hẹn khám tại nhà",
+        content: `Lịch hẹn khám tại nhà với BS.${recordDoctor.doctor.fullName} vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year} đã hoàn tất. Cảm ơn bạn đã sử dụng dịch vụ!!!`,
+        category: "APPOINTMENTHOME",
+        date: {
+          day: new Date().getDate(),
+          month: new Date().getMonth() + 1,
+          year: new Date().getFullYear(),
+        },
+        attached: rs._id,
+        user: rs.patient._id,
+      };
+      const messageDoctor = {
+        title: "Hoàn tất lịch hẹn khám tại nhà",
+        content: `Lịch hẹn khám tại nhà với bệnh nhân ${rs.patient.fullName} vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year} đã hoàn tất!!!`,
+        category: "APPOINTMENTHOME",
+        date: {
+          day: new Date().getDate(),
+          month: new Date().getMonth() + 1,
+          year: new Date().getFullYear(),
+        },
+        attached: rs._id,
+        user: recordDoctor.doctor._id,
+      };
+      noticeService.create(messagePatient);
+      noticeService.create(messageDoctor);
+    return complete;
+  }
   async doctorCancel(data) {
     const rs = await appointmentHomeModel.findById(data._id);
     if (!rs) {
@@ -518,63 +547,12 @@ class AppointmentHomeService {
       rs.price_list
     );
     const doctorRecord = await doctorRecordModel.findById(rs.doctor_record_id);
-    return appointmentRespone.toAppointment(rs, data, doctorRecord.doctor);
+    return appointmentHomeRes.toAppointmentHome(
+      rs,
+      data,
+      doctorRecord.doctor
+    );
   }
-  // async createAppointmentLogBook(appointmentData) {
-  //   const existRecord = await doctorRecordModel.findById(
-  //     appointmentData.doctor_record_id
-  //   );
-  //   if (!existRecord) {
-  //     return 0;
-  //   }
-
-  //   const data = { _id: appointmentData.patient };
-  //   const existPatient =
-  //     await patientService.getPatientById(data);
-  //   if (!existPatient) {
-  //     return 2;
-  //   }
-  //   const existPriceList = await priceListService.getOne(
-  //     appointmentData.price_list
-  //   );
-  //   if (!existPriceList) {
-  //     return 3;
-  //   }
-  //   appointmentData.patient =
-  //     userRequest.toPatientAppointment(existPatient);
-  //   const appointment = new appointmentModel(
-  //     appointmentData
-  //   );
-  //   appointment.doctor_record_id = existRecord._id;
-  //   await appointment.save();
-  //   const messagePatient = {
-  //     title: "Đặt lịch hẹn",
-  //     content: `BS. ${existRecord.doctor.fullName} đã tạo lịch hẹn khám định kỳ với bạn vào lúc ${appointmentData.appointment_date.time} ngày ${appointmentData.appointment_date.day}/${appointmentData.appointment_date.month}/${appointmentData.appointment_date.year}. Bấm vào để xem thông tin chi tiết!!!`,
-  //     category: "APPOINTMENT",
-  //     date: {
-  //       day: appointmentData.appointment_date.day,
-  //       month: appointmentData.appointment_date.month,
-  //       year: appointmentData.appointment_date.year,
-  //     },
-  //     attached: appointment._id,
-  //     user: appointmentData.patient,
-  //   };
-  //   const messageDoctor = {
-  //     title: "Đặt lịch hẹn",
-  //     content: `Bác sĩ đã tạo lịch hẹn khám định kỳ thành công với bệnh nhân ${existPatient.fullName}vào lúc ${appointmentData.appointment_date.time} ngày ${appointmentData.appointment_date.day}/${appointmentData.appointment_date.month}/${appointmentData.appointment_date.year}.`,
-  //     category: "APPOINTMENT",
-  //     date: {
-  //       day: appointmentData.appointment_date.day,
-  //       month: appointmentData.appointment_date.month,
-  //       year: appointmentData.appointment_date.year,
-  //     },
-  //     attached: appointment._id,
-  //     user: existRecord.doctor._id,
-  //   };
-  //   noticeService.create(messagePatient);
-  //   noticeService.create(messageDoctor);
-
-  //   return appointment;
-  // }
+  
 }
 module.exports = new AppointmentHomeService();

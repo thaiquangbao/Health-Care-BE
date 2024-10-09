@@ -51,7 +51,11 @@ class MailerService {
       to: data.patient.email,
       from: "vutienduc26122002@gmail.com",
       subject: "Phiếu khám sức khỏe",
-      html: `Phiếu khám sức khỏe vào lúc ${data?.date.time} ngày ${data?.date.day}/${data?.date.month}/${data?.date.year} <br>
+      html: `Phiếu khám sức khỏe vào lúc ${
+        data?.date.time
+      } ngày ${data?.date.day}/${data?.date.month}/${
+        data?.date.year
+      } <br>
         <!DOCTYPE html>
 <html>  
   <head>
@@ -139,19 +143,35 @@ class MailerService {
       <div class="patient-info">  
         <div class="info" style="font-size: 17px;"> 
         
-          <strong>Bệnh nhân:</strong> ${data.patient.fullName}
+          <strong>Bệnh nhân:</strong> ${
+            data.patient.fullName
+          }
         </div>
         <div class="info">
-          <span class="label">Triệu Chứng:</span> ${data.symptoms !== "" ? data.symptoms : "Không"}
+          <span class="label">Triệu Chứng:</span> ${
+            data.symptoms !== "" ? data.symptoms : "Không"
+          }
         </div>
         <div class="info">
-          <span class="label">Ngày Khám:</span> (${data.date.time}) ngày ${data.date.day}/${data.date.month}/${data.date.year}
+          <span class="label">Ngày Khám:</span> (${
+            data.date.time
+          }) ngày ${data.date.day}/${data.date.month}/${
+        data.date.year
+      }
         </div>
         <div class="info">
-          <span class="label">Nhịp tim:</span> ${data.healthRate !== 0 ? data.healthRate + " bpm" : "Không"} 
+          <span class="label">Nhịp tim:</span> ${
+            data.healthRate !== 0
+              ? data.healthRate + " bpm"
+              : "Không"
+          } 
         </div>
         <div class="info">
-          <span class="label">Huyết áp:</span> ${data.bloodPressure !== "" ? data.bloodPressure + " mmHg" : "Không"} 
+          <span class="label">Huyết áp:</span> ${
+            data.bloodPressure !== ""
+              ? data.bloodPressure + " mmHg"
+              : "Không"
+          } 
         </div>
         
       </div>  
@@ -159,20 +179,37 @@ class MailerService {
       <div class="doctor-info">
         <div class="info" style="font-size: 17px;">
         
-          <strong>Bác sĩ:</strong> BS.Dương Nguyễn Viết Hương
+          <strong>Bác sĩ:</strong> BS.${
+            data.doctor.fullName
+          }
         </div>
         <div class="info">
-          <span class="label">Ngày tái khám:</span> ${data.reExaminationDate.month !== 0 ? `ngày ${data?.reExaminationDate.day}/${data?.reExaminationDate.month}/${data?.reExaminationDate.year}`: "Không"} 
+          <span class="label">Ngày tái khám:</span> ${
+            data.reExaminationDate.month !== 0 &&
+            data.reExaminationDate.month !== null
+              ? `ngày ${data?.reExaminationDate.day}/${data?.reExaminationDate.month}/${data?.reExaminationDate.year}`
+              : "Không"
+          } 
         </div>
         <div class="info">
-          <span class="label">Nhiệt độ:</span> ${data.temperature !== 0 ? data.temperature + "°C" : "Không"}
+          <span class="label">Nhiệt độ:</span> ${
+            data.temperature !== 0
+              ? data.temperature + "°C"
+              : "Không"
+          }
         </div>
         
         <div class="info">
-          <span class="label">Chiều cao:</span> ${data.height !== 0 ? data.temperature + "cm": "Không"} 
+          <span class="label">Chiều cao:</span> ${
+            data.height !== 0
+              ? data.temperature + "cm"
+              : "Không"
+          } 
         </div>
         <div class="info">
-          <span class="label">Cân nặng:</span> ${data.weight !== 0 ? data.weight + "kg": "Không"} 
+          <span class="label">Cân nặng:</span> ${
+            data.weight !== 0 ? data.weight + "kg" : "Không"
+          } 
         </div>
         
       </div>
@@ -180,13 +217,17 @@ class MailerService {
     <div class="image-describe">
       <span>Hình ảnh mô tả: </span>
       <div style="display: flex;">
-        ${data.images.map((image) => `
+        ${data.images
+          .map(
+            (image) => `
           <img src="${image}" alt="" style="border-radius: 5%; width: 80px; height: 80px;" />
-        `).join('')}
+        `
+          )
+          .join("")}
       </div>
     </div>
     <div class="diagnosis">
-      Chẩn đoán: Rối loạn nhịp tim
+      Chẩn đoán: ${data.diagnosisDisease}
     </div>
     <div class="medication">
       <table>
@@ -199,14 +240,18 @@ class MailerService {
           </tr>
         </thead>
         <tbody>
-          ${data.medical.map((medication, index) => `
+          ${data.medical
+            .map(
+              (medication, index) => `
               <tr>
                 <td>${index}</td>
                 <td>${medication.medicalName}</td>
                 <td>${medication.quantity}</td>
                 <td>${medication.unitOfCalculation}</td>
               </tr>
-            `).join('')}
+            `
+            )
+            .join("")}
             
 
         </tbody>

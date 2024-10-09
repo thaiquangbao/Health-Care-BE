@@ -112,5 +112,27 @@ class DoctorRecordService {
     }
     return rs;
   }
+  async removeSchedule(data) {
+   const exist = await doctorRecordModel.findById(data.doctor_record_id);
+    if (!exist) {
+      return 0;
+    }
+    let schedule = exist.schedules;
+    for (let i = 0; i < schedule.length; i++) {
+      const scheduleItem = exist.schedules[i];
+      const date = scheduleItem.date;
+      if (date.day === data.date.day && date.month === data.date.month && date.year === data.date.year) {
+        for (let j = 0; j < scheduleItem.times.length; j++) {
+          const timeItem = scheduleItem.times[j];
+          if(timeItem.time === data.time && timeItem.status === 'home') {
+             scheduleItem.times.pull(timeItem);
+          }
+        }
+        
+      }
+    }
+    const rs = await doctorRecordModel.findByIdAndUpdate(data.doctor_record_id, exist, { new: true });
+    return rs;
+  }
 }
 module.exports = new DoctorRecordService();

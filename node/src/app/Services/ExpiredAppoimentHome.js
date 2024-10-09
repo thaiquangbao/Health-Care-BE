@@ -4,6 +4,7 @@ const mailService = require("../Services/MailerService");
 const appointmentHomeService = require("../Services/AppointmentHomeService");
 const noticeService = require("../Services/NoticeService");
 const doctorRecordModel = require("../models/doctorRecordModel");
+const doctorRecordService = require("../Services/AppointmentService/DoctorRecordService");
 class ExpiredAppointmentHomeService {
     async notification(acceptedAppointmentHome) {
         const [hours, minutes] =acceptedAppointmentHome.timeLimit.time.split(":").map(Number);
@@ -24,7 +25,7 @@ class ExpiredAppointmentHomeService {
             _id: acceptedAppointmentHome._id,
             status: {
               status_type: "CANCELED",
-              message: "Lịch hẹn đã hết hạn",
+              message: "Lịch hẹn đã hết hạn thanh toán",
             },
             processAppointment: 0,
           }
@@ -71,8 +72,17 @@ class ExpiredAppointmentHomeService {
           ""
       );
       // update lại lịch cho bác sĩ và bệnh nhân
+        const dataRemoveSchedule = {
+          doctor_record_id: acceptedAppointmentHome.doctor_record_id,
+          date: {
+            day: acceptedAppointmentHome.appointment_date.day,
+            month: acceptedAppointmentHome.appointment_date.month,
+            year: acceptedAppointmentHome.appointment_date.year,
+          },
+          time: acceptedAppointmentHome.appointment_date.time,
+        };
+        await doctorRecordService.removeSchedule(dataRemoveSchedule);
           console.log(`Đã gửi thông báo hết hạn lịch hẹn khám tại nhà cho BS. ${doctorRecord.doctor.fullName} và bệnh nhân ${acceptedAppointmentHome.patient.fullName}`);
-          
         } else {
           console.log("Chưa có lịch hẹn khám tại nhà nào hết hạn");
           
