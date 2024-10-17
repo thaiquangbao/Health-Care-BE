@@ -15,7 +15,11 @@ const middleWareToken = require("../../app/middlewares/MiddleWareToken");
 //   appointmentController.sendMail
 // );
 
-
+useRouter.post(
+  "/patient-cancel",
+  middleWareToken.validateToken,
+  appointmentHomeController.patientCancelAppointmentHome
+);
 useRouter.post(
   "/complete",
   appointmentHomeController.completeAppointmentHome

@@ -6,6 +6,7 @@ const doctorRecordModel = require("../app/models/doctorRecordModel");
 const appointmentService = require("../app/Services/AppointmentService/AppointmentService");
 const noticeService = require("../app/Services/NoticeService");
 const appointmentHomeService = require("../app/Services/AppointmentHomeService");
+const doctorRecordService = require("../app/Services/AppointmentService/DoctorRecordService");
 const socket = (server, baseURL) => {
   const io = new Server(server, {
     cors: {
@@ -487,6 +488,16 @@ const socket = (server, baseURL) => {
          `Bác sĩ ${recordDoctor.doctor.fullName} đã từ chối lịch hẹn khám tại nhà với bạn. Hãy đăng ký một lịch hẹn khác nhé !!!`,
          ""
        );
+      //  const dataRemoveSchedule = {
+      //   doctor_record_id: rs.doctor_record_id,
+      //   date: {
+      //     day: rs.appointment_date.day,
+      //     month: rs.appointment_date.month,
+      //     year: rs.appointment_date.year,
+      //   },
+      //   time: rs.appointment_date.time,
+      // };
+      // await doctorRecordService.removeSchedule(dataRemoveSchedule);
        if (!mail) {
          return 2;
        }
@@ -508,6 +519,16 @@ const socket = (server, baseURL) => {
          `Bác sĩ ${recordDoctor.doctor.fullName} đã hủy lịch hẹn khám tại nhà với bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}. Lý do: ${note}`,
          ""
        );
+       const dataRemoveSchedule = {
+        doctor_record_id: rs.doctor_record_id,
+        date: {
+          day: rs.appointment_date.day,
+          month: rs.appointment_date.month,
+          year: rs.appointment_date.year,
+        },
+        time: rs.appointment_date.time,
+      };
+      await doctorRecordService.removeSchedule(dataRemoveSchedule);
        if (!mail) {
          return 2;
        }
@@ -800,6 +821,52 @@ const socket = (server, baseURL) => {
      return 1;
    }
  );
+ emitter.on(
+  "send-email-appointment-home-patient.cancel",
+  async (rs) => {
+    const recordDoctor = await doctorRecordModel.findById(rs.doctor_record_id);
+      const dataRemoveSchedule = {
+        doctor_record_id: rs.doctor_record_id,
+        date: {
+          day: rs.appointment_date.day,
+          month: rs.appointment_date.month,
+          year: rs.appointment_date.year,
+        },
+        time: rs.appointment_date.time,
+      };
+      const dataRemove = await doctorRecordService.removeSchedule(dataRemoveSchedule);
+      const messagePatient = {
+        title: "Hủy lịch hẹn thành công",
+        content: `Bạn đã hủy lịch hẹn khám tại nhà với BS. ${recordDoctor.doctor.fullName} thành công. Hãy đặt một lịch khám mới nhé!!!`,
+        category: "APPOINTMENTHOME",
+        date: {
+          day: new Date().getDate(),
+          month: new Date().getMonth() + 1,
+          year: new Date().getFullYear(),
+        },
+        attached: rs._id,
+        user: rs.patient._id,
+      };
+       const messageDoctor = {
+         title: "Lịch hẹn khám tại nhà bị hủy",
+         content: `Bác sĩ có một lịch hẹn khám tại nhà bị hủy. Bấm vào để xem thông tin chi tiết!!!`,
+         category: "APPOINTMENTHOME",
+         date: {
+           day: new Date().getDate(),
+           month: new Date().getMonth() + 1,
+           year: new Date().getFullYear(),
+         },
+         attached: rs._id,
+         user: recordDoctor.doctor._id,
+       };
+      noticeService.create(messagePatient);
+      noticeService.create(messageDoctor);
+   
+ 
+       
+    return dataRemove;
+  }
+);
 };
 
 module.exports = socket;

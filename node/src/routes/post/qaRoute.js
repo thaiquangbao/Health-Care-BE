@@ -7,11 +7,11 @@ const upload = require("../../uploads/upload");
 //   "/get-category",
 //   postController.getPostByCategory
 // );
-// useRouter.delete(
-//   "/delete/:id",
-//   middleWareToken.validateToken,
-//   postController.deletePost
-// );
+useRouter.delete(
+  "/delete-one/:id",
+  middleWareToken.validateToken,
+  qaController.deletePost
+);
 useRouter.get("/get-one/:id", qaController.getOne);
 useRouter.get("/get-all", qaController.getAll);
 useRouter.post(

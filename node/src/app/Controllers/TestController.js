@@ -4,7 +4,9 @@ class TestController {
   async testTime(req, res) {
     try {
       const data = req.body;
-      const rs = await doctorRecordService.removeSchedule(data);
+      const rs = await doctorRecordService.checkSchedule(data);
+      console.log(rs);
+      
       return res.status(200).json(rs);
     } catch (error) {
       console.log(error);

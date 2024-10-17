@@ -87,25 +87,25 @@ class PostController {
   //     res.status(500).json(error.message);
   //   }
   // }
-  // async deletePost(req, res) {
-  //   try {
-  //     const rs = await qaService.deletePost(req.params.id);
-  //     if (!rs) {
-  //       return res
-  //         .status(404)
-  //         .json("Không tìm thấy bài đăng!!!");
-  //     }
-  //     const accessToken = req.headers["accesstoken"];
-  //     const refreshToken = req.headers["refreshtoken"];
-  //     const token = { accessToken, refreshToken };
-  //     res.status(200).json({
-  //       data: "Xóa bài đăng thành công!!!",
-  //       token,
-  //     });
-  //   } catch (error) {
-  //     res.status(500).json(error.message);
-  //   }
-  // }
+  async deletePost(req, res) {
+    try {
+      const rs = await qaService.delete(req.params.id);
+      if (!rs) {
+        return res
+          .status(404)
+          .json("Không tìm thấy câu hỏi!!!");
+      }
+      const accessToken = req.headers["accesstoken"];
+      const refreshToken = req.headers["refreshtoken"];
+      const token = { accessToken, refreshToken };
+      res.status(200).json({
+        data: "Xóa câu hỏi thành công!!!",
+        token,
+      });
+    } catch (error) {
+      res.status(500).json(error.message);
+    }
+  }
   // async getPostByCategory(req, res) {
   //   try {
   //     const rs = await qaService.getPostByCategory(

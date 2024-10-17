@@ -29,116 +29,61 @@ class ExpiredAppointmentService {
       const doctorRecord = await doctorRecordModel.findById(
         appointment.doctor_record_id
       );
-    //   let category_sick = "";
-    //   let sex = "";
-    //   let category = "";
-    //   if (!appointment.sick) {
-    //     category_sick = "Tim mạch";
-    //   } else {
-    //     category_sick = appointment.sick;
-    //   }
-    //   if (!appointment.patient.sex) {
-    //     sex = "Nữ";
-    //   } else {
-    //     sex = "Nam";
-    //   }
-    //   if (appointment.price_list.type === "Online") {
-    //     category = "Tư vấn online";
-    //   } else {
-    //     category = "Tư vấn trực tiếp";
-    //   }
+      let category_sick = "";
+      let sex = "";
+      let category = "";
+      if (!appointment.sick) {
+        category_sick = "Tim mạch";
+      } else {
+        category_sick = appointment.sick;
+      }
+      if (!appointment.patient.sex) {
+        sex = "Nữ";
+      } else {
+        sex = "Nam";
+      }
+      if (appointment.price_list.type === "Online") {
+        category = "Tư vấn online";
+      } else {
+        category = "Tư vấn trực tiếp";
+      }
 
-    //   await mailService.sendMail(
-    //     doctorRecord.doctor?.email,
-    //     `Xin chào bác sĩ ${doctorRecord.doctor?.fullName}`,
-    //     "test",
-    //     `Bác sĩ còn 30 phút nữa là đến cuộc hẹn với bệnh nhân ${appointment.patient.fullName} <br>
-    //       Vào lúc ${appointment.appointment_date.time} <br>
-    //       <div
-    //       style="font-family: Arial, sans-serif; width: 600px; margin: 0 auto; background-color: #f7f7f7; padding: 20px; border-radius: 8px;">
-    //       <div style="text-align: center; background-color: #b2ebf2; padding: 15px; border-radius: 8px 8px 0 0;">
-    //           <h2 style="margin: 0; color: #000;">Phiếu khám bệnh</h2>
-    //       </div>
-    //       <div
-    //           style="padding: 20px; background-color: #fff; border-radius: 0 0 8px 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);font-size: 16px;">
-    //           <h2 style="text-align: center; color: #000; margin-top: 0;">${category_sick}</h2>
-    //           <p style="text-align: center; color: #777; margin-bottom: 20px;">Địa chỉ: ${category}</p>
-    //           <hr style="border: 0; height: 2px; background-color: #ccc;">
-    //           <div style="text-align: center; margin-bottom: 30px;">
-    //               <p style="font-size: 24px; color: #000; margin: 0;">Thời gian khám</p>
-    //               <h1 style="font-size: 48px; color: #000; margin: 0;">${appointment.appointment_date.time}</h1>
-    //           </div>
-    //           <div
-    //               style="display: flex;justify-content: space-between; font-size: 18px; color: #000; margin-bottom: 10px;">
-    //               <p style="width: 30%; margin-left: 70px;">Dịch vụ:</p>
-    //               <p style="text-align:right; width: 70%; margin-right: 60px;"><strong> ${category}</strong></p>
-    //           </div>
-    //           <div
-    //               style="display: flex;justify-content: space-between; font-size: 18px; color: #000; margin-bottom: 10px;">
-    //               <p style="width: 30%; margin-left: 70px;">Chuyên khoa:</p>
-    //               <p style="text-align:right; width: 70%; margin-right: 60px;"><strong> ${category_sick}</strong></p>
-    //           </div>
-    //           <div
-    //               style="display: flex;justify-content: space-between; font-size: 18px; color: #000; margin-bottom: 10px;">
-    //               <p style="width: 30%; margin-left: 70px;">Bác sĩ:</p>
-    //               <p style="text-align:right; width: 70%; margin-right: 60px;"><strong> ${doctorRecord.doctor.fullName}</strong></p>
-    //           </div>
-    //           <div
-    //               style="display: flex;justify-content: space-between; font-size: 18px; color: #000; margin-bottom: 10px;">
-    //               <p style="width: 30%; margin-left: 70px;">Ngày khám:</p>
-    //               <p style="text-align:right; width: 70%; margin-right: 60px;"><strong>
-    //                       ${appointment.appointment_date.day}-${appointment.appointment_date.month}-${appointment.appointment_date.year}</strong></p>
-    //           </div>
-    //           <div
-    //               style="display: flex;justify-content: space-between; font-size: 18px; color: #000; margin-bottom: 10px;">
-    //               <p style="width: 30%; margin-left: 70px;">Giờ khám:</p>
-    //               <p style="text-align:right; width: 70%; margin-right: 60px;"><strong>${appointment.appointment_date.time}</strong></p>
-    //           </div>
-    //           <div
-    //               style="display: flex;justify-content: space-between; font-size: 18px; color: #000; margin-bottom: 10px;">
-    //               <p style="width: 30%; margin-left: 70px;">Phí khám:</p>
-    //               <p style="text-align:right; width: 70%; margin-right: 60px;"><strong>${appointment.price_list.price} VND</strong></p>
-    //           </div>
-    //            <div
-    //               style="display: flex;justify-content: space-between; font-size: 18px; color: #000; margin-bottom: 10px;">
-    //               <p style="width: 30%; margin-left: 70px;">Trạng thái:</p>
-    //               <p style="text-align:right; width: 70%; margin-right: 60px;"><strong>Đã thanh toán</strong></p>
-    //           </div>
-    //           <hr style="border: 0; height: 2px; background-color: #ccc;">
-    //           <div
-    //               style="display: flex;justify-content: space-between; font-size: 18px; color: #000; margin-bottom: 10px;">
-    //               <p style="width: 30%; margin-left: 70px;">Bệnh nhân:</p>
-    //               <p style="text-align:right; width: 70%; margin-right: 60px;"><strong>${appointment.patient.fullName} </strong></p>
-    //           </div>
-    //           <div
-    //               style="display: flex;justify-content: space-between; font-size: 18px; color: #000; margin-bottom: 10px;">
-    //               <p style="width: 30%; margin-left: 70px;">Giới tính:</p>
-    //               <p style="text-align:right; width: 70%; margin-right: 60px;"><strong>${sex}</strong></p>
-    //           </div>
-    //           <div
-    //               style="display: flex;justify-content: space-between; font-size: 18px; color: #000; margin-bottom: 10px;">
-    //               <p style="width: 30%; margin-left: 70px;">Số điện thoại:</p>
-    //               <p style="text-align:right; width: 70%; margin-right: 60px;"><strong>${appointment.patient.phone}</strong></p>
-    //           </div>
-    //           <div
-    //               style="display: flex;justify-content: space-between; font-size: 18px; color: #000; margin-bottom: 10px;">
-    //               <p style="width: 30%; margin-left: 70px;">Email:</p>
-    //               <p style="text-align:right; width: 70%; margin-right: 30px;text-decoration: none; color: #000;"><strong>${appointment.patient.email}</strong></p>
-    //           </div>
-    //           <div style="text-align: center; margin-top: 20px;">
-    //               <a href="https://health-haven-seven.vercel.app/zero/${appointment._id}/doctor" style="text-decoration: none;">
-    //                 <button style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; width: 80%; cursor: pointer;">Vào khám</button>
-    //               </a>
-    //           </div>
-    //       </div>
-    //   </div>
-    //       `
-    //   );
+      
     const dataComplete = {
         _id: appointment._id,
         status: "COMPLETED",
         status_message: "Đã hoàn tất lịch hẹn",
     }
+    await mailService.sendMail(
+      appointment.patient.email,
+     "Lịch hẹn khám trực tuyến đã hoàn tất",
+     "",
+     `Lịch hẹn khám trực tuyến của bạn với BS. ${
+      doctorRecord.doctor.fullName
+     } vào lúc (${
+       appointment.appointment_date.time
+     }) ngày ${appointment.appointment_date.day}/${
+       appointment.appointment_date.month
+     }/${
+       appointment.appointment_date.year
+     } đã hoàn tất. Cảm ơn bạn đã sử dụng dịch vụ tại Health-heaven!!! <br>
+    `
+    );
+    await mailService.sendMail(
+      doctorRecord.doctor.email,
+     "Lịch hẹn khám trực tuyến đã hoàn tất",
+     "",
+     `Lịch hẹn khám trực tuyến của bác sĩ với bệnh nhân ${
+      appointment.patient.fullName
+     } vào lúc (${
+       appointment.appointment_date.time
+     }) ngày ${appointment.appointment_date.day}/${
+       appointment.appointment_date.month
+     }/${
+       appointment.appointment_date.year
+     } đã hoàn tất!!! <br>
+    `
+    );
      await appointmentService.doctorComplete(dataComplete);
       const messagePatient = {
         title: "Lịch hẹn hoàn tất",

@@ -30,7 +30,10 @@ class AppointmentHomeService {
         return 3;
       }
       appointmentData.patient =
-        userRequest.toPatientAppointmentHome(existPatient,appointmentData.address);
+        userRequest.toPatientAppointmentHome(
+          existPatient,
+          appointmentData.address
+        );
       const appointmentHome = new appointmentHomeModel(
         appointmentData
       );
@@ -106,10 +109,13 @@ class AppointmentHomeService {
           const data = await priceListService.getOne(
             item.price_list
           );
-          const doctorRecord = await doctorRecordModel.findById(item.doctor_record_id);
+          const doctorRecord =
+            await doctorRecordModel.findById(
+              item.doctor_record_id
+            );
           const dt = appointmentHomeRes.toAppointmentHome(
             item,
-            data, 
+            data,
             doctorRecord.doctor
           );
           return dt;
@@ -131,7 +137,7 @@ class AppointmentHomeService {
             {
               doctor_record_id: dataSearch.doctor_record_id,
             },
-            { 'status.status_type': dataSearch.status },
+            { "status.status_type": dataSearch.status },
           ],
         })
         .lean();
@@ -140,7 +146,10 @@ class AppointmentHomeService {
           const data = await priceListService.getOne(
             item.price_list
           );
-          const doctorRecord = await doctorRecordModel.findById(item.doctor_record_id);
+          const doctorRecord =
+            await doctorRecordModel.findById(
+              item.doctor_record_id
+            );
 
           return appointmentHomeRes.toAppointmentHome(
             item,
@@ -178,7 +187,10 @@ class AppointmentHomeService {
           const data = await priceListService.getOne(
             item.price_list
           );
-          const doctorRecord = await doctorRecordModel.findById(item.doctor_record_id);
+          const doctorRecord =
+            await doctorRecordModel.findById(
+              item.doctor_record_id
+            );
           return appointmentHomeRes.toAppointmentHome(
             item,
             data,
@@ -203,7 +215,10 @@ class AppointmentHomeService {
         const data = await priceListService.getOne(
           item.price_list
         );
-        const doctorRecord = await doctorRecordModel.findById(item.doctor_record_id);
+        const doctorRecord =
+          await doctorRecordModel.findById(
+            item.doctor_record_id
+          );
         return appointmentHomeRes.toAppointmentHome(
           item,
           data,
@@ -224,7 +239,10 @@ class AppointmentHomeService {
         const data = await priceListService.getOne(
           item.price_list
         );
-        const doctorRecord = await doctorRecordModel.findById(item.doctor_record_id);
+        const doctorRecord =
+          await doctorRecordModel.findById(
+            item.doctor_record_id
+          );
         return appointmentHomeRes.toAppointmentHome(
           item,
           data,
@@ -266,15 +284,18 @@ class AppointmentHomeService {
     return accept;
   }
   async doctorDeny(data) {
-    const rs = await appointmentHomeModel.findById(data._id);
+    const rs = await appointmentHomeModel.findById(
+      data._id
+    );
     if (!rs) {
       return 0;
     }
-    const reject = await appointmentHomeModel.findByIdAndUpdate(
-      rs._id,
-      data,
-      { new: true }
-    );
+    const reject =
+      await appointmentHomeModel.findByIdAndUpdate(
+        rs._id,
+        data,
+        { new: true }
+      );
     const recordDoctor = await doctorRecordModel.findById(
       rs.doctor_record_id
     );
@@ -293,8 +314,27 @@ class AppointmentHomeService {
     noticeService.create(messagePatient);
     return reject;
   }
+  async patientCancel(data) {
+    const rs = await appointmentHomeModel.findById(
+      data._id
+    );
+    if (!rs) {
+      return 0;
+    }
+    const cancel =
+      await appointmentHomeModel.findByIdAndUpdate(
+        rs._id,
+        data,
+        { new: true }
+      );
+   
+   
+    return cancel;
+  }
   async doctorComplete(data) {
-    const rs = await appointmentHomeModel.findById(data._id);
+    const rs = await appointmentHomeModel.findById(
+      data._id
+    );
     if (!rs) {
       return 0;
     }
@@ -307,36 +347,38 @@ class AppointmentHomeService {
         data,
         { new: true }
       );
-      const messagePatient = {
-        title: "Hoàn tất lịch hẹn khám tại nhà",
-        content: `Lịch hẹn khám tại nhà với BS.${recordDoctor.doctor.fullName} vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year} đã hoàn tất. Cảm ơn bạn đã sử dụng dịch vụ!!!`,
-        category: "APPOINTMENTHOME",
-        date: {
-          day: new Date().getDate(),
-          month: new Date().getMonth() + 1,
-          year: new Date().getFullYear(),
-        },
-        attached: rs._id,
-        user: rs.patient._id,
-      };
-      const messageDoctor = {
-        title: "Hoàn tất lịch hẹn khám tại nhà",
-        content: `Lịch hẹn khám tại nhà với bệnh nhân ${rs.patient.fullName} vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year} đã hoàn tất!!!`,
-        category: "APPOINTMENTHOME",
-        date: {
-          day: new Date().getDate(),
-          month: new Date().getMonth() + 1,
-          year: new Date().getFullYear(),
-        },
-        attached: rs._id,
-        user: recordDoctor.doctor._id,
-      };
-      noticeService.create(messagePatient);
-      noticeService.create(messageDoctor);
+    const messagePatient = {
+      title: "Hoàn tất lịch hẹn khám tại nhà",
+      content: `Lịch hẹn khám tại nhà với BS.${recordDoctor.doctor.fullName} vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year} đã hoàn tất. Cảm ơn bạn đã sử dụng dịch vụ!!!`,
+      category: "APPOINTMENTHOME",
+      date: {
+        day: new Date().getDate(),
+        month: new Date().getMonth() + 1,
+        year: new Date().getFullYear(),
+      },
+      attached: rs._id,
+      user: rs.patient._id,
+    };
+    const messageDoctor = {
+      title: "Hoàn tất lịch hẹn khám tại nhà",
+      content: `Lịch hẹn khám tại nhà với bệnh nhân ${rs.patient.fullName} vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year} đã hoàn tất!!!`,
+      category: "APPOINTMENTHOME",
+      date: {
+        day: new Date().getDate(),
+        month: new Date().getMonth() + 1,
+        year: new Date().getFullYear(),
+      },
+      attached: rs._id,
+      user: recordDoctor.doctor._id,
+    };
+    noticeService.create(messagePatient);
+    noticeService.create(messageDoctor);
     return complete;
   }
   async doctorCancel(data) {
-    const rs = await appointmentHomeModel.findById(data._id);
+    const rs = await appointmentHomeModel.findById(
+      data._id
+    );
     if (!rs) {
       return 0;
     }
@@ -355,7 +397,7 @@ class AppointmentHomeService {
     const messagePatient = {
       title: "Hủy lịch hẹn",
       content: `Bác sĩ ${recordDoctor.doctor.fullName} đã hủy lịch hẹn của bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}. Lý do: ${data.note}`,
-      category: "APPOINTMENT",
+      category: "APPOINTMENTHOME",
       date: {
         day: rs.appointment_date.day,
         month: rs.appointment_date.month,
@@ -475,7 +517,10 @@ class AppointmentHomeService {
         const data = await priceListService.getOne(
           item.price_list
         );
-        const doctorRecord = await doctorRecordModel.findById(item.doctor_record_id);
+        const doctorRecord =
+          await doctorRecordModel.findById(
+            item.doctor_record_id
+          );
         return appointmentHomeRes.toAppointmentHome(
           item,
           data,
@@ -503,7 +548,10 @@ class AppointmentHomeService {
         const data = await priceListService.getOne(
           item.price_list
         );
-        const doctorRecord = await doctorRecordModel.findById(item.doctor_record_id);
+        const doctorRecord =
+          await doctorRecordModel.findById(
+            item.doctor_record_id
+          );
         return appointmentHomeRes.toAppointmentHome(
           item,
           data,
@@ -531,7 +579,10 @@ class AppointmentHomeService {
         const data = await priceListService.getOne(
           item.price_list
         );
-        const doctorRecord = await doctorRecordModel.findById(item.doctor_record_id);
+        const doctorRecord =
+          await doctorRecordModel.findById(
+            item.doctor_record_id
+          );
         return appointmentHomeRes.toAppointmentHome(
           item,
           data,
@@ -546,13 +597,14 @@ class AppointmentHomeService {
     const data = await priceListService.getOne(
       rs.price_list
     );
-    const doctorRecord = await doctorRecordModel.findById(rs.doctor_record_id);
+    const doctorRecord = await doctorRecordModel.findById(
+      rs.doctor_record_id
+    );
     return appointmentHomeRes.toAppointmentHome(
       rs,
       data,
       doctorRecord.doctor
     );
   }
-  
 }
 module.exports = new AppointmentHomeService();

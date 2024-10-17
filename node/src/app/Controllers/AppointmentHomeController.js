@@ -36,7 +36,10 @@ class AppointmentHomeController {
   async getAll(req, res) {
     try {
       const rs = await appointmentHomeService.getAll();
-      return res.status(200).json(rs);
+      const accessToken = req.headers["accesstoken"];
+      const refreshToken = req.headers["refreshtoken"];
+      const token = { accessToken, refreshToken };
+      return res.status(200).json({ data: rs, token });
     } catch (error) {
       return res.status(500).json(error);
     }
@@ -158,7 +161,10 @@ class AppointmentHomeController {
           .status(404)
           .json("Không tìm thấy lịch hẹn này!!!");
       }
-      emitter.emit("send-email-appointment-home.accept", rs);
+      emitter.emit(
+        "send-email-appointment-home.accept",
+        rs
+      );
       return res.status(200).json({
         data: rs,
         token: { accessToken, refreshToken },
@@ -203,10 +209,36 @@ class AppointmentHomeController {
           .status(404)
           .json("Không tìm thấy lịch hẹn này!!!");
       }
-       emitter.emit(
-         "send-email-appointment-home.cancel",
-         rs
-       );
+      emitter.emit(
+        "send-email-appointment-home.cancel",
+        rs
+      );
+      return res.status(200).json({
+        data: "Hủy lịch hẹn thành công!!!",
+        token: { accessToken, refreshToken },
+      });
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  }
+
+  async patientCancelAppointmentHome(req, res) {
+    try {
+      const data = req.body;
+      const accessToken = req.headers["accesstoken"];
+      const refreshToken = req.headers["refreshtoken"];
+      const rs = await appointmentHomeService.patientCancel(
+        data
+      );
+      if (rs === 0) {
+        return res
+          .status(404)
+          .json("Không tìm thấy lịch hẹn này!!!");
+      }
+      emitter.emit(
+        "send-email-appointment-home-patient.cancel",
+        rs
+      );
       return res.status(200).json({
         data: "Hủy lịch hẹn thành công!!!",
         token: { accessToken, refreshToken },
@@ -218,9 +250,8 @@ class AppointmentHomeController {
   async completeAppointmentHome(req, res) {
     try {
       const data = req.body;
-      const rs = await appointmentHomeService.doctorComplete(
-        data
-      );
+      const rs =
+        await appointmentHomeService.doctorComplete(data);
       if (rs === 0) {
         return res
           .status(404)
