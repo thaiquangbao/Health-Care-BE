@@ -49,6 +49,7 @@ const doctorRecords = new Schema(
       default: [],
     },
   },
+ 
   { timestamps: true }
 );
 module.exports = mongoose.model(

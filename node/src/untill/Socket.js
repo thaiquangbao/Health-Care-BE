@@ -98,6 +98,25 @@ const socket = (server, baseURL) => {
      emitter.on("temperature-warning.ai", (data) => {
       socket.emit(`temperature-warning.ai${data.user}`, data);
     })
+    // payment
+    emitter.on("payment-appointment-online", (data) => {
+      const start = data.content.indexOf('MaKH') + 4; 
+      const end = data.content.indexOf('-', start);
+      const user = data.content.substring(start, end);
+      socket.emit(`payment-appointment-online${user}`, data);
+    })
+    emitter.on("payment-appointment-offline", (data) => {
+      const start = data.content.indexOf('MaKH') + 4; 
+      const end = data.content.indexOf('-', start);
+      const user = data.content.substring(start, end);
+      socket.emit(`payment-appointment-offline${user}`, data);
+    })
+    emitter.on("payment-appointment-logbooks", (data) => {
+      const start = data.content.indexOf('MaKH') + 4; 
+      const end = data.content.indexOf('-', start);
+      const user = data.content.substring(start, end);
+      socket.emit(`payment-appointment-logbooks${user}`, data);
+    })
     //disconnect
     socket.on("disconnect", () => {
       console.log("User disconnected");
