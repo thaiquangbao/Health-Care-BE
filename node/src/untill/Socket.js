@@ -7,6 +7,7 @@ const appointmentService = require("../app/Services/AppointmentService/Appointme
 const noticeService = require("../app/Services/NoticeService");
 const appointmentHomeService = require("../app/Services/AppointmentHomeService");
 const doctorRecordService = require("../app/Services/AppointmentService/DoctorRecordService");
+const paymentService = require("../app/Services/PaymentService");
 const socket = (server, baseURL) => {
   const io = new Server(server, {
     cors: {
@@ -27,10 +28,13 @@ const socket = (server, baseURL) => {
     emitter.on("room.update", (room) => {
       socket.emit(`room.update${room._id}`, room);
     });
-    // Notice 
+    // Notice
     emitter.on("notice.create", async (notice) => {
       const result = await notice;
-      socket.emit(`notice.create${result.user}`,await result);
+      socket.emit(
+        `notice.create${result.user}`,
+        await result
+      );
     });
 
     // message
@@ -42,22 +46,34 @@ const socket = (server, baseURL) => {
     });
     // health log book
     emitter.on("health-logbook-blood.update", (data) => {
-      socket.emit(`health-logbook-blood.update${data._id}`, {
-        data,
-        type: "blood",
-      });
+      socket.emit(
+        `health-logbook-blood.update${data._id}`,
+        {
+          data,
+          type: "blood",
+        }
+      );
     });
-    emitter.on("health-logbook-temperature.update", (data) => {
-      socket.emit(`health-logbook-temperature.update${data._id}`, {
-        data,
-        type: "temperature",
-      });
-    });
+    emitter.on(
+      "health-logbook-temperature.update",
+      (data) => {
+        socket.emit(
+          `health-logbook-temperature.update${data._id}`,
+          {
+            data,
+            type: "temperature",
+          }
+        );
+      }
+    );
     emitter.on("health-logbook-health.update", (data) => {
-      socket.emit(`health-logbook-health.update${data._id}`, {
-        data,
-        type: "health",
-      });
+      socket.emit(
+        `health-logbook-health.update${data._id}`,
+        {
+          data,
+          type: "health",
+        }
+      );
     });
     emitter.on("health-logbook-bmi.update", (data) => {
       socket.emit(`health-logbook-bmi.update${data._id}`, {
@@ -66,57 +82,87 @@ const socket = (server, baseURL) => {
       });
     });
     emitter.on("health-logbook-symptom.update", (data) => {
-      socket.emit(`health-logbook-symptom.update${data._id}`, {
-        data,
-        type: "symptom",
-      });
+      socket.emit(
+        `health-logbook-symptom.update${data._id}`,
+        {
+          data,
+          type: "symptom",
+        }
+      );
     });
     emitter.on("health-logbook-doctor.accepted", (data) => {
-      socket.emit(`health-logbook-doctor.accepted${data.logBook.patient._id}`, data.room)
+      socket.emit(
+        `health-logbook-doctor.accepted${data.logBook.patient._id}`,
+        data.room
+      );
     });
     emitter.on("health-logbook-doctor.transfer", (data) => {
       // socket.emit(`health-logbook-doctor.transfer${data.dataTransfer._id}`, data.dataTransfer);
       // socket.emit(`health-logbook-doctor.transfer${data.dataNew.doctor._id}`, data.dataNew);
-      socket.emit(`health-logbook-doctor.transfer${data.room._id}`, data.room)
+      socket.emit(
+        `health-logbook-doctor.transfer${data.room._id}`,
+        data.room
+      );
     });
     // emitter.on("health-logbook-doctor.stopped", (data) => {
     //   socket.emit(`health-logbook-doctor.stopped${data._id}`, data);
     // });
-    emitter.on("health-logbook-completed.update", (data) => {
-      socket.emit(`health-logbook-completed.update${data._id}`, data);
-    });
+    emitter.on(
+      "health-logbook-completed.update",
+      (data) => {
+        socket.emit(
+          `health-logbook-completed.update${data._id}`,
+          data
+        );
+      }
+    );
     // heart warning AI
     emitter.on("bloodPressure-warning.ai", (data) => {
-      socket.emit(`bloodPressure-warning.ai${data.user}`, data);
-    })
+      socket.emit(
+        `bloodPressure-warning.ai${data.user}`,
+        data
+      );
+    });
     emitter.on("bmi-warning.ai", (data) => {
       socket.emit(`bmi-warning.ai${data.user}`, data);
-    })
-     emitter.on("heartRate-warning.ai", (data) => {
+    });
+    emitter.on("heartRate-warning.ai", (data) => {
       socket.emit(`heartRate-warning.ai${data.user}`, data);
-    })
-     emitter.on("temperature-warning.ai", (data) => {
-      socket.emit(`temperature-warning.ai${data.user}`, data);
-    })
+    });
+    emitter.on("temperature-warning.ai", (data) => {
+      socket.emit(
+        `temperature-warning.ai${data.user}`,
+        data
+      );
+    });
     // payment
     emitter.on("payment-appointment-online", (data) => {
-      const start = data.content.indexOf('MaKH') + 4; 
-      const end = data.content.indexOf('-', start);
+      const start = data.content.indexOf("MaKH") + 4;
+      const end = data.content.indexOf("-", start);
       const user = data.content.substring(start, end);
-      socket.emit(`payment-appointment-online${user}`, data);
-    })
+      socket.emit(
+        `payment-appointment-online${user}`,
+        data
+      );
+    });
     emitter.on("payment-appointment-offline", (data) => {
-      const start = data.content.indexOf('MaKH') + 4; 
-      const end = data.content.indexOf('-', start);
+      const start = data.content.indexOf("MaKH") + 4;
+      const end = data.content.indexOf("-", start);
       const user = data.content.substring(start, end);
-      socket.emit(`payment-appointment-offline${user}`, data);
-    })
+      socket.emit(
+        `payment-appointment-offline${user}`,
+        data
+      );
+    });
     emitter.on("payment-appointment-logbooks", (data) => {
-      const start = data.content.indexOf('MaKH') + 4; 
-      const end = data.content.indexOf('-', start);
+      const start = data.content.indexOf("MaKH") + 4;
+      const end = data.content.indexOf("-", start);
       const user = data.content.substring(start, end);
-      socket.emit(`payment-appointment-logbooks${user}`, data);
-    })
+      socket.emit(
+        `payment-appointment-logbooks${user}`,
+        data
+      );
+    });
     //disconnect
     socket.on("disconnect", () => {
       console.log("User disconnected");
@@ -125,7 +171,9 @@ const socket = (server, baseURL) => {
   // send mail accept
   emitter.on("send-email.accept", async (data) => {
     const rs = await appointmentService.getById(data._id);
-    const recordDoctor = await doctorRecordModel.findById(rs.doctor_record_id);
+    const recordDoctor = await doctorRecordModel.findById(
+      rs.doctor_record_id
+    );
     let category_sick = "";
     let sex = "";
     let category = "";
@@ -232,13 +280,34 @@ const socket = (server, baseURL) => {
   });
   // deny mail
   emitter.on("send-email.deny", async (rs) => {
-    const recordDoctor = await doctorRecordModel.findById(rs.doctor_record_id);
+    const recordDoctor = await doctorRecordModel.findById(
+      rs.doctor_record_id
+    );
     const mail = await mailService.sendMail(
       rs.patient.email,
       "Từ chối lịch hẹn",
       `Bác sĩ ${recordDoctor.doctor.fullName} đã từ chối lịch hẹn của bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}`,
       ""
     );
+    const payment = {
+      patient_id: rs.patient._id,
+      doctor_id: recordDoctor.doctor._id,
+      category: rs._id,
+      namePayment: "APPOINTMENT",
+      status_payment: {
+        type: "PENDING",
+        messages: "Đang chờ xử lý",
+      },
+      price: 200000,
+      date: rs.appointment_date,
+      beneficiaryAccount: {
+        accountNumber: "",
+        bankName: "",
+        accountName: "",
+      },
+      description: rs.status_message,
+    };
+    await paymentService.save(payment);
     if (!mail) {
       return 2;
     }
@@ -247,38 +316,63 @@ const socket = (server, baseURL) => {
   //cancel mail
   emitter.on("send-email.cancel", async (data) => {
     const { rs, note } = data;
-    const recordDoctor = await doctorRecordModel.findById(rs.doctor_record_id);
+    const recordDoctor = await doctorRecordModel.findById(
+      rs.doctor_record_id
+    );
     const mail = await mailService.sendMail(
       rs.patient.email,
       "Hủy lịch hẹn",
       `Bác sĩ ${recordDoctor.doctor.fullName} đã hủy lịch hẹn của bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}. Lý do: ${note}`,
       ""
     );
+    const payment = {
+      patient_id: rs.patient._id,
+      doctor_id: recordDoctor.doctor._id,
+      category: rs._id,
+      namePayment: "APPOINTMENT",
+      status_payment: {
+        type: "PENDING",
+        messages: "Đang chờ xử lý",
+      },
+      price: 200000,
+      date: rs.appointment_date,
+      beneficiaryAccount: {
+        accountNumber: "",
+        bankName: "",
+        accountName: "",
+      },
+      description: rs.status_message,
+    };
+    await paymentService.save(payment);
     if (!mail) {
       return 2;
     }
     return 1;
   });
-  emitter.on("doctor-appointment-logbook.submit", async (data) => {
-    const rs = await appointmentService.getById(data._id);
-    const recordDoctor = await doctorRecordModel.findById(rs.doctor_record_id);
-    let category_sick = "";
-    let sex = "";
-    if (!data.sick) {
-      category_sick = "Tim mạch";
-    } else {
-      category_sick = data.sick;
-    }
-    if (!rs.patient.sex) {
-      sex = "Nữ";
-    } else {
-      sex = "Nam";
-    }
-    const mail = await mailService.sendMail(
-      rs.patient.email,
-      "Xác nhận lịch hẹn",
-      "",
-      `Bác sĩ ${recordDoctor.doctor.fullName} đã tạo lịch hẹn khám định kỳ với bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year} <br>
+  emitter.on(
+    "doctor-appointment-logbook.submit",
+    async (data) => {
+      const rs = await appointmentService.getById(data._id);
+      const recordDoctor = await doctorRecordModel.findById(
+        rs.doctor_record_id
+      );
+      let category_sick = "";
+      let sex = "";
+      if (!data.sick) {
+        category_sick = "Tim mạch";
+      } else {
+        category_sick = data.sick;
+      }
+      if (!rs.patient.sex) {
+        sex = "Nữ";
+      } else {
+        sex = "Nam";
+      }
+      const mail = await mailService.sendMail(
+        rs.patient.email,
+        "Xác nhận lịch hẹn",
+        "",
+        `Bác sĩ ${recordDoctor.doctor.fullName} đã tạo lịch hẹn khám định kỳ với bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year} <br>
        Đây là phiếu khám của bạn: <br>
       <div
           style="font-family: Arial, sans-serif; width: 600px; margin: 0 auto; background-color: #f7f7f7; padding: 20px; border-radius: 8px;">
@@ -353,14 +447,17 @@ const socket = (server, baseURL) => {
               </div>
           </div>
       </div>`
-    );
-    //`Bác sĩ ${recordDoctor.doctor.fullName} đã xác nhận lịch hẹn của bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}`
-    if (!mail) {
-      return 2;
+      );
+      //`Bác sĩ ${recordDoctor.doctor.fullName} đã xác nhận lịch hẹn của bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}`
+      if (!mail) {
+        return 2;
+      }
+      return 1;
     }
-    return 1;
-  });
-  emitter.on("send-email-appointment-home.accept", async (data) => {
+  );
+  emitter.on(
+    "send-email-appointment-home.accept",
+    async (data) => {
       const rs = await appointmentHomeService.getById(
         data._id
       );
@@ -369,7 +466,7 @@ const socket = (server, baseURL) => {
       );
       let category_sick = "";
       let sex = "";
-      
+
       if (!data.sick) {
         category_sick = "Tim mạch";
       } else {
@@ -437,8 +534,8 @@ const socket = (server, baseURL) => {
                   <p style="width: 30%; margin-left: 70px;">Ngày khám:</p>
                   <p style="text-align:right; width: 70%; margin-right: 60px;"><strong>
                           ${rs.appointment_date.day}-${
-                            rs.appointment_date.month
-                          }-${rs.appointment_date.year}</strong></p>
+          rs.appointment_date.month
+        }-${rs.appointment_date.year}</strong></p>
               </div>
               <div
                   style="display: flex;justify-content: space-between; font-size: 18px; color: #000; margin-bottom: 10px;">
@@ -494,19 +591,18 @@ const socket = (server, baseURL) => {
       return 1;
     }
   );
-   emitter.on(
-     "send-email-appointment-home.deny",
-     async (rs) => {
-       const recordDoctor =
-         await doctorRecordModel.findById(
-           rs.doctor_record_id
-         );
-       const mail = await mailService.sendMail(
-         rs.patient.email,
-         "Từ chối lịch hẹn khám tại nhà",
-         `Bác sĩ ${recordDoctor.doctor.fullName} đã từ chối lịch hẹn khám tại nhà với bạn. Hãy đăng ký một lịch hẹn khác nhé !!!`,
-         ""
-       );
+  emitter.on(
+    "send-email-appointment-home.deny",
+    async (rs) => {
+      const recordDoctor = await doctorRecordModel.findById(
+        rs.doctor_record_id
+      );
+      const mail = await mailService.sendMail(
+        rs.patient.email,
+        "Từ chối lịch hẹn khám tại nhà",
+        `Bác sĩ ${recordDoctor.doctor.fullName} đã từ chối lịch hẹn khám tại nhà với bạn. Hãy đăng ký một lịch hẹn khác nhé !!!`,
+        ""
+      );
       //  const dataRemoveSchedule = {
       //   doctor_record_id: rs.doctor_record_id,
       //   date: {
@@ -517,28 +613,27 @@ const socket = (server, baseURL) => {
       //   time: rs.appointment_date.time,
       // };
       // await doctorRecordService.removeSchedule(dataRemoveSchedule);
-       if (!mail) {
-         return 2;
-       }
-       return 1;
-     }
-   );
-   //cancel mail
-   emitter.on(
-     "send-email-appointment-home.cancel",
-     async (data) => {
-       const { rs, note } = data;
-       const recordDoctor =
-         await doctorRecordModel.findById(
-           rs.doctor_record_id
-         );
-       const mail = await mailService.sendMail(
-         rs.patient.email,
-         "Hủy lịch hẹn",
-         `Bác sĩ ${recordDoctor.doctor.fullName} đã hủy lịch hẹn khám tại nhà với bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}. Lý do: ${note}`,
-         ""
-       );
-       const dataRemoveSchedule = {
+      if (!mail) {
+        return 2;
+      }
+      return 1;
+    }
+  );
+  //cancel mail
+  emitter.on(
+    "send-email-appointment-home.cancel",
+    async (data) => {
+      const { rs, note } = data;
+      const recordDoctor = await doctorRecordModel.findById(
+        rs.doctor_record_id
+      );
+      const mail = await mailService.sendMail(
+        rs.patient.email,
+        "Hủy lịch hẹn",
+        `Bác sĩ ${recordDoctor.doctor.fullName} đã hủy lịch hẹn khám tại nhà với bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}. Lý do: ${note}`,
+        ""
+      );
+      const dataRemoveSchedule = {
         doctor_record_id: rs.doctor_record_id,
         date: {
           day: rs.appointment_date.day,
@@ -547,50 +642,49 @@ const socket = (server, baseURL) => {
         },
         time: rs.appointment_date.time,
       };
-      await doctorRecordService.removeSchedule(dataRemoveSchedule);
-       if (!mail) {
-         return 2;
-       }
-       return 1;
-     }
-   );
-   // payment appointment home
-   emitter.on(
-     "send-email-appointment-home.payment",
-     async (data) => {
-       const rs = await appointmentHomeService.getById(
-         data._id
-       );
-       const recordDoctor =
-         await doctorRecordModel.findById(
-           rs.doctor_record_id
-         );
-       let category_sick = "";
-       let sex = "";
+      await doctorRecordService.removeSchedule(
+        dataRemoveSchedule
+      );
+      if (!mail) {
+        return 2;
+      }
+      return 1;
+    }
+  );
+  // payment appointment home
+  emitter.on(
+    "send-email-appointment-home.payment",
+    async (data) => {
+      const rs = await appointmentHomeService.getById(
+        data._id
+      );
+      const recordDoctor = await doctorRecordModel.findById(
+        rs.doctor_record_id
+      );
+      let category_sick = "";
+      let sex = "";
 
-       if (!data.sick) {
-         category_sick = "Tim mạch";
-       } else {
-         category_sick = data.sick;
-       }
-       if (!rs.patient.sex) {
-         sex = "Nữ";
-       } else {
-         sex = "Nam";
-       }
-       const mail = await mailService.sendMail(
-         rs.patient.email,
-         "Thanh toán thành công lịch hẹn khám tại nhà",
-         "",
-         `Bạn đã thanh toán thành công lịch hẹn khám tại nhà với BS. ${
-           recordDoctor.doctor.fullName
-         } vào lúc (${
-           rs.appointment_date.time
-         }) ngày ${rs.appointment_date.day}/${
-           rs.appointment_date.month
-         }/${
-           rs.appointment_date.year
-         }. <br>
+      if (!data.sick) {
+        category_sick = "Tim mạch";
+      } else {
+        category_sick = data.sick;
+      }
+      if (!rs.patient.sex) {
+        sex = "Nữ";
+      } else {
+        sex = "Nam";
+      }
+      const mail = await mailService.sendMail(
+        rs.patient.email,
+        "Thanh toán thành công lịch hẹn khám tại nhà",
+        "",
+        `Bạn đã thanh toán thành công lịch hẹn khám tại nhà với BS. ${
+          recordDoctor.doctor.fullName
+        } vào lúc (${rs.appointment_date.time}) ngày ${
+          rs.appointment_date.day
+        }/${rs.appointment_date.month}/${
+          rs.appointment_date.year
+        }. <br>
        Đây là phiếu khám của bạn: <br>
       <div
           style="font-family: Arial, sans-serif; width: 600px; margin: 0 auto; background-color: #f7f7f7; padding: 20px; border-radius: 8px;">
@@ -642,8 +736,8 @@ const socket = (server, baseURL) => {
                   <p style="width: 30%; margin-left: 70px;">Ngày khám:</p>
                   <p style="text-align:right; width: 70%; margin-right: 60px;"><strong>
                           ${rs.appointment_date.day}-${
-           rs.appointment_date.month
-         }-${rs.appointment_date.year}</strong></p>
+          rs.appointment_date.month
+        }-${rs.appointment_date.year}</strong></p>
               </div>
               <div
                   style="display: flex;justify-content: space-between; font-size: 18px; color: #000; margin-bottom: 10px;">
@@ -691,16 +785,18 @@ const socket = (server, baseURL) => {
               </div>
           </div>
       </div>`
-       );
-       await mailService.sendMail(
-         recordDoctor.doctor.email,
-         "Bệnh nhân đã thanh toán lịch hẹn khám tại nhà",
-         "",
-         `Bệnh nhân ${rs.patient.fullName} đã thanh toán thành công lịch hẹn khám tại nhà với bác sĩ  vào lúc (${rs.appointment_date.time}) ngày ${
-           rs.appointment_date.day
-         }/${rs.appointment_date.month}/${
-           rs.appointment_date.year
-         }. <br>
+      );
+      await mailService.sendMail(
+        recordDoctor.doctor.email,
+        "Bệnh nhân đã thanh toán lịch hẹn khám tại nhà",
+        "",
+        `Bệnh nhân ${
+          rs.patient.fullName
+        } đã thanh toán thành công lịch hẹn khám tại nhà với bác sĩ  vào lúc (${
+          rs.appointment_date.time
+        }) ngày ${rs.appointment_date.day}/${
+          rs.appointment_date.month
+        }/${rs.appointment_date.year}. <br>
        Đây là phiếu khám của bệnh nhân: <br>
       <div
           style="font-family: Arial, sans-serif; width: 600px; margin: 0 auto; background-color: #f7f7f7; padding: 20px; border-radius: 8px;">
@@ -752,8 +848,8 @@ const socket = (server, baseURL) => {
                   <p style="width: 30%; margin-left: 70px;">Ngày khám:</p>
                   <p style="text-align:right; width: 70%; margin-right: 60px;"><strong>
                           ${rs.appointment_date.day}-${
-           rs.appointment_date.month
-         }-${rs.appointment_date.year}</strong></p>
+          rs.appointment_date.month
+        }-${rs.appointment_date.year}</strong></p>
               </div>
               <div
                   style="display: flex;justify-content: space-between; font-size: 18px; color: #000; margin-bottom: 10px;">
@@ -801,49 +897,43 @@ const socket = (server, baseURL) => {
               </div>
           </div>
       </div>`
-       );
-       //`Bác sĩ ${recordDoctor.doctor.fullName} đã xác nhận lịch hẹn của bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}`
-       if (!mail) {
-         return 2;
-       }
-       return 1;
-     }
-   );
- emitter.on(
-   "send-email-appointment-home.complete",
-   async (data) => {
-     const rs = await appointmentHomeService.getById(
-       data._id
-     );
-     const recordDoctor = await doctorRecordModel.findById(
-       rs.doctor_record_id
-     );
-     const mail = await mailService.sendMail(
-       rs.patient.email,
-       "Lịch hẹn khám tại nhà đã hoàn tất",
-       "",
-       `Lịch hẹn khám tại nhà của bạn với BS. ${
-         recordDoctor.doctor.fullName
-       } vào lúc ${
-         rs.appointment_date.time
-       } ngày ${rs.appointment_date.day}/${
-         rs.appointment_date.month
-       }/${
-         rs.appointment_date.year
-       } đã hoàn tất.Hãy đánh giá cho bác sĩ nhé. Cảm ơn bạn đã sử dụng dịch vụ tại Health-heaven!!! <br>
+      );
+      //`Bác sĩ ${recordDoctor.doctor.fullName} đã xác nhận lịch hẹn của bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}`
+      if (!mail) {
+        return 2;
+      }
+      return 1;
+    }
+  );
+  emitter.on(
+    "send-email-appointment-home.complete",
+    async (data) => {
+      const rs = await appointmentHomeService.getById(
+        data._id
+      );
+      const recordDoctor = await doctorRecordModel.findById(
+        rs.doctor_record_id
+      );
+      const mail = await mailService.sendMail(
+        rs.patient.email,
+        "Lịch hẹn khám tại nhà đã hoàn tất",
+        "",
+        `Lịch hẹn khám tại nhà của bạn với BS. ${recordDoctor.doctor.fullName} vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year} đã hoàn tất.Hãy đánh giá cho bác sĩ nhé. Cảm ơn bạn đã sử dụng dịch vụ tại Health-heaven!!! <br>
       `
-     );
-     //`Bác sĩ ${recordDoctor.doctor.fullName} đã xác nhận lịch hẹn của bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}`
-     if (!mail) {
-       return 2;
-     }
-     return 1;
-   }
- );
- emitter.on(
-  "send-email-appointment-home-patient.cancel",
-  async (rs) => {
-    const recordDoctor = await doctorRecordModel.findById(rs.doctor_record_id);
+      );
+      //`Bác sĩ ${recordDoctor.doctor.fullName} đã xác nhận lịch hẹn của bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}`
+      if (!mail) {
+        return 2;
+      }
+      return 1;
+    }
+  );
+  emitter.on(
+    "send-email-appointment-home-patient.cancel",
+    async (rs) => {
+      const recordDoctor = await doctorRecordModel.findById(
+        rs.doctor_record_id
+      );
       const dataRemoveSchedule = {
         doctor_record_id: rs.doctor_record_id,
         date: {
@@ -853,7 +943,10 @@ const socket = (server, baseURL) => {
         },
         time: rs.appointment_date.time,
       };
-      const dataRemove = await doctorRecordService.removeSchedule(dataRemoveSchedule);
+      const dataRemove =
+        await doctorRecordService.removeSchedule(
+          dataRemoveSchedule
+        );
       const messagePatient = {
         title: "Hủy lịch hẹn thành công",
         content: `Bạn đã hủy lịch hẹn khám tại nhà với BS. ${recordDoctor.doctor.fullName} thành công. Hãy đặt một lịch khám mới nhé!!!`,
@@ -866,26 +959,48 @@ const socket = (server, baseURL) => {
         attached: rs._id,
         user: rs.patient._id,
       };
-       const messageDoctor = {
-         title: "Lịch hẹn khám tại nhà bị hủy",
-         content: `Bác sĩ có một lịch hẹn khám tại nhà bị hủy. Bấm vào để xem thông tin chi tiết!!!`,
-         category: "APPOINTMENTHOME",
-         date: {
-           day: new Date().getDate(),
-           month: new Date().getMonth() + 1,
-           year: new Date().getFullYear(),
-         },
-         attached: rs._id,
-         user: recordDoctor.doctor._id,
-       };
+      const messageDoctor = {
+        title: "Lịch hẹn khám tại nhà bị hủy",
+        content: `Bác sĩ có một lịch hẹn khám tại nhà bị hủy. Bấm vào để xem thông tin chi tiết!!!`,
+        category: "APPOINTMENTHOME",
+        date: {
+          day: new Date().getDate(),
+          month: new Date().getMonth() + 1,
+          year: new Date().getFullYear(),
+        },
+        attached: rs._id,
+        user: recordDoctor.doctor._id,
+      };
       noticeService.create(messagePatient);
       noticeService.create(messageDoctor);
-   
- 
-       
-    return dataRemove;
-  }
-);
+
+      return dataRemove;
+    }
+  );
+  emitter.on(
+    "health-logbook-doctor.rejected",
+    async (rs) => {
+      const payment = {
+        patient_id: rs.patient._id,
+        doctor_id: rs.doctor._id,
+        category: rs._id,
+        namePayment: "HEALTHLOGBOOK",
+        status_payment: {
+          type: "PENDING",
+          messages: "Đang chờ xử lý",
+        },
+        price: rs.priceList.price,
+        date: rs.date,
+        beneficiaryAccount: {
+          accountNumber: "",
+          bankName: "",
+          accountName: "",
+        },
+        description: rs.status?.message,
+      };
+      await paymentService.save(payment);
+    }
+  );
 };
 
 module.exports = socket;
