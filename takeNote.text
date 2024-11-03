@@ -1,10 +1,5 @@
 Nhớ đổi link meet qua bên https://heath-haven-meet.vercel.app
 
-
-google map api
-những bác sĩ gần bạn
-
-remove cho phần appoitmentHome reject với cancel(Đang bị cấn khi chưa zô đặt lịch thì k thể hủy lịchs)
 ---
 # fix
 customer khi xem chi tiết bác sĩ
@@ -14,11 +9,13 @@ Phân quyền lại các trang
 Bắt buộc bác sĩ, user nhập mail(còn phần customer khi đặt check mail, liên kết email check mail)
 set chức năng cho nút đặt khám ngay tại /cac-dich-vu(ok)
 những lịch đặt quá hạn thì tự kết thúc (appointment)
+set lại phần hiện thời gian đặt lịch cho appointment
 Khi đặt lịch thành công bấm vào đặt tiếp nó lại chuyển phần thanh toán tới bước cuối
 Check lại các trang token
 khi hoàn thành thì gửi mail appointment thường
 #Đã xong
 status room (ok)
+remove cho phần appoitmentHome reject với cancel(ok)
 Thêm chức năng đặt khám tại nhà(ok)
 màn hình thanh toán cho khám tại nhà(ok)
 check lại luồn sự kiện hiển thị nút hồ sơ bác sĩ(thằng đức ok)
@@ -51,9 +48,11 @@ thông báo thành công khi hoàn thành hồ sơ sức khỏe tại nhà và r
 Khi đã duyệt rồi thì hiện form medical record(ok)
 hoàn thành 1 cái record thì load lại trang(ok)
 sắp xếp lại các nút hoàn thành và đánh giá(ok)
+google map api (ok)
 còn phần khi hoàn tất khám tại nhà(ok)
 Gửi mail cho appointmentHome (ok)
+tich hop momo(ok)
+Thêm thống kê doanh thu cho bác sĩ(ok)
 #Lỡ dỡ
 smart contract(Tạm)
-tich hop momo(tạm)
-Thêm thống kê doanh thu cho bác sĩ(chưa gửi,thiếu mobile)
+

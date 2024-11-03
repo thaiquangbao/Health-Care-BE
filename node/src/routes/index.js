@@ -16,9 +16,11 @@ const noticeRoute = require("./notice/noticeRoute");
 const healthLogBookRoute = require("./healthBook/healthLogBookRoute");
 const paymentRoute = require("./payment");
 const appointmentHomeRoute = require("./appointmentHome/appointmentHomeRoute");
+const payBackRoute = require("./payBack/payBackRoute");
 const testRoute = require("./test/testRoute");
 function routes(app) {
   app.use("/test", testRoute);
+  app.use("/payBacks", payBackRoute);
   app.use("/appointmentHomes", appointmentHomeRoute);
   app.use("/payments", paymentRoute);
   app.use("/healthLogBooks", healthLogBookRoute);

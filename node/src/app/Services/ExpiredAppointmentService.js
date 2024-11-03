@@ -5,6 +5,7 @@ const appointmentService = require("./AppointmentService/AppointmentService");
 const appointmentModel = require("../models/appointmentModels");
 const doctorRecordModel = require("../models/doctorRecordModel");
 const noticeService = require("../Services/NoticeService");
+const payBackService = require("../Services/PayBackService");
 class ExpiredAppointmentService {
   async notification(appointment) {
     const [hours, minutes] =
@@ -47,44 +48,39 @@ class ExpiredAppointmentService {
       } else {
         category = "Tư vấn trực tiếp";
       }
+      const dataPayback = {
+        doctor_id: doctorRecord.doctor._id,
+        type: "APPOINTMENT",
+        service_id: appointment._id,
+        status: {
+          type: "AVAILABLE",
+          messages: "Khả dụng",
+        },
+        price: 140000,
+        date: appointment.appointment_date,
+      };
+      await payBackService.save(dataPayback);
 
-      
-    const dataComplete = {
+      const dataComplete = {
         _id: appointment._id,
         status: "COMPLETED",
         status_message: "Đã hoàn tất lịch hẹn",
-    }
-    await mailService.sendMail(
-      appointment.patient.email,
-     "Lịch hẹn khám trực tuyến đã hoàn tất",
-     "",
-     `Lịch hẹn khám trực tuyến của bạn với BS. ${
-      doctorRecord.doctor.fullName
-     } vào lúc (${
-       appointment.appointment_date.time
-     }) ngày ${appointment.appointment_date.day}/${
-       appointment.appointment_date.month
-     }/${
-       appointment.appointment_date.year
-     } đã hoàn tất. Cảm ơn bạn đã sử dụng dịch vụ tại Health-heaven!!! <br>
+      };
+      await mailService.sendMail(
+        appointment.patient.email,
+        "Lịch hẹn khám trực tuyến đã hoàn tất",
+        "",
+        `Lịch hẹn khám trực tuyến của bạn với BS. ${doctorRecord.doctor.fullName} vào lúc (${appointment.appointment_date.time}) ngày ${appointment.appointment_date.day}/${appointment.appointment_date.month}/${appointment.appointment_date.year} đã hoàn tất. Cảm ơn bạn đã sử dụng dịch vụ tại Health-heaven!!! <br>
     `
-    );
-    await mailService.sendMail(
-      doctorRecord.doctor.email,
-     "Lịch hẹn khám trực tuyến đã hoàn tất",
-     "",
-     `Lịch hẹn khám trực tuyến của bác sĩ với bệnh nhân ${
-      appointment.patient.fullName
-     } vào lúc (${
-       appointment.appointment_date.time
-     }) ngày ${appointment.appointment_date.day}/${
-       appointment.appointment_date.month
-     }/${
-       appointment.appointment_date.year
-     } đã hoàn tất!!! <br>
+      );
+      await mailService.sendMail(
+        doctorRecord.doctor.email,
+        "Lịch hẹn khám trực tuyến đã hoàn tất",
+        "",
+        `Lịch hẹn khám trực tuyến của bác sĩ với bệnh nhân ${appointment.patient.fullName} vào lúc (${appointment.appointment_date.time}) ngày ${appointment.appointment_date.day}/${appointment.appointment_date.month}/${appointment.appointment_date.year} đã hoàn tất!!! <br>
     `
-    );
-     await appointmentService.doctorComplete(dataComplete);
+      );
+      await appointmentService.doctorComplete(dataComplete);
       const messagePatient = {
         title: "Lịch hẹn hoàn tất",
         content: `Lịch hẹn khám của bạn với bác sĩ ${doctorRecord.doctor.fullName}. Vào lúc ${appointment.appointment_date.time} đã hoàn tất. Cảm ơn bạn đã sử dụng dịch vụ!!!`,
@@ -111,6 +107,7 @@ class ExpiredAppointmentService {
       };
       await noticeService.create(messagePatient);
       await noticeService.create(messageDoctor);
+
       console.log(
         `Notification sent to ${
           appointment.patient.email
@@ -118,9 +115,10 @@ class ExpiredAppointmentService {
           doctorRecord.doctor?.email
         }for appointment completed at ${appointmentDate.format()}`
       );
-     
     } else {
-      console.log("Không có lịch hẹn nào cần thông báo đã hoàn thành");
+      console.log(
+        "Không có lịch hẹn nào cần thông báo đã hoàn thành"
+      );
     }
   }
   async startDepointmentFetch() {

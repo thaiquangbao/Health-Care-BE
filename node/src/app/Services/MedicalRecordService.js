@@ -97,6 +97,7 @@ class MedicalRecordService {
     const rs = await medicalRecordModel.find({
       "patient._id": patient,
     });
+
     const result = rs.filter(
       (item) =>
         item.diagnosisDisease &&

@@ -173,7 +173,29 @@ class AppointmentController {
       }
       emitter.emit("send-email.cancel", rs);
       return res.status(200).json({
-        data: "Hủy lịch hẹn thành công!!!",
+        data: rs.rs,
+        token: { accessToken, refreshToken },
+      });
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  }
+  async cancelPatientAppointment(req, res) {
+    try {
+      const data = req.body;
+      const accessToken = req.headers["accesstoken"];
+      const refreshToken = req.headers["refreshtoken"];
+      const rs = await appointmentService.patientCancel(
+        data
+      );
+      if (rs === 0) {
+        return res
+          .status(404)
+          .json("Không tìm thấy lịch hẹn này!!!");
+      }
+      emitter.emit("send-email-patient.cancel", rs);
+      return res.status(200).json({
+        data: rs,
         token: { accessToken, refreshToken },
       });
     } catch (error) {

@@ -288,7 +288,7 @@ class AppointmentService {
       );
     const messagePatient = {
       title: "Hủy lịch hẹn",
-      content: `Bác sĩ ${recordDoctor.doctor.fullName} đã hủy lịch hẹn của bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}. Lý do: ${data.note}`,
+      content: `Bác sĩ ${recordDoctor.doctor.fullName} đã hủy lịch hẹn của bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}. Lý do: ${data.reason}`,
       category: "APPOINTMENT",
       date: {
         day: rs.appointment_date.day,
@@ -299,7 +299,52 @@ class AppointmentService {
       user: rs.patient._id,
     };
     noticeService.create(messagePatient);
-    return { rs: deleted, note: data.note };
+    return { rs: deleted, note: data.reason };
+  }
+  async patientCancel(data) {
+    const rs = await appointmentModel.findById(data._id);
+    if (!rs) {
+      return 0;
+    }
+    const recordDoctor = await doctorRecordModel.findById(
+      rs.doctor_record_id
+    );
+
+    const deleted =
+      await appointmentModel.findByIdAndUpdate(
+        rs._id,
+        data,
+        {
+          new: true,
+        }
+      );
+    const messagePatient = {
+      title: "Hủy lịch hẹn",
+      content: `Bạn đã hủy lịch hẹn với BS. ${recordDoctor.doctor.fullName} thành công vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}. Hãy đặt một lịch hẹn mới với bác sĩ khác nhé!!!`,
+      category: "APPOINTMENT",
+      date: {
+        day: rs.appointment_date.day,
+        month: rs.appointment_date.month,
+        year: rs.appointment_date.year,
+      },
+      attached: rs._id,
+      user: rs.patient._id,
+    };
+    const messageDoctor = {
+      title: "Hủy lịch hẹn",
+      content: `Bác sĩ có một lịch hẹn chưa xác nhân bị hủy vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year} !!!`,
+      category: "APPOINTMENT",
+      date: {
+        day: rs.appointment_date.day,
+        month: rs.appointment_date.month,
+        year: rs.appointment_date.year,
+      },
+      attached: rs._id,
+      user: recordDoctor.doctor._id,
+    };
+    noticeService.create(messagePatient);
+    noticeService.create(messageDoctor);
+    return deleted;
   }
   async findByWeek(dataSearch) {
     const startOfWeek = moment

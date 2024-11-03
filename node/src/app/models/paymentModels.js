@@ -3,21 +3,24 @@ const Schema = mongoose.Schema;
 const moment = require("moment-timezone");
 moment.tz.setDefault("Asia/Ho_Chi_Minh");
 const payments = new Schema({
-  patient_id: { type: Schema.Types.ObjectId },
-  doctor_id: { type: Schema.Types.ObjectId },
+  patient_id: {
+    type: Schema.Types.ObjectId,
+    default: null,
+  },
+  doctor_id: { type: Schema.Types.ObjectId, default: null },
   category: { type: String, default: "" },
   namePayment: { type: String, default: "" },
   date: {
     day: { type: Number, default: 0 },
     month: { type: Number, default: 0 },
     year: { type: Number, default: 0 },
-    time: { type: String, default: ""},
+    time: { type: String, default: "" },
   },
   dateTake: {
     day: { type: Number, default: 0 },
     month: { type: Number, default: 0 },
     year: { type: Number, default: 0 },
-    time: { type: String, default: ""},
+    time: { type: String, default: "" },
   },
   beneficiaryAccount: {
     accountNumber: { type: String, default: "0834885704" },

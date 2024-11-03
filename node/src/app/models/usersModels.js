@@ -18,7 +18,7 @@ const users = new Schema(
     cccd: { type: String, default: "" },
     pathological: { type: String, default: "" },
     bank: {
-      accountNumber: { type: Number, default: "" },
+      accountNumber: { type: String, default: "" },
       bankName: { type: String, default: "" },
       accountName: { type: String, default: "" },
     },

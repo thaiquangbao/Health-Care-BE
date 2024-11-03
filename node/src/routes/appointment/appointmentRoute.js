@@ -41,6 +41,11 @@ useRouter.post(
   appointmentController.cancelAppointment
 );
 useRouter.post(
+  "/patient-cancel",
+  middleWareToken.validateToken,
+  appointmentController.cancelPatientAppointment
+);
+useRouter.post(
   "/doctor-reject",
   middleWareToken.validateToken,
   appointmentController.denyAppointment

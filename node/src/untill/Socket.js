@@ -8,6 +8,7 @@ const noticeService = require("../app/Services/NoticeService");
 const appointmentHomeService = require("../app/Services/AppointmentHomeService");
 const doctorRecordService = require("../app/Services/AppointmentService/DoctorRecordService");
 const paymentService = require("../app/Services/PaymentService");
+const payBackService = require("../app/Services/PayBackService");
 const socket = (server, baseURL) => {
   const io = new Server(server, {
     cors: {
@@ -341,13 +342,37 @@ const socket = (server, baseURL) => {
         bankName: "",
         accountName: "",
       },
-      description: rs.status_message,
+      description: note,
     };
     await paymentService.save(payment);
     if (!mail) {
       return 2;
     }
     return 1;
+  });
+  emitter.on("send-email-patient.cancel", async (rs) => {
+    const recordDoctor = await doctorRecordModel.findById(
+      rs.doctor_record_id
+    );
+    const payment = {
+      patient_id: rs.patient._id,
+      doctor_id: recordDoctor.doctor._id,
+      category: rs._id,
+      namePayment: "APPOINTMENT",
+      status_payment: {
+        type: "PENDING",
+        messages: "Đang chờ xử lý",
+      },
+      price: 200000,
+      date: rs.appointment_date,
+      beneficiaryAccount: {
+        accountNumber: "",
+        bankName: "",
+        accountName: "",
+      },
+      description: rs.status_message,
+    };
+    return await paymentService.save(payment);
   });
   emitter.on(
     "doctor-appointment-logbook.submit",
@@ -914,6 +939,18 @@ const socket = (server, baseURL) => {
       const recordDoctor = await doctorRecordModel.findById(
         rs.doctor_record_id
       );
+      const dataPayback = {
+        doctor_id: recordDoctor.doctor._id,
+        type: "APPOINTMENTHOME",
+        service_id: data._id,
+        status: {
+          type: "AVAILABLE",
+          messages: "Khả dụng",
+        },
+        price: 210000,
+        date: rs.appointment_date,
+      };
+      await payBackService.save(dataPayback);
       const mail = await mailService.sendMail(
         rs.patient.email,
         "Lịch hẹn khám tại nhà đã hoàn tất",
@@ -1001,6 +1038,70 @@ const socket = (server, baseURL) => {
       await paymentService.save(payment);
     }
   );
+  emitter.on("request-status", async (rs) => {
+    const currentDate = new Date();
+    const vietnamTimeOffset = 7 * 60; // GMT+7 in minutes
+    const localTimeOffset = currentDate.getTimezoneOffset(); // Local timezone offset in minutes
+    const vietnamTime = new Date(
+      currentDate.getTime() +
+        (vietnamTimeOffset + localTimeOffset) * 60000
+    );
+    const time = {
+      day: vietnamTime.getDate(),
+      month: vietnamTime.getMonth() + 1,
+      year: vietnamTime.getFullYear(),
+      time: `${vietnamTime.getHours()}:${vietnamTime.getMinutes()}`,
+    };
+    const payment = {
+      doctor_id: rs.doctor_id,
+      namePayment: "PAYBACK",
+      status_take_money: {
+        type: "PENDING",
+        messages: "Đang chờ xử lý",
+      },
+      price: rs.priceValid,
+      dateTake: time,
+      beneficiaryAccount: {
+        accountNumber: "",
+        bankName: "",
+        accountName: "",
+      },
+      descriptionTake: rs.descriptionTake,
+    };
+    return await paymentService.save(payment);
+  });
+  // emitter.on("accept-status", async (rs) => {
+  //   const currentDate = new Date();
+  //   const vietnamTimeOffset = 7 * 60; // GMT+7 in minutes
+  //   const localTimeOffset = currentDate.getTimezoneOffset(); // Local timezone offset in minutes
+  //   const vietnamTime = new Date(
+  //     currentDate.getTime() +
+  //       (vietnamTimeOffset + localTimeOffset) * 60000
+  //   );
+  //   const time = {
+  //     day: vietnamTime.getDate(),
+  //     month: vietnamTime.getMonth() + 1,
+  //     year: vietnamTime.getFullYear(),
+  //     time: `${vietnamTime.getHours()}:${vietnamTime.getMinutes()}`,
+  //   };
+  //   const payment = {
+  //     doctor_id: rs.doctor_id,
+  //     namePayment: "PAYBACK",
+  //     status_take_money: {
+  //       type: "PENDING",
+  //       messages: "Đang chờ xử lý",
+  //     },
+  //     price: rs.priceValid,
+  //     dateTake: time,
+  //     beneficiaryAccount: {
+  //       accountNumber: "",
+  //       bankName: "",
+  //       accountName: "",
+  //     },
+  //     descriptionTake: rs.descriptionTake,
+  //   };
+  //   return await paymentService.save(payment);
+  // });
 };
 
 module.exports = socket;

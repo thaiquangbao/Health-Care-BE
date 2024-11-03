@@ -4,24 +4,24 @@ const paymentDto = require("../Dtos/Payment/PaymentRespone");
 const noticeService = require("./NoticeService");
 class PaymentService {
   async save(paymentData) {
-    const patient = await userModel.findOne({
-      $and: [
-        { _id: paymentData.patient_id },
-        { role: "USER" },
-      ],
-    });
-    const doctor = await userModel.findOne({
-      $and: [
-        { _id: paymentData.doctor_id },
-        { role: "DOCTOR" },
-      ],
-    });
-    if (!patient) {
-      return 2;
-    }
-    if (!doctor) {
-      return 3;
-    }
+    // const patient = await userModel.findOne({
+    //   $and: [
+    //     { _id: paymentData.patient_id },
+    //     { role: "USER" },
+    //   ],
+    // });
+    // const doctor = await userModel.findOne({
+    //   $and: [
+    //     { _id: paymentData.doctor_id },
+    //     { role: "DOCTOR" },
+    //   ],
+    // });
+    // if (!patient) {
+    //   return 2;
+    // }
+    // if (!doctor) {
+    //   return 3;
+    // }
     const payment = new paymentModel(paymentData);
     await payment.save();
     return payment;

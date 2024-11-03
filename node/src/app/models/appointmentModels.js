@@ -36,8 +36,9 @@ const appointments = new Schema(
     healthRate: { type: Number, default: 0 },
     weight: { type: Number, default: 0 },
     height: { type: Number, default: 0 },
-    temperature: { type: Number, default: 0 },  
+    temperature: { type: Number, default: 0 },
     bloodPressure: { type: String, default: "" },
+    reason: { type: String, default: "" },
   },
   { timestamps: true }
 );

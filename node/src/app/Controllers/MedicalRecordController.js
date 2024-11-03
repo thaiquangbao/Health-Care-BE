@@ -85,19 +85,24 @@ class MedicalRecordController {
   async getAll(req, res) {
     try {
       let rs = await medicalRecordService.getAll();
-      rs = JSON.parse(JSON.stringify(rs, (key, value) =>
-        typeof value === 'bigint' ? value.toString() : value
-    ));
+      rs = JSON.parse(
+        JSON.stringify(rs, (key, value) =>
+          typeof value === "bigint"
+            ? value.toString()
+            : value
+        )
+      );
       return res.status(200).json(rs);
     } catch (error) {
       console.log(error);
-      
+
       return res.status(500).json(error);
     }
   }
   async findByPatient(req, res) {
     try {
       const patient = req.params.id;
+
       const rs = await medicalRecordService.findByPatient(
         patient
       );
