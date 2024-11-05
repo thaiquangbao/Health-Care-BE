@@ -61,6 +61,9 @@ class HealthLogBookService {
     if (!exist) {
       return 0;
     }
+    if (exist.status.status_type !== "QUEUE") {
+      return 2;
+    }
     const updated =
       await healthLogBookModel.findByIdAndUpdate(
         exist._id,
@@ -129,6 +132,9 @@ class HealthLogBookService {
     if (!exist) {
       return 0;
     }
+    if (exist.status.status_type !== "QUEUE") {
+      return 2;
+    }
     const rs = await healthLogBookModel.findByIdAndUpdate(
       exist._id,
       {
@@ -152,6 +158,52 @@ class HealthLogBookService {
       user: exist.patient._id,
     };
     noticeService.create(messagePatient);
+    return rs;
+  }
+  async canceled(id) {
+    const exist = await healthLogBookModel.findById(id);
+    if (!exist) {
+      return 0;
+    }
+    if (exist.status.status_type !== "QUEUE") {
+      return 2;
+    }
+    const rs = await healthLogBookModel.findByIdAndUpdate(
+      exist._id,
+      {
+        $set: {
+          "status.status_type": "CANCELED",
+          "status.message": "Bệnh nhân đã hủy cuộc hẹn",
+        },
+      },
+      { new: true }
+    );
+    const messagePatient = {
+      title: "Hủy theo dõi sức khỏe",
+      content: `Bạn đã hủy theo dõi sức khỏe với BS. ${exist.doctor.fullName} thành công. Hãy đặt một lịch theo dõi sức khỏe mới nhé!!!`,
+      category: "HEARTLOGBOOK",
+      date: {
+        day: new Date().getDate(),
+        month: new Date().getMonth() + 1,
+        year: new Date().getFullYear(),
+      },
+      attached: exist._id,
+      user: exist.patient._id,
+    };
+    const messageDoctor = {
+      title: "Hủy theo dõi sức khỏe",
+      content: `Bác sĩ có một lịch hẹn chờ xác nhận theo dõi sức khỏe thành công. Bấm vào để xem thông tin chi tiết!!!`,
+      category: "HEARTLOGBOOK",
+      date: {
+        day: new Date().getDate(),
+        month: new Date().getMonth() + 1,
+        year: new Date().getFullYear(),
+      },
+      attached: exist._id,
+      user: exist.doctor._id,
+    };
+    noticeService.create(messagePatient);
+    noticeService.create(messageDoctor);
     return rs;
   }
   async completed(id) {

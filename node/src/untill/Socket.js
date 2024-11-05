@@ -1038,6 +1038,30 @@ const socket = (server, baseURL) => {
       await paymentService.save(payment);
     }
   );
+  emitter.on(
+    "health-logbook-doctor.canceled",
+    async (rs) => {
+      const payment = {
+        patient_id: rs.patient._id,
+        doctor_id: rs.doctor._id,
+        category: rs._id,
+        namePayment: "HEALTHLOGBOOK",
+        status_payment: {
+          type: "PENDING",
+          messages: "Đang chờ xử lý",
+        },
+        price: rs.priceList.price,
+        date: rs.date,
+        beneficiaryAccount: {
+          accountNumber: "",
+          bankName: "",
+          accountName: "",
+        },
+        description: rs.status?.message,
+      };
+      await paymentService.save(payment);
+    }
+  );
   emitter.on("request-status", async (rs) => {
     const currentDate = new Date();
     const vietnamTimeOffset = 7 * 60; // GMT+7 in minutes

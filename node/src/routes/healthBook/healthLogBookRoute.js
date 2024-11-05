@@ -63,6 +63,11 @@ useRouter.post(
   healthLogBookController.rejected
 );
 useRouter.post(
+  "/canceled",
+  middleWareToken.validateToken,
+  healthLogBookController.canceled
+);
+useRouter.post(
   "/accepted",
   middleWareToken.validateToken,
   healthLogBookController.accepted

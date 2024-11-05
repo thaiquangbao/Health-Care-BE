@@ -259,6 +259,9 @@ class AppointmentHomeService {
     if (!rs) {
       return 0;
     }
+    if (rs.status.status_type !== "QUEUE") {
+      return 2;
+    }
     const recordDoctor = await doctorRecordModel.findById(
       rs.doctor_record_id
     );
@@ -289,6 +292,9 @@ class AppointmentHomeService {
     );
     if (!rs) {
       return 0;
+    }
+    if (rs.status.status_type !== "QUEUE") {
+      return 2;
     }
     const reject =
       await appointmentHomeModel.findByIdAndUpdate(
@@ -321,14 +327,17 @@ class AppointmentHomeService {
     if (!rs) {
       return 0;
     }
+    if (rs.status.status_type === "CANCELED") {
+      return 2;
+    }
+
     const cancel =
       await appointmentHomeModel.findByIdAndUpdate(
         rs._id,
         data,
         { new: true }
       );
-   
-   
+
     return cancel;
   }
   async doctorComplete(data) {

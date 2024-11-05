@@ -205,6 +205,9 @@ class AppointmentService {
     if (!rs) {
       return 0;
     }
+    if (rs.status !== "QUEUE") {
+      return 2;
+    }
     const recordDoctor = await doctorRecordModel.findById(
       rs.doctor_record_id
     );
@@ -213,6 +216,7 @@ class AppointmentService {
       data,
       { new: true }
     );
+
     const messagePatient = {
       title: "Xác nhận lịch hẹn",
       content: `Bác sĩ ${recordDoctor.doctor.fullName} đã xác nhận lịch hẹn của bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}`,
@@ -232,6 +236,9 @@ class AppointmentService {
     const rs = await appointmentModel.findById(data._id);
     if (!rs) {
       return 0;
+    }
+    if (rs.status !== "QUEUE") {
+      return 2;
     }
     const reject = await appointmentModel.findByIdAndUpdate(
       rs._id,
@@ -274,6 +281,9 @@ class AppointmentService {
     if (!rs) {
       return 0;
     }
+    if (rs.status !== "ACCEPTED") {
+      return 2;
+    }
     const recordDoctor = await doctorRecordModel.findById(
       rs.doctor_record_id
     );
@@ -305,6 +315,9 @@ class AppointmentService {
     const rs = await appointmentModel.findById(data._id);
     if (!rs) {
       return 0;
+    }
+    if (rs.status !== "QUEUE") {
+      return 2;
     }
     const recordDoctor = await doctorRecordModel.findById(
       rs.doctor_record_id

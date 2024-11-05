@@ -123,11 +123,13 @@ class AppointmentController {
           .status(404)
           .json("Không tìm thấy lịch hẹn này!!!");
       }
-      // if (rs === 2) {
-      //   return res
-      //     .status(409)
-      //     .json("Gửi email chấp nhận không thành công!!!");
-      // }
+      if (rs === 2) {
+        return res
+          .status(409)
+          .json(
+            "Lịch hẹn đang không trong trạng thái chờ chấp nhận!!!"
+          );
+      }
       emitter.emit("send-email.accept", rs);
       return res.status(200).json({
         data: rs,
@@ -148,6 +150,13 @@ class AppointmentController {
         return res
           .status(404)
           .json("Không tìm thấy lịch hẹn này!!!");
+      }
+      if (rs === 2) {
+        return res
+          .status(409)
+          .json(
+            "Lịch hẹn đang không trong trạng thái chờ từ chối!!!"
+          );
       }
       emitter.emit("send-email.deny", rs);
       return res.status(200).json({
@@ -171,6 +180,13 @@ class AppointmentController {
           .status(404)
           .json("Không tìm thấy lịch hẹn này!!!");
       }
+      if (rs === 2) {
+        return res
+          .status(404)
+          .json(
+            "Lịch hẹn đang trong tình trạng không sẵn sàng để hủy!!!"
+          );
+      }
       emitter.emit("send-email.cancel", rs);
       return res.status(200).json({
         data: rs.rs,
@@ -192,6 +208,13 @@ class AppointmentController {
         return res
           .status(404)
           .json("Không tìm thấy lịch hẹn này!!!");
+      }
+      if (rs === 2) {
+        return res
+          .status(409)
+          .json(
+            "Lịch hẹn đã được bác sĩ từ chối hoặc đồng ý nên không thể hủy!!!"
+          );
       }
       emitter.emit("send-email-patient.cancel", rs);
       return res.status(200).json({

@@ -161,6 +161,13 @@ class AppointmentHomeController {
           .status(404)
           .json("Không tìm thấy lịch hẹn này!!!");
       }
+      if (rs === 2) {
+        return res
+          .status(404)
+          .json(
+            "Lịch hẹn này đang không trong trạng thái chờ xác nhận!!!"
+          );
+      }
       emitter.emit(
         "send-email-appointment-home.accept",
         rs
@@ -186,6 +193,13 @@ class AppointmentHomeController {
         return res
           .status(404)
           .json("Không tìm thấy lịch hẹn này!!!");
+      }
+      if (rs === 2) {
+        return res
+          .status(404)
+          .json(
+            "Lịch hẹn này đang không trong trạng thái chờ xác nhận!!!"
+          );
       }
       emitter.emit("send-email-appointment-home.deny", rs);
       return res.status(200).json({
@@ -235,6 +249,14 @@ class AppointmentHomeController {
           .status(404)
           .json("Không tìm thấy lịch hẹn này!!!");
       }
+      if (rs === 2) {
+        return res
+          .status(404)
+          .json(
+            "Lịch hẹn này đang không trong trạng có thể hủy!!!"
+          );
+      }
+
       emitter.emit(
         "send-email-appointment-home-patient.cancel",
         rs

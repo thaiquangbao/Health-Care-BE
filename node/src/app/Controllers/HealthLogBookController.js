@@ -63,6 +63,13 @@ class HealthLogBookController {
           .status(404)
           .json("Không tìm thấy lịch khám!!!");
       }
+      if (rs === 2) {
+        return res
+          .status(404)
+          .json(
+            "Lịch hẹn không trong trạng thái chờ chấp nhận!!!"
+          );
+      }
       const accessToken = req.headers["accesstoken"];
       const refreshToken = req.headers["refreshtoken"];
       const token = {
@@ -108,6 +115,13 @@ class HealthLogBookController {
           .status(404)
           .json("Không tìm thấy lịch khám!!!");
       }
+      if (rs === 2) {
+        return res
+          .status(404)
+          .json(
+            "Lịch hẹn không trong trạng thái chờ chấp nhận!!!"
+          );
+      }
       const accessToken = req.headers["accesstoken"];
       const refreshToken = req.headers["refreshtoken"];
       const token = {
@@ -115,6 +129,35 @@ class HealthLogBookController {
         refreshToken: refreshToken,
       };
       emitter.emit("health-logbook-doctor.rejected", rs);
+      return res.status(200).json({ data: rs, token });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error);
+    }
+  }
+  async canceled(req, res) {
+    try {
+      const data = req.body;
+      const rs = await healthBookService.canceled(data._id);
+      if (rs === 0) {
+        return res
+          .status(404)
+          .json("Không tìm thấy lịch khám!!!");
+      }
+      if (rs === 2) {
+        return res
+          .status(404)
+          .json(
+            "Lịch hẹn không trong trạng thái chờ chấp nhận!!!"
+          );
+      }
+      const accessToken = req.headers["accesstoken"];
+      const refreshToken = req.headers["refreshtoken"];
+      const token = {
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+      };
+      emitter.emit("health-logbook-doctor.canceled", rs);
       return res.status(200).json({ data: rs, token });
     } catch (error) {
       console.log(error);
