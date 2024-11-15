@@ -43,7 +43,7 @@ const medicalRecords = new Schema({
     default: null,
   },
   images: { type: [String], default: [] },
-  healthRate: { type: String, default: "" },
+  healthRate: { type: Number, default: 0 },
   weight: { type: Number, default: 0 },
   height: { type: Number, default: 0 },
   temperature: { type: Number, default: 0 },

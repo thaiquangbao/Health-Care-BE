@@ -1,6 +1,6 @@
 const contract = require("../../config/Web3/index");
 const { Web3 } = require("web3");
-const web3 = new Web3("http://localhost:7545/"); // 3.1.85.125:8545
+const web3 = new Web3("http://localhost:7545/"); // 3.0.147.48:8545
 class SmartContractService {
   async saveMedical(medicalData) {
     try {

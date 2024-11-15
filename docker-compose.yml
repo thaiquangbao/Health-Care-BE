@@ -1,0 +1,11 @@
+version: '3'
+services:
+  ganache:
+    image: trufflesuite/ganache:latest
+    ports:
+      - "8545:8545"
+    command:
+      - --account="0x8ED050bEEfAae99e2CAB3d71d22134c500F87509,1000000000000000000000" # Account with 1000 ETH
+      - --blockTime=1
+    environment:
+      - HARD_CODED_TX="Sample Transaction Data"

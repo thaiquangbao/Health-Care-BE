@@ -16,7 +16,9 @@ class DoctorResponse {
       specialize: doctor.specialize,
       cccd: doctor.cccd,
       pathological: doctor.pathological,
-      bank: doctor?.bank
+      bank: doctor?.bank,
+      createdAt: doctor.createdAt,
+      updatedAt: doctor.updatedAt,
     };
     return data;
   }

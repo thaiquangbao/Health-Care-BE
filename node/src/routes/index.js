@@ -18,9 +18,15 @@ const paymentRoute = require("./payment");
 const appointmentHomeRoute = require("./appointmentHome/appointmentHomeRoute");
 const payBackRoute = require("./payBack/payBackRoute");
 const adminRoute = require("./admin/adminRoute");
+const searchAIRoute = require("./AI/AIRoute");
 const testRoute = require("./test/testRoute");
+const doctorSuggestRoute = require("./doctorSuggest/doctorSuggestRoute");
+const customerRoute = require("./Customer/customerRoute");
 function routes(app) {
+  app.use("/customers", customerRoute);
   app.use("/test", testRoute);
+  app.use("/doctorSuggests", doctorSuggestRoute);
+  app.use("/ai", searchAIRoute);
   app.use("/admin", adminRoute);
   app.use("/payBacks", payBackRoute);
   app.use("/appointmentHomes", appointmentHomeRoute);

@@ -14,7 +14,9 @@ class UserResponse {
       dateOfBirth: user.dateOfBirth,
       image: user.image,
       cccd: user.cccd,
-      bank: user?.bank
+      bank: user?.bank,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
     };
     return data;
   }

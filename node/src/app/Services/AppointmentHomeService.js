@@ -327,7 +327,11 @@ class AppointmentHomeService {
     if (!rs) {
       return 0;
     }
-    if (rs.status.status_type === "CANCELED") {
+    if (
+      rs.status.status_type === "CANCELED" ||
+      (rs.status.status_type === "ACCEPTED" &&
+        rs.processAppointment === 2)
+    ) {
       return 2;
     }
 

@@ -81,6 +81,15 @@ class ExpiredAppointmentService {
     `
       );
       await appointmentService.doctorComplete(dataComplete);
+      // Cập nhật số lần khám của bác sĩ
+      await doctorRecordModel.findByIdAndUpdate(
+        doctorRecord._id,
+        {
+          examination_call:
+            doctorRecord.examination_call + 1,
+        },
+        { new: true }
+      );
       const messagePatient = {
         title: "Lịch hẹn hoàn tất",
         content: `Lịch hẹn khám của bạn với bác sĩ ${doctorRecord.doctor.fullName}. Vào lúc ${appointment.appointment_date.time} đã hoàn tất. Cảm ơn bạn đã sử dụng dịch vụ!!!`,

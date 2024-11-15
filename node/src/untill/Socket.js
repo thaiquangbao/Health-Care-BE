@@ -951,6 +951,14 @@ const socket = (server, baseURL) => {
         date: rs.appointment_date,
       };
       await payBackService.save(dataPayback);
+      await doctorRecordModel.findByIdAndUpdate(
+        recordDoctor._id,
+        {
+          examination_call:
+            recordDoctor.examination_call + 1,
+        },
+        { new: true }
+      );
       const mail = await mailService.sendMail(
         rs.patient.email,
         "Lịch hẹn khám tại nhà đã hoàn tất",
@@ -1093,6 +1101,23 @@ const socket = (server, baseURL) => {
       descriptionTake: rs.descriptionTake,
     };
     return await paymentService.save(payment);
+  });
+  emitter.on("send-notice-customer.submit", async (rs) => {
+    const recordDoctor = await doctorRecordModel.findById(
+      rs.doctor_record_id
+    );
+    const mail = await mailService.sendMail(
+      rs.patient.email,
+      "Đặt lịch hẹn khám thành công",
+      "",
+      `Bạn đã đặt lịch hẹn tư vấn sức khỏe trực tuyến thành công với BS. ${recordDoctor.doctor.fullName} vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year} .Hãy chờ bác sĩ xác nhận nhé.!!!
+    `
+    );
+    //`Bác sĩ ${recordDoctor.doctor.fullName} đã xác nhận lịch hẹn của bạn vào lúc ${rs.appointment_date.time} ngày ${rs.appointment_date.day}/${rs.appointment_date.month}/${rs.appointment_date.year}`
+    if (!mail) {
+      return 2;
+    }
+    return 1;
   });
   // emitter.on("accept-status", async (rs) => {
   //   const currentDate = new Date();

@@ -61,7 +61,9 @@ class PaymentService {
         const patient = await userModel.findOne({
           $and: [
             { _id: item.patient_id },
-            { role: "USER" },
+            {
+              $or: [{ role: "USER" }, { role: "CUSTOMER" }],
+            },
           ],
         });
         const doctor = await userModel.findOne({

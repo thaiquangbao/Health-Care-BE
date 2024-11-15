@@ -77,6 +77,7 @@ class AuthenticateService {
     const existUser = await userModel.findOne({
       phone: dataUser.userName,
     });
+
     if (!existUser) {
       return 0;
     }

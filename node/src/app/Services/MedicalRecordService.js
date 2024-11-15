@@ -3,12 +3,11 @@ const patientService = require("./AuthService/PatientService");
 const doctorService = require("./AuthService/DoctorService");
 const medicalRecordDto = require("../Dtos/MedicalRecord/MedicalRecordDto");
 const smartContract = require("./SmartContractService");
+const usersModels = require("../models/usersModels");
 class MedicalRecordService {
   async save(medicalRecordData) {
     const data = { _id: medicalRecordData.patient };
-    const patient = await patientService.getPatientById(
-      data
-    );
+    const patient = await usersModels.findOne(data);
     const dataDoctor = { _id: medicalRecordData.doctor };
     const doctor = await doctorService.getDoctorById(
       dataDoctor
@@ -87,11 +86,16 @@ class MedicalRecordService {
   //       item.diagnosisDisease.trim() !== "" &&
   //       item.medical.length > 0
   //   );
-  //   const validData = await Promise.all(result.map(async (item) => {
-  //     const check = await smartContract.checkMedicalRecord(item.blockChain.hashTX);
-  //     return check && check._id === item.id ? item : null; // Chỉ trả về item nếu nó hợp lệ
-  //   }));
-  //   return validData.filter(item => item !== null); // Lọc ra các item hợp lệ
+  //   const validData = await Promise.all(
+  //     result.map(async (item) => {
+  //       const check =
+  //         await smartContract.checkMedicalRecord(
+  //           item.blockChain.hashTX
+  //         );
+  //       return check && check._id === item.id ? item : null; // Chỉ trả về item nếu nó hợp lệ
+  //     })
+  //   );
+  //   return validData.filter((item) => item !== null); // Lọc ra các item hợp lệ
   // }
   async findByPatient(patient) {
     const rs = await medicalRecordModel.find({

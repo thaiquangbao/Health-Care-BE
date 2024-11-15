@@ -7,10 +7,9 @@ reponsive web
 thêm redis cho mượt
 Phân quyền lại các trang
 Bắt buộc bác sĩ, user nhập mail(còn phần customer khi đặt check mail, liên kết email check mail)
-set chức năng cho nút đặt khám ngay tại /cac-dich-vu(ok)
+
 những lịch đặt quá hạn thì tự kết thúc (appointment)
-set lại phần hiện thời gian đặt lịch cho appointment
-Khi đặt lịch thành công bấm vào đặt tiếp nó lại chuyển phần thanh toán tới bước cuối
+
 Check lại các trang token
 khi hoàn thành thì gửi mail appointment thường
 #Đã xong
@@ -18,6 +17,10 @@ status room (ok)
 remove cho phần appoitmentHome reject với cancel(ok)
 Thêm chức năng đặt khám tại nhà(ok)
 màn hình thanh toán cho khám tại nhà(ok)
+set lại phần hiện thời gian đặt lịch cho appointment(ok)
+Khi đặt lịch thành công bấm vào đặt tiếp nó lại chuyển phần thanh toán tới bước cuối(ok)
+thêm lịch của bác sĩ cộng thêm 1(ok)
+set chức năng cho nút đặt khám ngay tại /cac-dich-vu(ok)
 check lại luồn sự kiện hiển thị nút hồ sơ bác sĩ(thằng đức ok)
 add vào lịch của bác sũ khi bác sĩ xác nhận khám tại nhà (ok)
 ẩn khám tại nhà đối với các bác sĩ khác khi đã thành toàn (ok)

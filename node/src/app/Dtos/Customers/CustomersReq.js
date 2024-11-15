@@ -6,6 +6,7 @@ class CustomerRequest {
       email: customer.email,
       sex: customer.sex,
       phone: customer.phone,
+      image: customer.image,
     };
     return data;
   }
