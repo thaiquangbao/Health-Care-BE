@@ -94,6 +94,16 @@ class AuthenticateController {
       return res.status(500).json("Lỗi hệ thống !!!");
     }
   }
+  async generateTokenZego(req, res) {
+    try {
+      const data = req.body;
+      const result = await authService.generateToken(data);
+      return res.status(200).json(result);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json("Lỗi hệ thống !!!");
+    }
+  }
   async getUserByToken(req, res) {
     try {
       const accessToken = req.headers["accesstoken"];

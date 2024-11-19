@@ -20,5 +20,25 @@ class JWTService {
       refreshToken,
     };
   }
+  async generateTokenZego(user, expire) {
+    const accessToken = jwt.sign(
+      user,
+      process.env.SECRETKEY,
+      { expiresIn: process.env.ACCESSZEGO }
+    );
+    const refreshToken = jwt.sign(
+      user,
+      process.env.SECRETKEY,
+      {
+        expiresIn: expire
+          ? expire
+          : process.env.REFRESHZEGO,
+      }
+    );
+    return {
+      accessToken,
+      refreshToken,
+    };
+  }
 }
 module.exports = new JWTService();

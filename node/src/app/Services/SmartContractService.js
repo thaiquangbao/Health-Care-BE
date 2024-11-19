@@ -1,6 +1,6 @@
 const contract = require("../../config/Web3/index");
 const { Web3 } = require("web3");
-const web3 = new Web3("http://localhost:7545/"); // 3.0.147.48:8545
+const web3 = new Web3("http://54.179.30.205:8545/"); // 3.0.147.48:8545
 class SmartContractService {
   async saveMedical(medicalData) {
     try {
@@ -49,14 +49,14 @@ class SmartContractService {
       const gasEstimate = await web3.eth.estimateGas({
         to: "0x8E41e9f6C84ED7E8963d81b908418b821dA00C06",
         data: data,
-        from: "0x1E64432C47c1F902B8B624F85122B6b4437bef9E",
+        from: "0xe72ae3bE6eaC70d96c7645D6f2040aEfdCCfcEe5",
       });
 
       // Lấy giá gas hiện tại
       const gasPrice = await web3.eth.getGasPrice();
 
       const tx = {
-        from: "0x1E64432C47c1F902B8B624F85122B6b4437bef9E",
+        from: "0xe72ae3bE6eaC70d96c7645D6f2040aEfdCCfcEe5",
         to: "0x8E41e9f6C84ED7E8963d81b908418b821dA00C06",
         gas: gasEstimate,
         gasPrice: gasPrice,
@@ -67,7 +67,7 @@ class SmartContractService {
       const signedTx =
         await web3.eth.accounts.signTransaction(
           tx,
-          "0x7d77ca663700d74a576d5198e020d3f7beda9d53ffded2c8bb7ed3c6837c1696"
+          "0xe68efe6592fd68ef5362e12a6588aa9bc5e018a1363b9a5678d6d2068cb884f0"
         );
       const receipt = await web3.eth.sendSignedTransaction(
         signedTx.rawTransaction
@@ -153,14 +153,14 @@ class SmartContractService {
       const gasEstimate = await web3.eth.estimateGas({
         to: "0x8E41e9f6C84ED7E8963d81b908418b821dA00C06",
         data: data,
-        from: "0x1E64432C47c1F902B8B624F85122B6b4437bef9E",
+        from: "0xe72ae3bE6eaC70d96c7645D6f2040aEfdCCfcEe5",
       });
 
       // Lấy giá gas hiện tại
       const gasPrice = await web3.eth.getGasPrice();
 
       const tx = {
-        from: "0x1E64432C47c1F902B8B624F85122B6b4437bef9E",
+        from: "0xe72ae3bE6eaC70d96c7645D6f2040aEfdCCfcEe5",
         to: "0x8E41e9f6C84ED7E8963d81b908418b821dA00C06",
         gas: gasEstimate,
         gasPrice: gasPrice,

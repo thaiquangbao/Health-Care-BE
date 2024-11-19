@@ -131,6 +131,11 @@ class AuthenticateService {
       _id: data._id,
     });
   }
+  async generateTokenZego(data) {
+    return await jwtService.generateTokenZego({
+      _id: data._id,
+    });
+  }
   async getAuthData(user) {
     if (user.role.match("USER")) {
       return await userResponse.toUserAuth(user);
