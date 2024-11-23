@@ -1,6 +1,6 @@
 const contract = require("../../config/Web3/index");
 const { Web3 } = require("web3");
-const web3 = new Web3("http://54.179.30.205:8545/"); // 3.0.147.48:8545
+const web3 = new Web3("http://localhost:7545/"); // 3.0.147.48:8545
 class SmartContractService {
   async saveMedical(medicalData) {
     try {
@@ -10,9 +10,7 @@ class SmartContractService {
       medicalData.medical.map((item) => {
         medicalNames.push(item.medicalName.toString());
         quantities.push(item.quantity);
-        unitsOfCalculation.push(
-          item.unitOfCalculation.toString()
-        );
+        unitsOfCalculation.push(item.unitOfCalculation.toString());
       });
       const dataSmartContract = {
         patientId: medicalData.patient._id.toString(),
@@ -64,11 +62,10 @@ class SmartContractService {
       };
 
       // Ký giao dịch
-      const signedTx =
-        await web3.eth.accounts.signTransaction(
-          tx,
-          "0xe68efe6592fd68ef5362e12a6588aa9bc5e018a1363b9a5678d6d2068cb884f0"
-        );
+      const signedTx = await web3.eth.accounts.signTransaction(
+        tx,
+        "0xe68efe6592fd68ef5362e12a6588aa9bc5e018a1363b9a5678d6d2068cb884f0"
+      );
       const receipt = await web3.eth.sendSignedTransaction(
         signedTx.rawTransaction
       );
@@ -80,24 +77,17 @@ class SmartContractService {
   }
   async getAllMedicalRecord() {
     try {
-      const data = await contract.methods
-        .getAllMedicalRecords()
-        .call();
+      const data = await contract.methods.getAllMedicalRecords().call();
       return data;
     } catch (error) {
-      console.log(
-        "Lỗi khi lấy danh sách bệnh nhân:",
-        error
-      );
+      console.log("Lỗi khi lấy danh sách bệnh nhân:", error);
     }
   }
   async checkMedicalRecord(hashTX) {
     try {
       const www = await web3.eth.getTransaction(hashTX);
 
-      const decodedData = contract.decodeMethodData(
-        www.data
-      );
+      const decodedData = contract.decodeMethodData(www.data);
 
       return decodedData;
     } catch (error) {
@@ -114,9 +104,7 @@ class SmartContractService {
       medicalData.medical.map((item) => {
         medicalNames.push(item.medicalName.toString());
         quantities.push(item.quantity);
-        unitsOfCalculation.push(
-          item.unitOfCalculation.toString()
-        );
+        unitsOfCalculation.push(item.unitOfCalculation.toString());
       });
       const dataSmartContract = {
         patientId: medicalData.patient._id.toString(),
@@ -168,11 +156,10 @@ class SmartContractService {
       };
 
       // Ký giao dịch
-      const signedTx =
-        await web3.eth.accounts.signTransaction(
-          tx,
-          "0x7d77ca663700d74a576d5198e020d3f7beda9d53ffded2c8bb7ed3c6837c1696"
-        );
+      const signedTx = await web3.eth.accounts.signTransaction(
+        tx,
+        "0x7d77ca663700d74a576d5198e020d3f7beda9d53ffded2c8bb7ed3c6837c1696"
+      );
       const receipt = await web3.eth.sendSignedTransaction(
         signedTx.rawTransaction
       );

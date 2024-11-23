@@ -7,16 +7,23 @@ reponsive web
 thêm redis cho mượt
 Phân quyền lại các trang
 cái appointment lượt bỏ bớt mấy cái quá hẹn
-xin lại key AI
-ràng buột lại description thanh toán
+ràng buột lại description thanh toán(ok)
 những lịch đặt quá hạn thì tự kết thúc (appointment)
-Bác sĩ để xuất
+Bác sĩ để xuất(ok)
+Chỉnh lại chuyên Khoa (mobile)
+Đặt kah1m cho customer(mobile)
 Check lại các trang token
+Thêm tài khoản ngân hàng vào lúc đăng ký(ok)
+lịch bị hủy có thể đặt lại giờ FormBooking appointment :115 (ok)
+cài ràng buộc dữ liệu nhập các chỉ số sức khỏe(ok)
+Chưa rõ thời gian appointmentHome(ok)
+chỉnh thông báo cho hoàn tiền và rút tiền(ok)
+thêm bank bên đăng ký(ok)
+nút nhận tiền có cài ràng buộc cập nhật tài khoản ngân hàng(mobile)
 #Đã xong
 status room (ok)
+xin lại key AI(ok)
 khi hoàn thành thì gửi mail appointment thường(ok)
-chỉnh thông báo cho hoàn tiền và rút tiền(ok)
-Chưa rõ thời gian appointmentHome(ok)
 Bắt buộc bác sĩ, user nhập mail(ok)
 remove cho phần appoitmentHome reject với cancel(ok)
 Thêm chức năng đặt khám tại nhà(ok)

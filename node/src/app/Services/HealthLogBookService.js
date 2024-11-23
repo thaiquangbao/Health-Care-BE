@@ -61,20 +61,23 @@ class HealthLogBookService {
     if (!exist) {
       return 0;
     }
-    if (exist.status.status_type !== "QUEUE") {
+    if (
+      exist.status.status_type !== "QUEUE" &&
+      exist.status.status_type !== "TRANSFER"
+    ) {
       return 2;
     }
-    const updated =
-      await healthLogBookModel.findByIdAndUpdate(
-        exist._id,
-        {
-          $set: {
-            "status.status_type": "ACCEPTED",
-            "status.message": "Bác sĩ đã đồng ý",
-          },
+
+    const updated = await healthLogBookModel.findByIdAndUpdate(
+      exist._id,
+      {
+        $set: {
+          "status.status_type": "ACCEPTED",
+          "status.message": "Bác sĩ đã đồng ý",
         },
-        { new: true }
-      );
+      },
+      { new: true }
+    );
     const room = {
       patient: {
         _id: updated.patient._id,
@@ -225,9 +228,7 @@ class HealthLogBookService {
       patient: rs.patient,
       doctor: rs.doctor,
     };
-    const rsRoom = await roomsService.updateStatusRoom(
-      room
-    );
+    const rsRoom = await roomsService.updateStatusRoom(room);
     if (rsRoom === 0) {
       return 2;
     }
@@ -261,9 +262,7 @@ class HealthLogBookService {
     return rs;
   }
   async updateDoctor(data) {
-    const exist = await healthLogBookModel.findById(
-      data._id
-    );
+    const exist = await healthLogBookModel.findById(data._id);
     if (!exist) {
       return 0;
     }
@@ -290,9 +289,7 @@ class HealthLogBookService {
       patient: rs.patient,
       doctor: rs.doctor,
     };
-    const rsRoom = await roomsService.updateStatusRoom(
-      room
-    );
+    const rsRoom = await roomsService.updateStatusRoom(room);
     if (rsRoom === 0) {
       return 2;
     }
@@ -329,9 +326,7 @@ class HealthLogBookService {
     };
   }
   async stopped(data) {
-    const exist = await healthLogBookModel.findById(
-      data._id
-    );
+    const exist = await healthLogBookModel.findById(data._id);
     if (!exist) {
       return 0;
     }
@@ -362,19 +357,13 @@ class HealthLogBookService {
     return rs;
   }
   async update(data) {
-    const exist = await healthLogBookModel.findById(
-      data._id
-    );
+    const exist = await healthLogBookModel.findById(data._id);
     if (!exist) {
       return 0;
     }
-    const rs = await healthLogBookModel.findByIdAndUpdate(
-      exist._id,
-      data,
-      {
-        new: true,
-      }
-    );
+    const rs = await healthLogBookModel.findByIdAndUpdate(exist._id, data, {
+      new: true,
+    });
     return rs;
   }
   async getAll() {
@@ -421,14 +410,8 @@ class HealthLogBookService {
     return rs;
   }
   async findByWeak(data) {
-    const startOfWeek = moment
-      .tz("Asia/Ho_Chi_Minh")
-      .startOf("week")
-      .toDate();
-    const endOfWeek = moment
-      .tz("Asia/Ho_Chi_Minh")
-      .endOf("week")
-      .toDate();
+    const startOfWeek = moment.tz("Asia/Ho_Chi_Minh").startOf("week").toDate();
+    const endOfWeek = moment.tz("Asia/Ho_Chi_Minh").endOf("week").toDate();
     const startDay = startOfWeek.getDate() + 2;
     const startMonth = startOfWeek.getMonth() + 1; // Tháng trong JS bắt đầu từ 0
     const startYear = startOfWeek.getFullYear();
@@ -482,14 +465,8 @@ class HealthLogBookService {
     return rs;
   }
   async findByNextWeek(data) {
-    const startOfNextWeek = moment()
-      .add(1, "weeks")
-      .startOf("week")
-      .toDate();
-    const endOfNextWeek = moment()
-      .add(1, "weeks")
-      .endOf("week")
-      .toDate();
+    const startOfNextWeek = moment().add(1, "weeks").startOf("week").toDate();
+    const endOfNextWeek = moment().add(1, "weeks").endOf("week").toDate();
     const start = startOfNextWeek.getDate();
     const end = endOfNextWeek.getDate();
     const rs = await healthLogBookModel.find({
@@ -531,16 +508,12 @@ class HealthLogBookService {
     return rs;
   }
   async updateBloodPressure(data) {
-    const exist = await healthLogBookModel.findById(
-      data._id
-    );
+    const exist = await healthLogBookModel.findById(data._id);
     if (!exist) {
       return 0;
     }
     exist.disMon.push(data.disMonItem);
-    if (
-      data.status_bloodPressure.status_type !== "NORMAL"
-    ) {
+    if (data.status_bloodPressure.status_type !== "NORMAL") {
       const messageDoctor = {
         title: "Cảnh báo sức khỏe",
         content: `Huyết áp của bệnh nhân ${exist.patient.fullName} đang trong tình trạng ${data.status_bloodPressure.message}. Bác sĩ hãy chú ý đến bệnh nhân này!!!`,
@@ -560,24 +533,17 @@ class HealthLogBookService {
         ""
       );
       noticeService.create(messageDoctor);
-      exist.status_bloodPressure =
-        data.status_bloodPressure;
+      exist.status_bloodPressure = data.status_bloodPressure;
     } else {
       exist.status_bloodPressure = null;
     }
-    const rs = await healthLogBookModel.findByIdAndUpdate(
-      exist._id,
-      exist,
-      {
-        new: true,
-      }
-    );
+    const rs = await healthLogBookModel.findByIdAndUpdate(exist._id, exist, {
+      new: true,
+    });
     return rs;
   }
   async updateTemperature(data) {
-    const exist = await healthLogBookModel.findById(
-      data._id
-    );
+    const exist = await healthLogBookModel.findById(data._id);
     if (!exist) {
       return 0;
     }
@@ -606,19 +572,13 @@ class HealthLogBookService {
     } else {
       exist.status_temperature = null;
     }
-    const rs = await healthLogBookModel.findByIdAndUpdate(
-      exist._id,
-      exist,
-      {
-        new: true,
-      }
-    );
+    const rs = await healthLogBookModel.findByIdAndUpdate(exist._id, exist, {
+      new: true,
+    });
     return rs;
   }
   async updateHeartRate(data) {
-    const exist = await healthLogBookModel.findById(
-      data._id
-    );
+    const exist = await healthLogBookModel.findById(data._id);
     if (!exist) {
       return 0;
     }
@@ -649,19 +609,13 @@ class HealthLogBookService {
       exist.status_heartRate = null;
     }
 
-    const rs = await healthLogBookModel.findByIdAndUpdate(
-      exist._id,
-      exist,
-      {
-        new: true,
-      }
-    );
+    const rs = await healthLogBookModel.findByIdAndUpdate(exist._id, exist, {
+      new: true,
+    });
     return rs;
   }
   async updateBMI(data) {
-    const exist = await healthLogBookModel.findById(
-      data._id
-    );
+    const exist = await healthLogBookModel.findById(data._id);
     if (!exist) {
       return 0;
     }
@@ -690,30 +644,20 @@ class HealthLogBookService {
     } else {
       exist.status_bmi = null;
     }
-    const rs = await healthLogBookModel.findByIdAndUpdate(
-      exist._id,
-      exist,
-      {
-        new: true,
-      }
-    );
+    const rs = await healthLogBookModel.findByIdAndUpdate(exist._id, exist, {
+      new: true,
+    });
     return rs;
   }
   async updateSymptom(data) {
-    const exist = await healthLogBookModel.findById(
-      data._id
-    );
+    const exist = await healthLogBookModel.findById(data._id);
     if (!exist) {
       return 0;
     }
     exist.disMon.push(data.disMonItem);
-    const rs = await healthLogBookModel.findByIdAndUpdate(
-      exist._id,
-      exist,
-      {
-        new: true,
-      }
-    );
+    const rs = await healthLogBookModel.findByIdAndUpdate(exist._id, exist, {
+      new: true,
+    });
     return rs;
   }
 }

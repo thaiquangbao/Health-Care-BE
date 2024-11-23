@@ -5,7 +5,7 @@ const appointmentService = require("../AppointmentService/AppointmentService");
 const customerReq = require("../../Dtos/Customers/CustomersReq");
 const doctorRecordModel = require("../../models/doctorRecordModel");
 const noticeService = require("../NoticeService");
-
+const customerRes = require("../../Dtos/Customers/CustomersRes");
 class CustomerService {
   async create(dataCustomer) {
     const existRecord = await doctorRecordModel.findById(
@@ -21,8 +21,7 @@ class CustomerService {
     if (!existPatient) {
       return 2;
     }
-    dataCustomer.patient =
-      customerReq.toCustomerAppointment(existPatient);
+    dataCustomer.patient = customerReq.toCustomerAppointment(existPatient);
     const appointment = new appointmentModels(dataCustomer);
     appointment.doctor_record_id = existRecord._id;
     await appointment.save();
@@ -50,10 +49,7 @@ class CustomerService {
       return { user: exist, role: "USER" };
     }
     const existCustomer = await userModel.findOne({
-      $and: [
-        { phone: dataCustomer.patient.phone },
-        { role: "CUSTOMER" },
-      ],
+      $and: [{ phone: dataCustomer.patient.phone }, { role: "CUSTOMER" }],
     });
     if (existCustomer) {
       return { user: existCustomer, role: "CUSTOMER" };
@@ -72,6 +68,21 @@ class CustomerService {
       "https://th.bing.com/th/id/R.be953f29410b3d18ef0e5e0fbd8d3120?rik=Dm2iDRVLgVcpdA&pid=ImgRaw&r=0";
     const dataSaved = await customer.save();
     return { user: dataSaved, role: "NEW" };
+  }
+  async getAllCustomer() {
+    const rs = await userModel.find({ role: "CUSTOMER" }).lean();
+    rs.map((item) => {
+      return customerRes.toCustomer(item);
+    });
+    return rs;
+  }
+  async deleteOneCustomer(id) {
+    const exist = await userModel.findById(id);
+    if (!exist) {
+      return 0;
+    }
+    const rs = await userModel.findByIdAndDelete(id);
+    return rs;
   }
 }
 module.exports = new CustomerService();
