@@ -56,7 +56,7 @@ class HealthLogBookService {
     }
     return exist;
   }
-  async accepted(id) {
+  async accepted(id, dateStop) {
     const exist = await healthLogBookModel.findById(id);
     if (!exist) {
       return 0;
@@ -67,13 +67,13 @@ class HealthLogBookService {
     ) {
       return 2;
     }
-
     const updated = await healthLogBookModel.findByIdAndUpdate(
       exist._id,
       {
         $set: {
           "status.status_type": "ACCEPTED",
           "status.message": "Bác sĩ đã đồng ý",
+          dateStop: dateStop,
         },
       },
       { new: true }
@@ -266,6 +266,7 @@ class HealthLogBookService {
     if (!exist) {
       return 0;
     }
+    // dateStop Này là ngày bắt chuyển bác sĩ
     const rs = await healthLogBookModel.findByIdAndUpdate(
       exist._id,
       {
@@ -280,7 +281,7 @@ class HealthLogBookService {
       patient: rs.patient,
       doctor: data.doctor,
       priceList: rs.priceList,
-      date: rs.dateStop,
+      date: rs.dateStop, //  Lấy ngày bắt đầu chuyển làm ngày bắt đầu mới
       status: data.statusNew,
     };
     const healthLogBook = new healthLogBookModel(dataNew);

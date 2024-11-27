@@ -53,7 +53,7 @@ class HealthLogBookController {
   async accepted(req, res) {
     try {
       const data = req.body;
-      const rs = await healthBookService.accepted(data._id);
+      const rs = await healthBookService.accepted(data._id, data.dateStop);
       if (rs === 0) {
         return res.status(404).json("Không tìm thấy lịch khám!!!");
       }
