@@ -1000,6 +1000,7 @@ const socket = (server, baseURL) => {
     return await paymentService.save(payment);
   });
   emitter.on("send-notice-customer.submit", async (rs) => {
+    console.log(rs);
     const recordDoctor = await doctorRecordModel.findById(rs.doctor_record_id);
     const mail = await mailService.sendMail(
       rs.patient.email,

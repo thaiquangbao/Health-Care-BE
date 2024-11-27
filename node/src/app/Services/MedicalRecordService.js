@@ -9,9 +9,7 @@ class MedicalRecordService {
     const data = { _id: medicalRecordData.patient };
     const patient = await usersModels.findOne(data);
     const dataDoctor = { _id: medicalRecordData.doctor };
-    const doctor = await doctorService.getDoctorById(
-      dataDoctor
-    );
+    const doctor = await doctorService.getDoctorById(dataDoctor);
     if (!patient) {
       return 0;
     }
@@ -19,22 +17,16 @@ class MedicalRecordService {
       return 2;
     }
 
-    medicalRecordData.patient =
-      medicalRecordDto.toPatient(patient);
-    medicalRecordData.doctor =
-      medicalRecordDto.toDoctor(doctor);
-    const medicalRecord = new medicalRecordModel(
-      medicalRecordData
-    );
+    medicalRecordData.patient = medicalRecordDto.toPatient(patient);
+    medicalRecordData.doctor = medicalRecordDto.toDoctor(doctor);
+    const medicalRecord = new medicalRecordModel(medicalRecordData);
     await medicalRecord.save();
 
     return medicalRecord;
   }
 
   async update(medicalRecordData) {
-    const exist = await medicalRecordModel.findById(
-      medicalRecordData._id
-    );
+    const exist = await medicalRecordModel.findById(medicalRecordData._id);
     if (!exist) {
       return 0;
     }
@@ -51,9 +43,7 @@ class MedicalRecordService {
     if (!exist) {
       return 0;
     }
-    const rs = await medicalRecordModel.findByIdAndDelete(
-      id
-    );
+    const rs = await medicalRecordModel.findByIdAndDelete(id);
     if (!rs) {
       return 2;
     }
@@ -76,40 +66,39 @@ class MedicalRecordService {
     const rs = await medicalRecordModel.find();
     return rs;
   }
-  // async findByPatient(patient) {
-  //   const rs = await medicalRecordModel.find({
-  //     "patient._id": patient,
-  //   });
-  //   const result = rs.filter(
-  //     (item) =>
-  //       item.diagnosisDisease &&
-  //       item.diagnosisDisease.trim() !== "" &&
-  //       item.medical.length > 0
-  //   );
-  //   const validData = await Promise.all(
-  //     result.map(async (item) => {
-  //       const check =
-  //         await smartContract.checkMedicalRecord(
-  //           item.blockChain.hashTX
-  //         );
-  //       return check && check._id === item.id ? item : null; // Chỉ trả về item nếu nó hợp lệ
-  //     })
-  //   );
-  //   return validData.filter((item) => item !== null); // Lọc ra các item hợp lệ
-  // }
   async findByPatient(patient) {
     const rs = await medicalRecordModel.find({
       "patient._id": patient,
     });
-
     const result = rs.filter(
       (item) =>
         item.diagnosisDisease &&
         item.diagnosisDisease.trim() !== "" &&
         item.medical.length > 0
     );
-    return result;
+    const validData = await Promise.all(
+      result.map(async (item) => {
+        const check = await smartContract.checkMedicalRecord(
+          item.blockChain.hashTX
+        );
+        return check && check._id === item.id ? item : null; // Chỉ trả về item nếu nó hợp lệ
+      })
+    );
+    return validData.filter((item) => item !== null); // Lọc ra các item hợp lệ
   }
+  // async findByPatient(patient) {
+  //   const rs = await medicalRecordModel.find({
+  //     "patient._id": patient,
+  //   });
+
+  //   const result = rs.filter(
+  //     (item) =>
+  //       item.diagnosisDisease &&
+  //       item.diagnosisDisease.trim() !== "" &&
+  //       item.medical.length > 0
+  //   );
+  //   return result;
+  // }
   async findByDoctor(doctor) {
     const rs = await medicalRecordModel.find({
       "doctor._id": doctor,

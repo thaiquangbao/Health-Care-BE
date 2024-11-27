@@ -8,6 +8,9 @@ class CustomerController {
       if (customer === 0) {
         return res.status(404).json("Không tìm thấy hồ sơ bác sĩ!!!");
       }
+      if (customer === 2) {
+        return res.status(404).json("Không tìm thấy người dùng!!!");
+      }
       emitter.emit("send-notice-customer.submit", customer);
       return res.status(200).json(customer);
     } catch (error) {

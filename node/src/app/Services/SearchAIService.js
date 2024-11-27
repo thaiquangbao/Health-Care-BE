@@ -48,46 +48,49 @@ class SearchAIService {
       messages: [
         {
           role: "system",
-          content: `Hãy trả lời bằng tiếng việt. Dựa vào thông tin triệu chứng ${data.symptom} hãy đưa ra người bệnh đang mắc những chứng bệnh nào trong đây ${titles} (Hãy đưa ra 4-6 chứng bệnh có tỉ lệ cao nhất thôi) .Và những chuyên khoa nào trong ${dsKhoa} có thể chửa được những chứng bệnh đó (Các chuyên khoa có thể chữa trị những chứng bệnh này là: (Trả lời ở đây), Đưa ra khoảng 4 chuyên khoa thôi và mỗi chuyên khoa cách nhau bằng dấu ,) ,No Yapping`,
+          content: `Hãy trả lời bằng tiếng việt. Dựa vào thông tin triệu chứng ${data.symptom} hãy đưa ra người bệnh đang mắc những chứng bệnh nào trong đây ${titles} (Hãy đưa ra 4-6 chứng bệnh có tỉ lệ cao nhất thôi) , No Yapping`,
+        },
+      ],
+      model: "gpt-3.5-turbo",
+    });
+    const completion1 = await openai.chat.completions.create({
+      messages: [
+        {
+          role: "system",
+          content: `Dựa vào thông tin triệu chứng ${data.symptom} hãy đưa ra những chuyên khoa nào trong ${dsKhoa} phù hợp với những chứng bệnh đó (Chỉ Đưa ra khoảng 4 chuyên khoa dựa trên danh sách khoa tôi đưa ra và mỗi chuyên khoa cách nhau bằng dấu "," ngoài ra thì không viết gì thêm) ,No Yapping`,
         },
       ],
       model: "gpt-3.5-turbo",
     });
     const dataAI = completion.choices[0].message.content;
-    const khoaSectionRegex =
-      /Các chuyên khoa có thể chữa trị những chứng bệnh này là: ([^\.]+)/;
-    const khoaSectionNotMatch =
-      /Các chuyên khoa có thể chữa trị những chứng bệnh này là ([^\.]+)/;
-    const khoaSectionMatch = dataAI.match(khoaSectionRegex);
-    const khoaSectionNotMatched = dataAI.match(khoaSectionNotMatch);
-    let processedKhoaMatches = [];
-    if (khoaSectionMatch && khoaSectionMatch[1]) {
-      const khoaList = khoaSectionMatch[1]
+    let dataAI1 = completion1.choices[0].message.content;
+    while (
+      !dataAI1
         .split(",")
-        .map((khoa) => khoa.trim());
-
-      processedKhoaMatches = khoaList.map((khoa) => {
-        return khoa.charAt(0).toUpperCase() + khoa.slice(1);
+        .map((item) => item.trim())
+        .every((e) => dsKhoa.includes(e))
+    ) {
+      const completion2 = await openai.chat.completions.create({
+        messages: [
+          {
+            role: "system",
+            content: `Dựa vào thông tin triệu chứng ${data.symptom} hãy đưa ra những chuyên khoa nào trong ${dsKhoa} phù hợp với những chứng bệnh đó (Chỉ Đưa ra khoảng 4 chuyên khoa dựa trên danh sách khoa tôi đưa ra và mỗi chuyên khoa cách nhau bằng dấu "," ngoài ra thì không viết gì thêm) ,No Yapping`,
+          },
+        ],
+        model: "gpt-3.5-turbo",
       });
-    } else {
-      const khoaList = khoaSectionNotMatched[1]
-        .split(",")
-        .map((khoa) => khoa.trim());
-
-      processedKhoaMatches = khoaList.map((khoa) => {
-        return khoa.charAt(0).toUpperCase() + khoa.slice(1);
-      });
+      dataAI1 = completion2.choices[0].message.content;
     }
-
     const dsDoctor = await doctorRecordService.getAll();
     const filteredDoctors = dsDoctor.filter((doctor) => {
-      return processedKhoaMatches
-        .map((item) => item.toUpperCase().trim())
-        .includes(doctor.doctor.specialize.toUpperCase().trim());
+      return dataAI1
+        .split(",")
+        .map((item) => item.trim())
+        .includes(doctor.doctor.specialize);
     });
     return {
       ai: dataAI,
-      khoa: processedKhoaMatches,
+      khoa: dataAI1,
       data: filteredDoctors,
     };
   };
