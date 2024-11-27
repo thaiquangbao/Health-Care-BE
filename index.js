@@ -21,14 +21,11 @@ const baseURL = "http://127.0.0.1:3000";
 const baseURLTWO = "http://127.0.0.1:3001";
 const baseURLDEPLOY = "https://heath-haven-meet.vercel.app";
 const myURLDEPLOY = "https://health-care-fe-two.vercel.app";
+const myURLDEPLOYFINAL = "https://health-haven-iuh.vercel.app";
 const socket = require("./node/src/untill/Socket");
 const corsOptions = {
   origin: "*",
-  allowedHeaders: [
-    "Content-Type",
-    "accessToken",
-    "refreshToken",
-  ],
+  allowedHeaders: ["Content-Type", "accessToken", "refreshToken"],
 };
 app.use(morgan("dev"));
 app.use(helmet());
@@ -36,9 +33,7 @@ app.use(compression());
 app.use(cors(corsOptions));
 // Tăng giới hạn kích thước yêu cầu lên 50MB
 app.use(bodyParser.json({ limit: "50mb" }));
-app.use(
-  bodyParser.urlencoded({ limit: "50mb", extended: true })
-);
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(express.json());
 dotenv.config();
 routes(app);
@@ -54,6 +49,7 @@ socket(server, [
   baseURLTWO,
   baseURLDEPLOY,
   myURLDEPLOY,
+  myURLDEPLOYFINAL,
 ]);
 server.listen(port, () => {
   console.log(`Connect service running on port ${port}`);

@@ -8,10 +8,9 @@ const noticeService = require("../Services/NoticeService");
 const healthLogBookService = require("../Services/HealthLogBookService");
 class ScheduleEmailNotification {
   async notification(appointment) {
-    const [hours, minutes] =
-      appointment.appointment_date.time
-        .split(":")
-        .map(Number);
+    const [hours, minutes] = appointment.appointment_date.time
+      .split(":")
+      .map(Number);
     const appointmentDate = moment.tz(
       {
         year: appointment.appointment_date.year,
@@ -23,9 +22,7 @@ class ScheduleEmailNotification {
       "Asia/Ho_Chi_Minh"
     );
     const now = moment.tz("Asia/Ho_Chi_Minh");
-    const notificationDate = appointmentDate
-      .clone()
-      .subtract(30, "minutes"); // Trừ 30 phút
+    const notificationDate = appointmentDate.clone().subtract(30, "minutes"); // Trừ 30 phút
     if (
       now.isBetween(notificationDate, appointmentDate) &&
       !appointment.notificationSent
@@ -124,7 +121,7 @@ class ScheduleEmailNotification {
                   <p style="text-align:right; width: 70%; margin-right: 30px;text-decoration: none; color: #000;"><strong>${appointment.patient.email}</strong></p>
               </div>
               <div style="text-align: center; margin-top: 20px;">
-                  <a href="https://health-care-fe-two.vercel.app/zero/${appointment._id}/patient" style="text-decoration: none;">
+                  <a href="https://health-haven-iuh.vercel.app/zero/${appointment._id}/patient" style="text-decoration: none;">
                     <button style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; width: 80%; cursor: pointer;">Vào khám</button>
                   </a>
               </div>
@@ -210,7 +207,7 @@ class ScheduleEmailNotification {
                   <p style="text-align:right; width: 70%; margin-right: 30px;text-decoration: none; color: #000;"><strong>${appointment.patient.email}</strong></p>
               </div>
               <div style="text-align: center; margin-top: 20px;">
-                  <a href="https://health-care-fe-two.vercel.app/zero/${appointment._id}/doctor" style="text-decoration: none;">
+                  <a href="https://health-haven-iuh.vercel.app/zero/${appointment._id}/doctor" style="text-decoration: none;">
                     <button style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; width: 80%; cursor: pointer;">Vào khám</button>
                   </a>
               </div>
@@ -267,8 +264,7 @@ class ScheduleEmailNotification {
   async startDepointmentFetch() {
     cron.schedule("*/5 * * * *", async () => {
       try {
-        const appointments =
-          await appointmentService.getAll();
+        const appointments = await appointmentService.getAll();
         const acceptedAppointments = appointments.filter(
           (appointment) => appointment.status === "ACCEPTED"
         );
@@ -276,10 +272,7 @@ class ScheduleEmailNotification {
           this.notification(appointment);
         }
       } catch (error) {
-        console.error(
-          "Error fetching depointments:",
-          error
-        );
+        console.error("Error fetching depointments:", error);
       }
     });
   }
