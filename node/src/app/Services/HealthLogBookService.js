@@ -267,22 +267,24 @@ class HealthLogBookService {
       return 0;
     }
     // dateStop Này là ngày bắt chuyển bác sĩ
+    // Dữ liệu cũ
     const rs = await healthLogBookModel.findByIdAndUpdate(
       exist._id,
       {
         $set: {
-          dateStop: data.dateStop,
           status: data.status,
         },
       },
       { new: true }
     );
+    // Dữ liệu mới
     const dataNew = {
       patient: rs.patient,
       doctor: data.doctor,
       priceList: rs.priceList,
-      date: rs.dateStop, //  Lấy ngày bắt đầu chuyển làm ngày bắt đầu mới
+      date: rs.date, //  Lấy ngày bắt đầu chuyển làm ngày bắt đầu mới
       status: data.statusNew,
+      dateStop: rs.dateStop, // Ngày kết thúc mới
     };
     const healthLogBook = new healthLogBookModel(dataNew);
     const saved = await healthLogBook.save();

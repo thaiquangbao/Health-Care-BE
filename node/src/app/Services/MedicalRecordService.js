@@ -66,39 +66,39 @@ class MedicalRecordService {
     const rs = await medicalRecordModel.find();
     return rs;
   }
-  async findByPatient(patient) {
-    const rs = await medicalRecordModel.find({
-      "patient._id": patient,
-    });
-    const result = rs.filter(
-      (item) =>
-        item.diagnosisDisease &&
-        item.diagnosisDisease.trim() !== "" &&
-        item.medical.length > 0
-    );
-    const validData = await Promise.all(
-      result.map(async (item) => {
-        const check = await smartContract.checkMedicalRecord(
-          item.blockChain.hashTX
-        );
-        return check && check._id === item.id ? item : null; // Chỉ trả về item nếu nó hợp lệ
-      })
-    );
-    return validData.filter((item) => item !== null); // Lọc ra các item hợp lệ
-  }
   // async findByPatient(patient) {
   //   const rs = await medicalRecordModel.find({
   //     "patient._id": patient,
   //   });
-
   //   const result = rs.filter(
   //     (item) =>
   //       item.diagnosisDisease &&
   //       item.diagnosisDisease.trim() !== "" &&
   //       item.medical.length > 0
   //   );
-  //   return result;
+  //   const validData = await Promise.all(
+  //     result.map(async (item) => {
+  //       const check = await smartContract.checkMedicalRecord(
+  //         item.blockChain.hashTX
+  //       );
+  //       return check && check._id === item.id ? item : null; // Chỉ trả về item nếu nó hợp lệ
+  //     })
+  //   );
+  //   return validData.filter((item) => item !== null); // Lọc ra các item hợp lệ
   // }
+  async findByPatient(patient) {
+    const rs = await medicalRecordModel.find({
+      "patient._id": patient,
+    });
+
+    const result = rs.filter(
+      (item) =>
+        item.diagnosisDisease &&
+        item.diagnosisDisease.trim() !== "" &&
+        item.medical.length > 0
+    );
+    return result;
+  }
   async findByDoctor(doctor) {
     const rs = await medicalRecordModel.find({
       "doctor._id": doctor,
