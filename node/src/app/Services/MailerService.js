@@ -6,15 +6,15 @@ const transporter = nodemailer.createTransport({
   port: 587,
   secure: false, // Use `true` for port 465, `false` for all other ports
   auth: {
-    user: "vutienduc26122002@gmail.com",
-    pass: "dcnvkzancakurope",
+    user: "healthhaveniuh@gmail.com",
+    pass: "sgidcdfiqjimqkzu",
   },
 });
 class MailerService {
   async sendMail(receiver, subject, text, body) {
     const send = await transporter.sendMail({
       to: receiver,
-      from: "vutienduc26122002@gmail.com",
+      from: "healthhaveniuh@gmail.com",
       subject: subject,
       html: body,
       text: text,
@@ -28,7 +28,7 @@ class MailerService {
   warning(receiver, subject, text, body) {
     const send = transporter.sendMail({
       to: receiver,
-      from: "vutienduc26122002@gmail.com",
+      from: "healthhaveniuh@gmail.com",
       subject: subject,
       html: body,
       text: text,
@@ -51,7 +51,7 @@ class MailerService {
     );
     const send = await transporter.sendMail({
       to: data.patient.email,
-      from: "vutienduc26122002@gmail.com",
+      from: "healthhaveniuh@gmail.com",
       subject: "Phiếu khám sức khỏe",
       html: `Phiếu khám sức khỏe vào lúc ${
         data?.date.time
