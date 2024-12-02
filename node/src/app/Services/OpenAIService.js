@@ -2,6 +2,7 @@ const OpenAI = require("openai");
 const moment = require("moment-timezone");
 moment.tz.setDefault("Asia/Ho_Chi_Minh");
 const teachAIHearth = require("../Services/TeachAIHearth");
+require('dotenv').config();
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });

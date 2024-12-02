@@ -32,7 +32,7 @@ class ScheduleEmailNotification {
         appointment.doctor_record_id
       );
       const tokenZegoDoctor = await jwtService.generateTokenZego({_id: doctorRecord.doctor._id});
-      const tokenZegoPatient = await authenticateService.generateTokenZego({_id: appointment.patient._id});
+      const tokenZegoPatient = await jwtService.generateTokenZego({_id: appointment.patient._id});
       let category_sick = "";
       let sex = "";
       let category = "";
@@ -124,7 +124,7 @@ class ScheduleEmailNotification {
                   <p style="text-align:right; width: 70%; margin-right: 30px;text-decoration: none; color: #000;"><strong>${appointment.patient.email}</strong></p>
               </div>
               <div style="text-align: center; margin-top: 20px;">
-                  <a href="https://health-haven-iuh.vercel.app/zero/${appointment._id}/patient?accesstoken=${tokenZegoPatient.accessToken}&refreshtoken=${tokenZegoPatient.refreshToken}" style="text-decoration: none;">
+                  <a href="https://health-haven-iuh.vercel.app/meet/${appointment._id}/patient?accesstoken=${tokenZegoPatient.accessToken}&refreshtoken=${tokenZegoPatient.refreshToken}" style="text-decoration: none;">
                     <button style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; width: 80%; cursor: pointer;">Vào khám</button>
                   </a>
               </div>
@@ -210,7 +210,7 @@ class ScheduleEmailNotification {
                   <p style="text-align:right; width: 70%; margin-right: 30px;text-decoration: none; color: #000;"><strong>${appointment.patient.email}</strong></p>
               </div>
               <div style="text-align: center; margin-top: 20px;">
-                  <a href="https://health-haven-iuh.vercel.app/zero/${appointment._id}/doctor?accesstoken=${tokenZegoDoctor.accessToken}&refreshtoken=${tokenZegoDoctor.refreshToken}" style="text-decoration: none;">
+                  <a href="https://health-haven-iuh.vercel.app/meet/${appointment._id}/doctor?accesstoken=${tokenZegoDoctor.accessToken}&refreshtoken=${tokenZegoDoctor.refreshToken}" style="text-decoration: none;">
                     <button style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; width: 80%; cursor: pointer;">Vào khám</button>
                   </a>
               </div>
