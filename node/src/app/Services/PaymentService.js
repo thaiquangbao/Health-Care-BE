@@ -253,7 +253,7 @@ class PaymentService {
       return 0;
     }
     const patient = await userModel.findOne({
-      $and: [{ _id: exist.patient_id }, { role: "USER" }],
+       _id: exist.patient_id 
     });
 
     if (!patient) {

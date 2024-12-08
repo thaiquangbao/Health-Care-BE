@@ -22,7 +22,7 @@ class AuthenticateService {
         passWord,
       });
       await newUser.save();
-      return await userResponse.toUserAuth(newUser);
+      return { auth: await userResponse.toUserAuth(newUser), role: "USER" };
     }
     if (!existUser.role.match("CUSTOMER")) {
       return 0;
@@ -41,7 +41,7 @@ class AuthenticateService {
       },
       { new: true }
     );
-    return await userResponse.toUserAuth(customer);
+      return { auth: await userResponse.toUserAuth(customer) , role: "CUSTOMER" };
   }
   async updateProcessSignup(dataUser) {
     const existUser = await userModel.findOne({

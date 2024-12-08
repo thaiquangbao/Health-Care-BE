@@ -204,7 +204,7 @@ class MailerService {
         <div class="info">
           <span class="label">Chiều cao:</span> ${
             data.height !== 0
-              ? data.temperature + "cm"
+              ? data.height + "cm"
               : "Không"
           } 
         </div>
