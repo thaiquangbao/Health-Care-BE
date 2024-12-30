@@ -145,5 +145,14 @@ class MedicalRecordController {
       return res.status(500).json(error);
     }
   }
+  async findByAppointment(req, res) {
+    try {
+      const id = req.params.id;
+      const rs = await medicalRecordService.findByAppointment(id);
+      return res.status(200).json(rs);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
+  }
 }
 module.exports = new MedicalRecordController();

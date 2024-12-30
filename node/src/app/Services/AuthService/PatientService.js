@@ -91,7 +91,7 @@ class PatientService {
   }
   async takePassWord(data) {
     const existPatient = await userModel.findOne({
-      $and: [{ phone: data.phone }, { role: "USER" }],
+      $and: [{ phone: data.phone }, { $or: [{role: "USER"}, {role: "DOCTOR"}] }],
     });
     if (!existPatient) {
       return 0;

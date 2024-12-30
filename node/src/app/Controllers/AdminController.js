@@ -1,4 +1,5 @@
 const adminService = require("../Services/AdminService");
+const smartContractService = require("../Services/SmartContractService");
 class AdminController {
   async getAllAppointments(req, res) {
     try {
@@ -131,6 +132,17 @@ class AdminController {
       const accessToken = req.headers["accesstoken"];
       const refreshToken = req.headers["refreshtoken"];
       const token = { accessToken, refreshToken };
+      return res.status(200).json({ data: rs, token });
+    } catch (error) {
+      return res.status(500).json(error.message);
+    }
+  }
+  async getBalance(req, res) {
+    try {
+      const accessToken = req.headers["accesstoken"];
+      const refreshToken = req.headers["refreshtoken"];
+      const token = { accessToken, refreshToken };
+      const rs = await smartContractService.checkBalance();
       return res.status(200).json({ data: rs, token });
     } catch (error) {
       return res.status(500).json(error.message);

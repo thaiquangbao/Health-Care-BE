@@ -5,6 +5,10 @@ const medicalRecordController = require("../../app/Controllers/MedicalRecordCont
 const mailerController = require("../../app/Controllers/MailerController");
 useRouter.post("/send-mail/:id", mailerController.mailMedicalRecord);
 useRouter.get(
+  "/get-appointment/:id",
+  medicalRecordController.findByAppointment
+);
+useRouter.get(
   "/findByDoctor/:id",
   medicalRecordController.findByDoctor
 );

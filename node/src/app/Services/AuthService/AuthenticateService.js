@@ -196,5 +196,15 @@ class AuthenticateService {
     const users = await userModel.find();
     return users;
   }
+  async checkAuth(data) {
+    const existPatient = await userModel.findOne({
+      $and: [{ phone: data.phone }, { $or: [{role: "USER"}, {role: "DOCTOR"}] }],
+    });
+    if (!existPatient) {
+      return 0;
+    }
+   
+    return await userResponse.toUserAuth(existPatient);
+  }
 }
 module.exports = new AuthenticateService();

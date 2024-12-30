@@ -2,6 +2,13 @@ const express = require("express");
 const useRouter = express.Router();
 const adminController = require("../../app/Controllers/AdminController");
 const middleWareToken = require("../../app/middlewares/MiddleWareToken");
+
+//getBalance
+useRouter.get(
+  "/get-balance",
+  middleWareToken.validateToken,
+  adminController.getBalance
+);
 // logBooks
 useRouter.get(
   "/get-logBooks-year",

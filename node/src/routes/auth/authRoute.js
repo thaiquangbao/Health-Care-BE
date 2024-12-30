@@ -116,6 +116,10 @@ useRouter.post(
   "/take-password/doctor",
   doctorController.takePasswordDoctor
 );
+useRouter.post(
+  "/check-auth",
+  authController.checkExistAuth
+);
 useRouter.post("/login/admin", authController.loginAdmin);
 useRouter.post("/login", authController.loginAuth);
 useRouter.post(

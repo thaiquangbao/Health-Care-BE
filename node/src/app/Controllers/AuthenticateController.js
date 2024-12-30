@@ -132,5 +132,20 @@ class AuthenticateController {
       return res.status(500).json("Lỗi hệ thống!!!");
     }
   }
+  async checkExistAuth(req, res) {
+    try {
+      const data = req.body;
+      const result = await authService.checkAuth(data);
+      if (result === 0) {
+        return res
+          .status(404)
+          .json("Số điện thoại không tồn tại!!!");
+      }
+      return res.status(200).json(result);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json("Lỗi hệ thống!!!");
+    }
+  }
 }
 module.exports = new AuthenticateController();

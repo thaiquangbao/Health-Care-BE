@@ -169,5 +169,21 @@ class SmartContractService {
       console.log(error);
     }
   }
+  checkBalance = async () => {
+    try {
+      const balance = await web3.eth.getBalance(
+        "0xe72ae3bE6eaC70d96c7645D6f2040aEfdCCfcEe5"
+      );
+      // console.log(
+      //   "Account balance:",
+      //   web3.utils.fromWei(balance, "ether"),
+      //   "ETH"
+      // );
+      return web3.utils.fromWei(balance, "ether");
+    } catch (error) {
+      console.error("Error fetching balance:", error);
+      return error.message;
+    }
+  };
 }
 module.exports = new SmartContractService();

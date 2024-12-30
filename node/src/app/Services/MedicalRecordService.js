@@ -70,6 +70,43 @@ class MedicalRecordService {
     const rs = await medicalRecordModel.find({
       "patient._id": patient,
     });
+    
+    let result = rs.filter(
+      (item) =>
+        item.diagnosisDisease &&
+        item.diagnosisDisease.trim() !== "" &&
+        item.medical.length > 0
+    );
+    
+    const validData = await Promise.all(
+      result.map(async (item) => {
+        const check = await smartContract.checkMedicalRecord(item.blockChain.hashTX);
+        return check && check._id === item.id ? item : null; // Chỉ trả về item nếu nó hợp lệ
+      })
+    );
+    
+    const filteredValidData = validData.filter((item) => item !== null);
+    console.log(filteredValidData.length);
+    
+    
+
+    // Lấy giá trị cuối cùng của mảng appointment nếu có trùng appointment
+    const latestAppointments = filteredValidData.reduce((acc, item) => {
+      const appointmentId = item.appointment;
+      acc[appointmentId] = item; // Luôn ghi đè với item mới nhất
+      return acc;
+    }, {});
+
+    const latestAppointmentsArray = Object.values(latestAppointments);
+
+
+      console.log(latestAppointmentsArray.length);
+      return latestAppointmentsArray;
+  }
+  async findByAppointment(appointment) {
+    const rs = await medicalRecordModel.find({
+      appointment: appointment,
+    });
     const result = rs.filter(
       (item) =>
         item.diagnosisDisease &&
